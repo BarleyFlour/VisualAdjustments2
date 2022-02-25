@@ -54,6 +54,7 @@ namespace VisualAdjustments2
             base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(this.OnUnitChanged));
             charController.Bind(dollState);
             base.AddDisposable(this.RefreshView?.Subscribe(() => { this.Change(); }));
+
             /*base.AddDisposable(Game.Instance.SelectionCharacter.SelectionCharacterUpdated.Subscribe(delegate (Unit _)
             {
                 this.OnUnitChanged(Game.Instance.SelectionCharacter.SelectedUnit.Value);
