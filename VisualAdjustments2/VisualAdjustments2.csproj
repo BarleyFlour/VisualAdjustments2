@@ -181,9 +181,6 @@
     <Folder Include="New VMs\" />
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Docket.md" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
