@@ -137,9 +137,6 @@ namespace VisualAdjustments2.UI
                                 CharGenAppearancePhaseVMModified.pcview.transform.parent.gameObject.SetActive(true);
                                 base.AddDisposable(this.DollVM.Value = new CharGenAppearancePhaseVMModified(lvlcontroller, doll, false));
                             }
-                            
-                            // TODO: Set this up with the constructor and related code (mby move related to constructor?)
-                            //base.AddDisposable(this.DollVM.Value = new CharGenAppearancePhaseVMModified());
                             return;
                         }
                         return;

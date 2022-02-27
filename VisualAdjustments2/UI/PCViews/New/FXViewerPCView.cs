@@ -12,8 +12,8 @@ namespace VisualAdjustments2.UI
 {
     public class FXViewerPCView : ViewBase<FXViewerVM>
     {
-        public BarleyListPCView m_CurrentFX;
-        public BarleyListPCView m_AllFX;
+        public ListPCView m_CurrentFX;
+        public ListPCView m_AllFX;
         public OwlcatButton m_AddRemoveButton;
         public void Initialize()
         {

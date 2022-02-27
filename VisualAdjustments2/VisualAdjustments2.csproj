@@ -14,6 +14,7 @@
       <PubliciseInputAssemblies Include="$(InstallDir)\Wrath_Data\Managed\UnityEngine.UI.dll" />
       <PubliciseInputAssemblies Include="$(InstallDir)\Wrath_Data\Managed\UnityEngine.UIModule.dll" />
       <PubliciseInputAssemblies Include="$(InstallDir)\Wrath_Data\Managed\UnityEngine.CoreModule.dll" />
+      <PubliciseInputAssemblies Include="$(InstallDir)\Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll" />
     </ItemGroup>
     <Publicise InputAssemblies="@(PubliciseInputAssemblies)" OutputPath="$(SolutionDir)lib/" PubliciseCompilerGenerated="true" />
   </Target>
@@ -64,6 +65,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\ResourceLoader.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListViewItemPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ServiceWindowMenuSelectorPCView.cs" />
@@ -72,10 +74,13 @@
     <Compile Include="UI\PCViews\New\EEPickerPCView.cs" />
     <Compile Include="UI\PCViews\New\EquipmentPCView.cs" />
     <Compile Include="UI\PCViews\New\FXViewerPCView.cs" />
+    <Compile Include="Infrastructure\Utilities.cs" />
     <Compile Include="UI\VMs\Modified\CharGenAppearancePhaseVMModified.cs" />
     <Compile Include="DollStateSerialization.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\CurrentEEsVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewItemVM.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\ListViewVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />
     <Compile Include="UI\VMs\New\EEPickerVM.cs" />
     <Compile Include="UI\VMs\New\EquipmentVM.cs" />
@@ -85,7 +90,7 @@
     <Compile Include="UI\PCViews\Modified\ServiceWindowMenuPCViewModified.cs" />
     <Compile Include="UI\VMs\Modified\ServiceWindowsMenuVMModified.cs" />
     <Compile Include="UI\VMs\Modified\ServiceWindowsVMModified.cs" />
-    <Compile Include="UIPatches.cs" />
+    <Compile Include="UI\UIPatches.cs" />
     <Compile Include="UI\VMs\New\SearchableBoxVM.cs" />
     <Compile Include="UI\VMs\New\VisualAdjustments2VM.cs" />
   </ItemGroup>
@@ -143,9 +148,8 @@
     <Reference Include="UnityEngine">
       <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="UnityEngine.AssetBundleModule_public">
+      <HintPath>..\lib\UnityEngine.AssetBundleModule_public.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ClothModule">
       <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
@@ -177,8 +181,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Modified VMs\" />
-    <Folder Include="New VMs\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

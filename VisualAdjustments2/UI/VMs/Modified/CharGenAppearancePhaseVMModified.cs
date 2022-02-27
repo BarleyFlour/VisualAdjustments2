@@ -33,14 +33,11 @@ namespace VisualAdjustments2
 {
     public class CharGenAppearancePhaseVMModified : CharGenPhaseBaseVM
     {
-        // Token: 0x17000CC9 RID: 3273
-        // (get) Token: 0x06004E8F RID: 20111 RVA: 0x000336A8 File Offset: 0x000318A8
         public override int OrderPriority
         {
             get
             {
                 return 0;
-                //return base.GetBaseOrderPriority(CharGenPhaseBaseVM.ChargenPhasePriority.Appearance) + ((this.DollState != base.LevelUpController.Doll) ? 1 : 0);
             }
         }
         public static CharGenAppearancePhaseDetailedPCViewModified pcview;
@@ -54,12 +51,6 @@ namespace VisualAdjustments2
             base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(this.OnUnitChanged));
             charController.Bind(dollState);
             base.AddDisposable(this.RefreshView?.Subscribe(() => { this.Change(); }));
-
-            /*base.AddDisposable(Game.Instance.SelectionCharacter.SelectionCharacterUpdated.Subscribe(delegate (Unit _)
-            {
-                this.OnUnitChanged(Game.Instance.SelectionCharacter.SelectedUnit.Value);
-            }));*/
-            // this.AddDisposable(PartyVM.SelectedUnit.Subscribe((UnitDescriptor desc) => { this.OnUnitChanged(desc); }));
         }
         public void OnUnitChanged(UnitDescriptor descriptor)
         {
@@ -96,7 +87,6 @@ namespace VisualAdjustments2
                 Main.Logger.Error(ex.ToString());
             }
         }
-        // Token: 0x06004E91 RID: 20113 RVA: 0x001B76B8 File Offset: 0x001B58B8
         public override void DisposeImplementation()
         {
             StringSequentialSelectorVM beardSelectorVM = this.m_BeardSelectorVM;
@@ -146,21 +136,15 @@ namespace VisualAdjustments2
             this.m_HairSelectorVM = null;
             this.m_HeadSelectorVM = null;
         }
-
-        // Token: 0x06004E92 RID: 20114 RVA: 0x000336CA File Offset: 0x000318CA
         public override bool CheckIsCompleted()
         {
-
-
             return false;
-            //This is just levelupstuff
-            //return this.SelectionStateIsCompleted(base.LevelUpController) || base.IsInDetailedView.Value;
+            //This is just levelupstuff so we dont need to bother with any logic.
         }
-
-        // Token: 0x06004E93 RID: 20115 RVA: 0x000094BF File Offset: 0x000076BF
         private bool SelectionStateIsCompleted(LevelUpController controller)
         {
             return true;
+            //This is just levelupstuff so we dont need to bother with any logic.
         }
 
         // Token: 0x06004E94 RID: 20116 RVA: 0x001B7780 File Offset: 0x001B5980
@@ -177,88 +161,10 @@ namespace VisualAdjustments2
                 {
                     this.Change();
                 }));
-                //My subscriptions
-                {
-                    /*base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.RacePreset, true).Subscribe(delegate (BlueprintRaceVisualPreset _)
-					{
-						this.Change();
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Beard, true).Subscribe(delegate (DollState.EEAdapter _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.CharacterClass, true).Subscribe(delegate (BlueprintCharacterClass _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.EquipmentRampIndex, true).Subscribe(delegate (int _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.EquipmentRampIndexSecondary, true).Subscribe(delegate (int _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Eyebrows, true).Subscribe(delegate (DollState.EEAdapter _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.EyesColorRampIndex, true).Subscribe(delegate (int _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Hair, true).Subscribe(delegate (DollState.EEAdapter _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.HairRampIndex, true).Subscribe(delegate (int _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Head, true).Subscribe(delegate (DollState.EEAdapter _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Horn, true).Subscribe(delegate (DollState.EEAdapter _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.HornsRampIndex, true).Subscribe(delegate (int _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Scar, true).Subscribe(delegate (DollState.EEAdapter _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Scars, true).Subscribe(delegate (List<EquipmentEntityLink> _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.SkinRampIndex, true).Subscribe(delegate (int _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Tattoos, true).Subscribe(delegate (List<DollState.DollPrint> _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => this.DollState.Warprints, true).Subscribe(delegate (List<DollState.DollPrint> _)
-					{
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));
-
-					base.AddDisposable(base.LevelUpController.GetReactiveProperty((LevelUpController controller) => dirt.dirtthing(base.LevelUpController), true).Subscribe(delegate (bool fg)
-                    {
-						this.LevelUpController.Unit.SaveDollState(this.DollState);
-					}));*/
-                }
                 this.m_Subscribed = true;
             }
             this.Change();
         }
-
-        // Token: 0x06004E95 RID: 20117 RVA: 0x001B7800 File Offset: 0x001B5A00
         public void Change()
         {
             if (this.m_BodySelectorVM != null)
@@ -376,8 +282,6 @@ namespace VisualAdjustments2
             this.LevelUpController.Unit.SaveDollState(this.DollState);
             Main.Logger.Log("changed");
         }
-
-        // Token: 0x06004E96 RID: 20118 RVA: 0x001B7A70 File Offset: 0x001B5C70
         private static void GetTextureSelectorItemVM(ReactiveCollection<TextureSelectorItemVM> valueList, int i, Texture2D item, Action setter)
         {
             if (valueList.Count > i)
@@ -388,9 +292,6 @@ namespace VisualAdjustments2
             TextureSelectorItemVM textureSelectorItemVm = new TextureSelectorItemVM(item, setter, i);
             valueList.Add(textureSelectorItemVm);
         }
-
-        // Token: 0x17000CCA RID: 3274
-        // (get) Token: 0x06004E97 RID: 20119 RVA: 0x001B7AA8 File Offset: 0x001B5CA8
         public SelectionGroupRadioVM<TextureSelectorItemVM> BodyColorSelectorVM
         {
             get
@@ -398,9 +299,6 @@ namespace VisualAdjustments2
                 return this.m_BodyColorSelectorVM = (this.m_BodyColorSelectorVM ?? this.CreateBodyColorSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x17000CCB RID: 3275
-        // (get) Token: 0x06004E98 RID: 20120 RVA: 0x001B7AD4 File Offset: 0x001B5CD4
         public StringSequentialSelectorVM BodySelectorVM
         {
             get
@@ -408,15 +306,11 @@ namespace VisualAdjustments2
                 return this.m_BodySelectorVM = (this.m_BodySelectorVM ?? this.GetBodySelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004E99 RID: 20121 RVA: 0x001B7B00 File Offset: 0x001B5D00
         private StringSequentialSelectorVM GetBodySelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetBodyList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004E9A RID: 20122 RVA: 0x001B7B20 File Offset: 0x001B5D20
         private List<StringSequentialEntity> GetBodyList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> sequentialEntityList = new List<StringSequentialEntity>();
@@ -441,16 +335,12 @@ namespace VisualAdjustments2
             }
             return sequentialEntityList;
         }
-
-        // Token: 0x06004E9B RID: 20123 RVA: 0x001B7C04 File Offset: 0x001B5E04
         private SelectionGroupRadioVM<TextureSelectorItemVM> CreateBodyColorSelectorVM(DollState dollState)
         {
             SelectionGroupRadioVM<TextureSelectorItemVM> selector = new SelectionGroupRadioVM<TextureSelectorItemVM>(new ReactiveCollection<TextureSelectorItemVM>());
             this.UpdateBodyColorList(dollState, selector);
             return selector;
         }
-
-        // Token: 0x06004E9C RID: 20124 RVA: 0x001B7C28 File Offset: 0x001B5E28
         private void UpdateBodyColorList(DollState dollState, SelectionGroupRadioVM<TextureSelectorItemVM> selector)
         {
             ReactiveCollection<TextureSelectorItemVM> entitiesCollection = selector.EntitiesCollection;
@@ -473,9 +363,6 @@ namespace VisualAdjustments2
             }
             selector.ClearFromIndex(skinRamps.Count);
         }
-
-        // Token: 0x17000CCC RID: 3276
-        // (get) Token: 0x06004E9D RID: 20125 RVA: 0x001B7CF4 File Offset: 0x001B5EF4
         public SelectionGroupRadioVM<TextureSelectorItemVM> EyesColorSelectorVM
         {
             get
@@ -483,16 +370,12 @@ namespace VisualAdjustments2
                 return this.m_EyesColorSelectorVM = (this.m_EyesColorSelectorVM ?? this.CreateEyesColorSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004E9E RID: 20126 RVA: 0x001B7D20 File Offset: 0x001B5F20
         private SelectionGroupRadioVM<TextureSelectorItemVM> CreateEyesColorSelectorVM(DollState dollState)
         {
             SelectionGroupRadioVM<TextureSelectorItemVM> selector = new SelectionGroupRadioVM<TextureSelectorItemVM>(new ReactiveCollection<TextureSelectorItemVM>());
             this.UpdateEyesColorList(dollState, selector);
             return selector;
         }
-
-        // Token: 0x06004E9F RID: 20127 RVA: 0x001B7D44 File Offset: 0x001B5F44
         private void UpdateEyesColorList(DollState dollState, SelectionGroupRadioVM<TextureSelectorItemVM> selector)
         {
             ReactiveCollection<TextureSelectorItemVM> entitiesCollection = selector.EntitiesCollection;
@@ -520,9 +403,6 @@ namespace VisualAdjustments2
             }
             selector.ClearFromIndex(eyesColorRamps.Count);
         }
-
-        // Token: 0x17000CCD RID: 3277
-        // (get) Token: 0x06004EA0 RID: 20128 RVA: 0x001B7E10 File Offset: 0x001B6010
         public StringSequentialSelectorVM ScarsSelectorVM
         {
             get
@@ -530,15 +410,11 @@ namespace VisualAdjustments2
                 return this.m_ScarsSelectorVM = (this.m_ScarsSelectorVM ?? this.GetScarsSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004EA1 RID: 20129 RVA: 0x001B7E3C File Offset: 0x001B603C
         private StringSequentialSelectorVM GetScarsSelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetScarsList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004EA2 RID: 20130 RVA: 0x001B7E5C File Offset: 0x001B605C
         private List<StringSequentialEntity> GetScarsList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> sequentialEntityList = new List<StringSequentialEntity>();
@@ -564,9 +440,6 @@ namespace VisualAdjustments2
             }
             return sequentialEntityList;
         }
-
-        // Token: 0x17000CCE RID: 3278
-        // (get) Token: 0x06004EA3 RID: 20131 RVA: 0x001B7F3C File Offset: 0x001B613C
         public StringSequentialSelectorVM HandSelectorVM
         {
             get
@@ -574,24 +447,17 @@ namespace VisualAdjustments2
                 return this.m_HandSelectorVM = (this.m_HandSelectorVM ?? this.GetHandSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004EA4 RID: 20132 RVA: 0x001B7F68 File Offset: 0x001B6168
         private StringSequentialSelectorVM GetHandSelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetHandList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004EA5 RID: 20133 RVA: 0x000336E7 File Offset: 0x000318E7
         private List<StringSequentialEntity> GetHandList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> result = new List<StringSequentialEntity>();
             current = null;
             return result;
         }
-
-        // Token: 0x17000CCF RID: 3279
-        // (get) Token: 0x06004EA6 RID: 20134 RVA: 0x001B7F88 File Offset: 0x001B6188
         public StringSequentialSelectorVM BeardSelectorVM
         {
             get
@@ -599,15 +465,11 @@ namespace VisualAdjustments2
                 return this.m_BeardSelectorVM = (this.m_BeardSelectorVM ?? this.GetBeardSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004EA7 RID: 20135 RVA: 0x001B7FB4 File Offset: 0x001B61B4
         private StringSequentialSelectorVM GetBeardSelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetBeardList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004EA8 RID: 20136 RVA: 0x001B7FD4 File Offset: 0x001B61D4
         private List<StringSequentialEntity> GetBeardList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> sequentialEntityList = new List<StringSequentialEntity>();
@@ -633,9 +495,6 @@ namespace VisualAdjustments2
             }
             return sequentialEntityList;
         }
-
-        // Token: 0x17000CD0 RID: 3280
-        // (get) Token: 0x06004EA9 RID: 20137 RVA: 0x001B80DC File Offset: 0x001B62DC
         public StringSequentialSelectorVM HornSelectorVM
         {
             get
@@ -643,9 +502,6 @@ namespace VisualAdjustments2
                 return this.m_HornSelectorVM = (this.m_HornSelectorVM ?? this.GetHornSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x17000CD1 RID: 3281
-        // (get) Token: 0x06004EAA RID: 20138 RVA: 0x001B8108 File Offset: 0x001B6308
         public SelectionGroupRadioVM<TextureSelectorItemVM> HornColorSelectorVM
         {
             get
@@ -653,16 +509,12 @@ namespace VisualAdjustments2
                 return this.m_HornColorSelectorVM = (this.m_HornColorSelectorVM ?? this.CreateHornColorSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004EAB RID: 20139 RVA: 0x001B8134 File Offset: 0x001B6334
         private SelectionGroupRadioVM<TextureSelectorItemVM> CreateHornColorSelectorVM(DollState dollState)
         {
             SelectionGroupRadioVM<TextureSelectorItemVM> selector = new SelectionGroupRadioVM<TextureSelectorItemVM>(new ReactiveCollection<TextureSelectorItemVM>());
             this.UpdateHornColorList(dollState, selector);
             return selector;
         }
-
-        // Token: 0x06004EAC RID: 20140 RVA: 0x001B8158 File Offset: 0x001B6358
         private void UpdateHornColorList(DollState dollState, SelectionGroupRadioVM<TextureSelectorItemVM> selector)
         {
             ReactiveCollection<TextureSelectorItemVM> entitiesCollection = selector.EntitiesCollection;
@@ -684,15 +536,11 @@ namespace VisualAdjustments2
             }
             selector.ClearFromIndex(hornsRamps.Count);
         }
-
-        // Token: 0x06004EAD RID: 20141 RVA: 0x001B81F8 File Offset: 0x001B63F8
         private StringSequentialSelectorVM GetHornSelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetHornList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004EAE RID: 20142 RVA: 0x001B8218 File Offset: 0x001B6418
         private List<StringSequentialEntity> GetHornList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> sequentialEntityList = new List<StringSequentialEntity>();
@@ -718,9 +566,6 @@ namespace VisualAdjustments2
             }
             return sequentialEntityList;
         }
-
-        // Token: 0x17000CD2 RID: 3282
-        // (get) Token: 0x06004EAF RID: 20143 RVA: 0x001B8320 File Offset: 0x001B6520
         public StringSequentialSelectorVM HeadSelectorVM
         {
             get
@@ -728,15 +573,11 @@ namespace VisualAdjustments2
                 return this.m_HeadSelectorVM = (this.m_HeadSelectorVM ?? this.GetHeadSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004EB0 RID: 20144 RVA: 0x001B834C File Offset: 0x001B654C
         private StringSequentialSelectorVM GetHeadSelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetHeadsList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004EB1 RID: 20145 RVA: 0x001B836C File Offset: 0x001B656C
         private List<StringSequentialEntity> GetHeadsList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> sequentialEntityList = new List<StringSequentialEntity>();
@@ -762,9 +603,6 @@ namespace VisualAdjustments2
             }
             return sequentialEntityList;
         }
-
-        // Token: 0x17000CD3 RID: 3283
-        // (get) Token: 0x06004EB2 RID: 20146 RVA: 0x001B8474 File Offset: 0x001B6674
         public StringSequentialSelectorVM HairSelectorVM
         {
             get
@@ -772,9 +610,6 @@ namespace VisualAdjustments2
                 return this.m_HairSelectorVM = (this.m_HairSelectorVM ?? this.GetHairSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x17000CD4 RID: 3284
-        // (get) Token: 0x06004EB3 RID: 20147 RVA: 0x001B84A0 File Offset: 0x001B66A0
         public SelectionGroupRadioVM<TextureSelectorItemVM> HairColorSelectorVM
         {
             get
@@ -782,16 +617,12 @@ namespace VisualAdjustments2
                 return this.m_HairColorSelectorVM = (this.m_HairColorSelectorVM ?? this.CreateHairColorSelectorVM(this.DollState));
             }
         }
-
-        // Token: 0x06004EB4 RID: 20148 RVA: 0x001B84CC File Offset: 0x001B66CC
         private SelectionGroupRadioVM<TextureSelectorItemVM> CreateHairColorSelectorVM(DollState dollState)
         {
             SelectionGroupRadioVM<TextureSelectorItemVM> selector = new SelectionGroupRadioVM<TextureSelectorItemVM>(new ReactiveCollection<TextureSelectorItemVM>());
             this.UpdateHairColorList(dollState, selector);
             return selector;
         }
-
-        // Token: 0x06004EB5 RID: 20149 RVA: 0x001B84F0 File Offset: 0x001B66F0
         private void UpdateHairColorList(DollState dollState, SelectionGroupRadioVM<TextureSelectorItemVM> selector)
         {
             ReactiveCollection<TextureSelectorItemVM> entitiesCollection = selector.EntitiesCollection;
@@ -813,15 +644,11 @@ namespace VisualAdjustments2
             }
             selector.ClearFromIndex(hairRamps.Count);
         }
-
-        // Token: 0x06004EB6 RID: 20150 RVA: 0x001B8590 File Offset: 0x001B6790
         private StringSequentialSelectorVM GetHairSelectorVM(DollState dollState)
         {
             StringSequentialEntity current;
             return new StringSequentialSelectorVM(this.GetHairList(dollState, out current), current, true);
         }
-
-        // Token: 0x06004EB7 RID: 20151 RVA: 0x001B85B0 File Offset: 0x001B67B0
         private List<StringSequentialEntity> GetHairList(DollState dollState, out StringSequentialEntity current)
         {
             List<StringSequentialEntity> sequentialEntityList = new List<StringSequentialEntity>();
@@ -847,9 +674,6 @@ namespace VisualAdjustments2
             }
             return sequentialEntityList;
         }
-
-        // Token: 0x17000CD5 RID: 3285
-        // (get) Token: 0x06004EB8 RID: 20152 RVA: 0x00030DE7 File Offset: 0x0002EFE7
         public int WarpaintsNumber
         {
             get
@@ -857,9 +681,6 @@ namespace VisualAdjustments2
                 return 5;
             }
         }
-
-        // Token: 0x17000CD6 RID: 3286
-        // (get) Token: 0x06004EB9 RID: 20153 RVA: 0x001B86B8 File Offset: 0x001B68B8
         public List<StringSequentialSelectorVM> WarpaintsSelectorVMList
         {
             get

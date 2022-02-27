@@ -11,51 +11,29 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Owlcat.Runtime.UI.SelectionGroup;
+using Owlcat.Runtime.UI.SelectionGroup.View;
 
 namespace VisualAdjustments2.UI
 {
-    public class ListViewItemPCView : NestedSelectionGroupEntityPCView<ListViewItemVM>, IEventSystemHandler
+    public class ListViewItemPCView : SelectionGroupEntityView<ListViewItemVM>, IEventSystemHandler
     {
         public override void BindViewImplementation()
         {
             base.BindViewImplementation();
-            string str = base.ViewModel.Name;
-            if (str.Length > this.m_MaxSymbols)
-            {
-                str = base.ViewModel.Name.Substring(0, this.m_MaxSymbols - 2) + "...";
-            }
-            this.m_FeatureNameText.text = str;
-            this.m_FeatureAcronymText.text = base.ViewModel.Name;
-            this.m_FeatureAcronymText.gameObject.SetActive(!string.IsNullOrEmpty(base.ViewModel.Name));
+            this.m_DisplayName.text = base.ViewModel.DisplayName;
         }
-        public override void OnChangeSelectedState(bool value)
+        public override void DestroyViewImplementation()
         {
-            base.OnChangeSelectedState(value);
-            this.m_FeatureImage.material = (base.ViewModel.IsAvailable.Value ? null : this.m_Material);
         }
-
-        // Token: 0x060061FC RID: 25084 RVA: 0x001F975C File Offset: 0x001F795C
         public override void OnClick()
         {
             if (base.ViewModel.IsAvailable.Value && (!base.ViewModel.IsSelected.Value || base.ViewModel.AllowSwitchOff))
             {
-                this.ApplyOnClick();
-                return;
+                base.ViewModel.SetSelectedFromView(!base.ViewModel.IsSelected.Value);
             }
         }
-        private void ApplyOnClick()
-        {
-            base.ViewModel.SetSelectedFromView(!base.ViewModel.IsSelected.Value);
-            if (!base.ViewModel.AllowSwitchOff)
-            {
-                this.OnChangeSelectedState(base.ViewModel.IsSelected.Value);
-            }
-        }
-        public Image m_FeatureImage;
-        public Material m_Material;
-        public TextMeshProUGUI m_FeatureAcronymText;
-        public TextMeshProUGUI m_FeatureNameText;
-
-        private int m_MaxSymbols = 33;
+        [SerializeField]
+        public TextMeshProUGUI m_DisplayName;
     }
 }

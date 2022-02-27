@@ -38,6 +38,7 @@ namespace VisualAdjustments2
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 modEntry.OnGUI = OnGUI;
                 modEntry.OnUnload = Unload;
+
             }
             catch (Exception e)
             {

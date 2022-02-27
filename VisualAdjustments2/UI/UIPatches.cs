@@ -239,14 +239,22 @@ namespace VisualAdjustments2
                     var gameobject = new GameObject("FXViewer");
                     gameobject.transform.SetParent(newgameobject.transform);
                     var FXViewerPCView = gameobject.AddComponent<FXViewerPCView>();
+                    gameobject.transform.localPosition = new Vector3(0, 0, 0);
+                    gameobject.transform.localScale = new Vector3(1, 1, 1);
 
                     var gameobject2 = new GameObject("EEPicker");
-                    gameobject.transform.SetParent(newgameobject.transform);
-                    var EEPickerPCView = gameobject.AddComponent<EEPickerPCView>();
+                    gameobject2.transform.SetParent(newgameobject.transform);
+                    var EEPickerPCView = gameobject2.AddComponent<EEPickerPCView>();
+                    //EEPickerPCView.Initialize();
+                    gameobject2.transform.localPosition = new Vector3(0, 0, 0);
+                    gameobject2.transform.localScale = new Vector3(1, 1, 1);
 
                     var gameobject3 = new GameObject("Equipment");
-                    gameobject.transform.SetParent(newgameobject.transform);
-                    var EquipmentPCView = gameobject.AddComponent<EquipmentPCView>();
+                    gameobject3.transform.SetParent(newgameobject.transform);
+                    var EquipmentPCView = gameobject3.AddComponent<EquipmentPCView>();
+                    gameobject3.transform.localPosition = new Vector3(0, 0, 0);
+                    gameobject3.transform.localScale = new Vector3(1, 1, 1);
+
                     newselectionbar.transform.localScale = oldbar.transform.localScale;
                     //Add visual adjustments Window PCView
                     {
@@ -324,13 +332,7 @@ namespace VisualAdjustments2
                 if (!__instance.m_MenuEntities.Contains(component)) __instance.m_MenuEntities.Add(component);
                 __instance.m_MenuEntities.FirstOrDefault(a => a.name == component.name)?.Bind(newVM);
                 __instance.transform.parent.GetComponent<ServiceWindowMenuPCView>().ViewModel.SelectionGroup.EntitiesCollection.Add(newVM);
-                //newVM.RefreshView.Subscribe(new Action(() =>
-                //{
-                //component.OnChangeSelectedState(!component.ViewModel.IsSelected.Value);
-                //}));
                 component.ViewModel.HasView = true;
-                //component.BindViewImplementation();
-
             }
             catch (Exception e)
             {
@@ -366,8 +368,6 @@ namespace VisualAdjustments2
                 //Main.Logger.Log("stufforsomething");
                 if ((int)type == 50)
                 {
-
-                    // TODO: bind the new selection bar
                     {
 
 
