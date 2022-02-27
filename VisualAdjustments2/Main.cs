@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Kingmaker;
 using Kingmaker.Modding;
 using Kingmaker.PubSubSystem;
 using Owlcat.Runtime.Core.Logging;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using VisualAdjustments2.Infrastructure;
 using UnityEngine;
 #if DEBUG
 using UnityModManagerNet;
@@ -38,6 +40,7 @@ namespace VisualAdjustments2
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 modEntry.OnGUI = OnGUI;
                 modEntry.OnUnload = Unload;
+                ResourceLoader.StartEEGetting();
 
             }
             catch (Exception e)
@@ -79,6 +82,10 @@ namespace VisualAdjustments2
         private static void OnGUI()
 #endif
         {
+            if(GUILayout.Button("Test"))
+            {
+                Main.Logger.Log(GameVersion.GetVersion());
+            }
             GUILayout.Label("Hello world!");
             if (GUILayout.Button("SerializationTest"))
             {

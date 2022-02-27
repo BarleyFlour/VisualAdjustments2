@@ -65,7 +65,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\BundleLoadMonoBehaviour.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
+    <Compile Include="Infrastructure\ResourceSaver.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListViewItemPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ServiceWindowMenuSelectorPCView.cs" />
