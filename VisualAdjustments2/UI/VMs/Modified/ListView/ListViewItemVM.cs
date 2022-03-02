@@ -22,12 +22,17 @@ namespace VisualAdjustments2.UI
 			this.InternalName = ee.Name_Internal;
 			base.AddDisposable(this);
 		}
+		public bool HasText(string searchRequest)
+		{
+			return (this.InternalName != null && this.DisplayName != null) && (this.InternalName.IndexOf(searchRequest, StringComparison.InvariantCultureIgnoreCase) >= 0 || this.DisplayName.IndexOf(searchRequest, StringComparison.InvariantCultureIgnoreCase) >= 0);
+		}
 		public override void DoSelectMe()
 		{
 
 		}
 		public override void DisposeImplementation()
 		{
+			base.DisposeImplementation();
 		}
 		public ReactiveProperty<TooltipBaseTemplate> m_TooltipTemplate;
 		public readonly string DisplayName;

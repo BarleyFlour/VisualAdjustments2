@@ -30,17 +30,42 @@ namespace VisualAdjustments2.UI
     {
         public static ListViewItemPCView ConvertToListPCView(this CharGenFeatureSelectorItemPCView oldview)
         {
-            var newcomp = oldview.gameObject.AddComponent<ListViewItemPCView>();
-            newcomp.m_Button = oldview.m_Button;
-            newcomp.m_DisplayName = oldview.m_FeatureNameText;
-            UnityEngine.Component.Destroy(oldview);
-            return newcomp;
+            try
+            {
+                var newcomp = oldview.gameObject.AddComponent<ListViewItemPCView>();
+                newcomp.m_Button = oldview.m_Button;
+                newcomp.m_DisplayName = oldview.m_FeatureNameText;
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("CollapseButton"));
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("RecommendationPlace"));
+                foreach(var comp in oldview.transform.Find("IconPlace").GetComponents<Component>().Concat(oldview.transform.Find("IconPlace").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+                foreach (var comp in oldview.transform.Find("TextContainer/Description").GetComponents<Component>().Concat(oldview.transform.Find("TextContainer/Description").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("IconPlace"), true);
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("TextContainer/Description"), true);
+                oldview.transform.Find("IconPlace").gameObject.SetActive(false);
+                oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
+
+                UnityEngine.Component.Destroy(oldview);
+                return newcomp;
+            }
+            catch(Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw e;
+            }
         }
     }
     public class ListPCView : SelectionGroupViewWithFilterPCView<ListViewVM, ListViewItemVM, ListViewItemPCView>
     {
+
         public ListViewItemPCView m_Template;
-        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp)
+        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp,string headertext)
         {
             this.m_CharGenFeatureSearchView = oldcomp.m_CharGenFeatureSearchView;
             this.m_SearchRequestEntitiesNotFound = oldcomp.m_SearchRequestEntitiesNotFound;
@@ -50,6 +75,8 @@ namespace VisualAdjustments2.UI
                 instantiated.ConvertToListPCView();
                 m_Template = instantiated.GetComponent<ListViewItemPCView>();
             }
+            this.m_SelectorHeader = this.transform.Find("HeaderH2/Label").GetComponent<TextMeshProUGUI>();
+            this.m_SelectorHeader.text = headertext;
             this.SlotPrefab = m_Template;
             this.VirtualList = oldcomp.VirtualList;
         }
@@ -65,9 +92,12 @@ namespace VisualAdjustments2.UI
         {
             base.BindViewImplementation();
             this.Initialize();
+            var searchVM = new CharGenFeatureSearchVM();
+            base.AddDisposable(searchVM);
+            m_CharGenFeatureSearchView.Bind(searchVM);
             if (this.m_CharGenFeatureSearchView != null)
             {
-              //  base.AddDisposable(this.m_CharGenFeatureSearchView.SearchRequest.Subscribe(new Action<string>(this.OnSearchRequestChanged)));
+                base.AddDisposable(this.m_CharGenFeatureSearchView.SearchRequest.Subscribe(new Action<string>(this.OnSearchRequestChanged)));
             }
             base.AddDisposable(this.HasVisibleElements.Subscribe(new Action<bool>(this.UpdateNotFoundText)));
             base.AddDisposable(base.ViewModel.EntitiesCollection.ObserveCountChanged(false).Subscribe(delegate (int _)
@@ -78,10 +108,23 @@ namespace VisualAdjustments2.UI
             base.AddDisposable(this.VirtualList.Subscribe<ListViewItemVM>(this.VisibleCollection));
             this.TryScrollToSelectedElement();
         }
+        public override void DestroyViewImplementation()
+        {
+           // base.gameObject.SetActive(false);
+            base.DestroyViewImplementation();
+            this.m_CharGenFeatureSearchView?.Unbind();
+        }
+        public void OnSearchRequestChanged(string _)
+        {
+            this.VisibleCollection.Clear();
+            base.OnCollectionChanged();
+            base.TryScrollToSelectedElement();
+            this.HasVisibleElements.Value = this.VisibleCollection.Any<ListViewItemVM>();
+        }
         public override bool IsVisible(ListViewItemVM entity)
         {
-            // TODO: Search logic here i think.
-            return true;
+            string searchRequest = this.m_CharGenFeatureSearchView.SearchRequest.Value;
+            return string.IsNullOrEmpty(searchRequest) || entity.HasText(searchRequest);
         }
         public override int EntityComparer(ListViewItemVM a, ListViewItemVM b)
         {
@@ -89,6 +132,7 @@ namespace VisualAdjustments2.UI
         }
         public CharGenFeatureSearchPCView m_CharGenFeatureSearchView;
         public TextMeshProUGUI m_SearchRequestEntitiesNotFound;
+        private TextMeshProUGUI m_SelectorHeader;
         public BoolReactiveProperty HasVisibleElements = new BoolReactiveProperty(true);
         public override bool HasSorter
         {

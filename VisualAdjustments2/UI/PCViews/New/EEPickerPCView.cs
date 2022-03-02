@@ -10,39 +10,25 @@ using UnityEngine;
 
 namespace VisualAdjustments2.UI
 {
-    public class EEPickerPCView : ViewBase<EEPickerVM>
+    public class EEPickerPCView : VisualAdjustments2ServiceWindowVM<EEPickerVM>
     {
         public void Initialize()
         {
-            {
-                var alleelistview = GameObject.Instantiate(gameObject.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, this.transform);
-                alleelistview.transform.localPosition = new Vector3(650, -50, 0);
-                var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
-                var newcomp = alleelistview.AddComponent<ListPCView>();
-                newcomp.SetupFromChargenList(oldcomp);
-                UnityEngine.Component.Destroy(oldcomp);
-                this.m_AllEEs = newcomp;
-            }
-            {
-                var alleelistview = GameObject.Instantiate(gameObject.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, this.transform);
-                alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
-                var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
-                var newcomp = alleelistview.AddComponent<ListPCView>();
-                newcomp.SetupFromChargenList(oldcomp);
-                UnityEngine.Component.Destroy(oldcomp);
-                this.m_CurrentEEs = newcomp;
-            }
 
         }
         public override void BindViewImplementation()
         {
+            base.BindViewImplementation();
             Initialize();
+            this.AddDisposable(base.ViewModel.AllEEs.Value);
             this.m_AllEEs.Bind(base.ViewModel.AllEEs.Value);
+            this.AddDisposable(base.ViewModel.CurrentEEs.Value);
             this.m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
         }
 
         public override void DestroyViewImplementation()
         {
+            base.DestroyViewImplementation();
         }
         public ListPCView m_AllEEs;
         public ListPCView m_CurrentEEs;

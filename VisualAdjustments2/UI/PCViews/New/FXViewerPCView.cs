@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace VisualAdjustments2.UI
 {
-    public class FXViewerPCView : ViewBase<FXViewerVM>
+    public class FXViewerPCView : VisualAdjustments2ServiceWindowVM<FXViewerVM>
     {
         public ListPCView m_CurrentFX;
         public ListPCView m_AllFX;
@@ -21,10 +21,12 @@ namespace VisualAdjustments2.UI
         }
         public override void BindViewImplementation()
         {
+            base.BindViewImplementation();
         }
 
         public override void DestroyViewImplementation()
         {
+            base.DestroyViewImplementation();
         }
     }
 }

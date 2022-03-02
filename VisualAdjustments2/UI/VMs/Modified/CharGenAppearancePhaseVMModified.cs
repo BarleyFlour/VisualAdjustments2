@@ -45,7 +45,7 @@ namespace VisualAdjustments2
         public CharGenAppearancePhaseVMModified(LevelUpController levelUpController, DollState dollState, bool isAlternative) : base(levelUpController)
         {
             this.DollState = dollState;
-            dollState.m_OnUpdateAction += () => { levelUpController.Unit.SaveDollState(dollState); };
+            base.AddDisposable(dollState.m_OnUpdateAction += () => { levelUpController.Unit.SaveDollState(dollState); });
             this.IsAlternative = isAlternative;
 
             base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(this.OnUnitChanged));

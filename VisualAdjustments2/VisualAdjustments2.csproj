@@ -65,9 +65,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\BundleLoadMonoBehaviour.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
-    <Compile Include="Infrastructure\ResourceSaver.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListViewItemPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ServiceWindowMenuSelectorPCView.cs" />
@@ -77,6 +75,7 @@
     <Compile Include="UI\PCViews\New\EquipmentPCView.cs" />
     <Compile Include="UI\PCViews\New\FXViewerPCView.cs" />
     <Compile Include="Infrastructure\Utilities.cs" />
+    <Compile Include="UI\PCViews\New\VisualAdjustments2ServiceWindowVM.cs" />
     <Compile Include="UI\VMs\Modified\CharGenAppearancePhaseVMModified.cs" />
     <Compile Include="DollStateSerialization.cs" />
     <Compile Include="ExtensionMethods.cs" />

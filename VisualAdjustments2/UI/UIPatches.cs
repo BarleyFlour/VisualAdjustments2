@@ -13,6 +13,7 @@ using Kingmaker.UI.Common;
 using Kingmaker.UI.MVVM;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Appearance;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Common;
+using Kingmaker.UI.MVVM._PCView.CharGen.Phases.FeatureSelector;
 using Kingmaker.UI.MVVM._PCView.ServiceWindows;
 using Kingmaker.UI.MVVM._PCView.ServiceWindows.Menu;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases.Appearance;
@@ -241,19 +242,40 @@ namespace VisualAdjustments2
                     var FXViewerPCView = gameobject.AddComponent<FXViewerPCView>();
                     gameobject.transform.localPosition = new Vector3(0, 0, 0);
                     gameobject.transform.localScale = new Vector3(1, 1, 1);
+                    gameobject.SetActive(false);
 
                     var gameobject2 = new GameObject("EEPicker");
                     gameobject2.transform.SetParent(newgameobject.transform);
                     var EEPickerPCView = gameobject2.AddComponent<EEPickerPCView>();
-                    //EEPickerPCView.Initialize();
+                    {
+                        var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
+                        alleelistview.transform.localPosition = new Vector3(650, -50, 0);
+                        var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
+                        var newcompl = alleelistview.AddComponent<ListPCView>();
+                        newcompl.SetupFromChargenList(oldcomp, "Current EE's");
+                        UnityEngine.Component.Destroy(oldcomp);
+                        EEPickerPCView.m_AllEEs = newcompl;
+                    }
+                    {
+                        var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
+                        alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
+                        var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
+                        var newcompl = alleelistview.AddComponent<ListPCView>();
+                        newcompl.SetupFromChargenList(oldcomp, "All EE's");
+                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
+                        UnityEngine.Component.Destroy(oldcomp);
+                        EEPickerPCView.m_CurrentEEs = newcompl;
+                    }
                     gameobject2.transform.localPosition = new Vector3(0, 0, 0);
                     gameobject2.transform.localScale = new Vector3(1, 1, 1);
+                    gameobject2.SetActive(false);
 
                     var gameobject3 = new GameObject("Equipment");
                     gameobject3.transform.SetParent(newgameobject.transform);
                     var EquipmentPCView = gameobject3.AddComponent<EquipmentPCView>();
                     gameobject3.transform.localPosition = new Vector3(0, 0, 0);
                     gameobject3.transform.localScale = new Vector3(1, 1, 1);
+                    gameobject3.SetActive(false);
 
                     newselectionbar.transform.localScale = oldbar.transform.localScale;
                     //Add visual adjustments Window PCView
@@ -387,7 +409,7 @@ namespace VisualAdjustments2
                     }
                     //Old stuff for direct to doll page
                     /*
-                    var unit = UIUtility.GetCurrentCharacter();
+                    var unit = UIUtility.GetCurrent.();
                     var doll = unit.GetDollState();
                     if (doll.Race != null)
                     {

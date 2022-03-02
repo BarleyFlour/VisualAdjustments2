@@ -20,11 +20,14 @@ namespace VisualAdjustments2.UI
     {
         public override void BindViewImplementation()
         {
+            base.gameObject.SetActive(true);
             base.BindViewImplementation();
             this.m_DisplayName.text = base.ViewModel.DisplayName;
         }
         public override void DestroyViewImplementation()
         {
+            base.DestroyViewImplementation();
+          //  base.gameObject.SetActive(false);
         }
         public override void OnClick()
         {
@@ -33,7 +36,6 @@ namespace VisualAdjustments2.UI
                 base.ViewModel.SetSelectedFromView(!base.ViewModel.IsSelected.Value);
             }
         }
-        [SerializeField]
         public TextMeshProUGUI m_DisplayName;
     }
 }

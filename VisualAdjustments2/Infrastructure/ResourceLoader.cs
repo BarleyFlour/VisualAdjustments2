@@ -1,5 +1,6 @@
 ﻿using Kingmaker;
 using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.JsonSystem;
 using Kingmaker.BundlesLoading;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.FeatureSelector;
 using Kingmaker.Utility;
@@ -14,7 +15,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-
+using HarmonyLib;
+using Kingmaker.UI.MVVM._VM.MainMenu;
+using Kingmaker.UI.MVVM._PCView.MainMenu;
 
 namespace VisualAdjustments2
 {
@@ -25,8 +28,19 @@ namespace VisualAdjustments2
             allEEs = allees;
             Version = version;
         }
-        public EEInfo[] allEEs;
-        public string Version;
+        [JsonProperty] public EEInfo[] allEEs;
+        [JsonProperty] public string Version;
+    }
+    public static class EEInfo_Extensions
+    {
+        public static EEInfo? ToEEInfo(this EquipmentEntity ee)
+        {
+            if (ResourceLoader.NameToEEInfo.TryGetValue(ee.name, out EEInfo val))
+            {
+                return val;
+            }
+            return null;
+        }
     }
     public struct EEInfo
     {
@@ -36,21 +50,18 @@ namespace VisualAdjustments2
             Name_Internal = internalname;
             GUID = guid;
         }
-        public readonly string Name;
-        public readonly string Name_Internal;
-        public readonly string GUID;
+        [JsonProperty] public readonly string Name;
+        [JsonProperty] public readonly string Name_Internal;
+        [JsonProperty] public readonly string GUID;
     }
     public static class ResourceLoader
     {
-        public static void Save(this EEInfo[] array)
-        {
-
-        }
-        public static ResourcesLibrary.LoadedResource LoadEE(string assetid)
+        public static Dictionary<string, EEInfo> NameToEEInfo = new Dictionary<string, EEInfo>();
+        public static ResourcesLibrary.LoadedResource LoadEE(string assetid, string assetBundleName)
         {
             var sw = new Stopwatch();
             sw.Start();
-            AssetBundle assetBundle = BundlesLoadService.Instance?.RequestBundleForAsset(assetid);
+            AssetBundle assetBundle = BundlesLoadService.Instance?.RequestBundle(assetBundleName);
             sw.Stop();
             Main.Logger.Log($"Got Bundle in {sw.ElapsedTicks} ticks");
             sw.Restart();
@@ -95,7 +106,9 @@ namespace VisualAdjustments2
             ["ZB"] = "Zombie",
             ["CB"] = "Cambion",
             ["CM"] = "Cambion",
-            ["SN"] = "Skeleton"
+            ["SN"] = "Skeleton",
+            ["DE"] = "Drow"
+
         };
         public static void SaveCachedEEs(EEInfo[] array)
         {
@@ -131,8 +144,8 @@ namespace VisualAdjustments2
         public static bool GetCachedEEs(out SerializedEEList info)
         {
 #if DEBUG
-            info = null;
-            return false;
+            // info = null;
+            //  return false;
 #endif
             var filepath = Path.Combine(Main.ModEntry.Path, "CachedEEs.json");
             if (File.Exists(filepath))
@@ -174,53 +187,228 @@ namespace VisualAdjustments2
             }
             else { info = null; return false; }
         }
-        public static void StartEEGetting()
+
+
+
+
+        private struct LoadInfo
         {
-            AssetBundle assetBundle = BundlesLoadService.Instance.RequestBundle("equipment");
-            var SortedGuidMap = GetResourceGuidMap().Where(b => b.Value[0] == 'e' && b.Value[1] == 'q');
-#if DEBUG
+            public LoadInfo(string guid, int index)
+            {
+                GUID = guid;
+                Index = index;
+            }
+            private readonly string GUID;
+            private readonly int Index;
+        }
+        //use load all but associate guids w/ index beforehand then link them using index
+        /// <summary>
+        /// 
+        /// </summary>
+        /*public static void StartEEGetting2()
+        {
+            m_AllEEs = new List<EEInfo>();
             var sw = new Stopwatch();
             sw.Start();
-#endif
+            var assetbundle = BundlesLoadService.Instance.RequestBundle("equipment");
+            var guids = GetResourceGuidMap().Where(b => b.Value[0] == 'e' && b.Value[1] == 'e').ToArray();
+
+            var bundles = guids.Distinct();
+            foreach (var bundle in bundles)
+            {
+                var all = BundlesLoadService.Instance.RequestBundle(bundle.Value).LoadAllAssetsAsync<EquipmentEntity>();
+                //sw.Restart();
+                all.completed += (AsyncOperation _) => { ProcessEEs(all.allAssets, all.asset); };
+                //while(!all.isDone)
+                {
+                    //Main.Logger.Log();
+                }
+                //Main.Logger.Log(sw.ElapsedMilliseconds.ToString());
+                void ProcessEEs(UnityEngine.Object[] ees, UnityEngine.Object obj)
+                {
+                    try
+                    {
+
+                        for (int i = 0; i > ees.Length; i++)
+                        {
+                            var ee = ees[i];
+                            if ((EquipmentEntity)ee != null)
+                            {
+                                var guid = guids[i];
+
+                                HandleEEGotten((EquipmentEntity)ee, guid.Key);
+                            }
+                        }
+                        //Main.Logger.Log($"Got all of em in {sw.ElapsedMilliseconds}ms");
+                        sw.Stop();
+                    }
+                    catch (Exception e) { Main.Logger.Error(e.ToString()); }
+                }
+            }*/
+        /*  for (int i = 0; i < guids.Count; i++)
+          {
+              var guid = guids.ElementAt(i);
+              if ()
+              {
+                  toload.Add(new LoadInfo(guid.Key, i));
+              }
+          }*//*
+         // sw.Stop();
+         // Main.Logger.Log($"Generated Load Infos in {sw.ElapsedMilliseconds}ms");
+
+      }*/
+        public static bool GetBundleBarley(string bundleName, out AssetBundle bundle)
+        {
+            BundlesLoadService.BundleData bundleData2;
+            if (BundlesLoadService.Instance.m_Bundles.TryGetValue(bundleName, out bundleData2) && bundleData2.Bundle)
+            {
+                PFLog.Bundles.Log("Requested: {0}, already loaded ({1}) ", new object[]
+                {
+                    bundleName,
+                    bundleData2.RequestCount
+                });
+                bundleData2.RequestCount++;
+                bundle = bundleData2.Bundle;
+                return true;
+            }
+            else
+            {
+                bundle = null;
+                return false;
+            }
+        }
+        public static void StartEEGetting()
+        {
+            m_AllEEs = new List<EEInfo>();
+            var sw = new Stopwatch();
+            sw.Start();
+            foreach (var x in GetResourceGuidMap().Where(b => b.Value[0] == 'e' && b.Value[1] == 'e' && b.Value[2] == '_'))
+            {
+                var thing = ResourcesLibrary.TryGetResource<EquipmentEntity>(x.Key);
+                if (thing != null) HandleEEGotten(thing, x.Key);
+            }
+            sw.Stop();
+            Main.Logger.Log($"Got EEs in {sw.ElapsedMilliseconds}ms");
+
+
+
+            return;
+            var sw2 = new Stopwatch();
+            sw2.Start();
+            var SortedGuidMap = GetResourceGuidMap().Where(b => b.Value[0] == 'e' && b.Value[1] == 'e' && b.Value[2] == '_').ToArray();
+            //if (AllEEs != null) return;
+            //AssetBundle assetBundle = BundlesLoadService.Instance.RequestBundle("equipment");
+            foreach (var ToAsyncLoad in SortedGuidMap)
+            {
+                if (GetBundleBarley(ToAsyncLoad.Value, out var assetBundle))
+                {
+                    var EERequest = assetBundle.LoadAssetAsync<EquipmentEntity>(ToAsyncLoad.Key);
+                    EERequest.priority = 1000;
+                    EERequest.completed += (AsyncOperation _) =>
+                    {
+                        Main.Logger.Log(EERequest.asset.name.ToString());
+                    };
+                }
+                else
+                {
+                    var LoadedBundle = AssetBundle.LoadFromFileAsync(BundlesLoadService.BundlesPath(ToAsyncLoad.Value));
+                    LoadedBundle.priority = 1000;
+                    LoadedBundle.completed += (AsyncOperation _) =>
+                    {
+                        var a = LoadedBundle.assetBundle.LoadAssetAsync<EquipmentEntity>(ToAsyncLoad.Key);
+                        a.priority = 1000;
+                        a.completed += (AsyncOperation __) =>
+                        {
+                            Main.Logger.Log(a.asset.name.ToString());
+                        };
+                    };
+                }
+                //   d = BundlesLoadService.Instance.RequestBundleAsync(ToAsyncLoad.Value);
+            }
+            /* while (!d.IsCompleted)
+                 yield return new WaitForSeconds(2);
+             for (int i = 0; i < SortedGuidMap.Length - 1; i++)
+             //foreach(var EEBundle in SortedGuidMap)
+             {
+                 var EEBundle = SortedGuidMap[i];
+                 var bundle = BundlesLoadService.Instance.RequestBundle(EEBundle.Value);
+                 var a = bundle.LoadAssetAsync<EquipmentEntity>(EEBundle.Key);
+                 if (i == SortedGuidMap.Length - 1)
+                 {
+                     a.completed += (AsyncOperation _) => { Main.Logger.Log(a.allAssets.Length.ToString() + " " + EEBundle.Value); Main.Logger.Log($"Got EEs in {sw2.ElapsedMilliseconds}ms"); };
+                 }
+                 else
+                 {
+                     a.completed += (AsyncOperation _) => { Main.Logger.Log(a.allAssets.Length.ToString() + " " + EEBundle.Value); };
+                 }
+
+             }*/
+            /*
+            //#if DEBUG
+            var sw = new Stopwatch();
+            sw.Start();
+
+            //#endif
             var count = SortedGuidMap.Count();
-            AllEEs = new List<EEInfo>();
+           // m_AllEEs = new List<EEInfo>();
             var Keys = SortedGuidMap.Select(b => b.Key).ToArray();
             for (int i = 0; i < count; i++)
             {
                 var assetguid = Keys[i];
-                var request = assetBundle.LoadAssetAsync_Internal(assetguid, typeof(EquipmentEntity));
-#if DEBUG
+                var request = assetBundle.LoadAssetAsync<EquipmentEntity>(assetguid);
+                //#if DEBUG
                 if (i == count - 1)
                 {
-                    request.completed += (AsyncOperation _) => { if (request.asset != null) HandleEEGotten((EquipmentEntity)request.asset, assetguid); sw.Stop(); HandleFinalEEGotten(); Main.Logger.Log($"Got all EEs in {sw.ElapsedMilliseconds}ms"); };
+                    // Main.Logger.Log($"Final index {i}, Length:{Keys.Length}");
+                    request.completed += (AsyncOperation _) =>
+                    {
+                        Main.Logger.Log(request?.asset?.ToString());
+                        if (request.asset != null) HandleEEGotten((EquipmentEntity)request.asset, assetguid);
+                        sw.Stop();
+                        HandleFinalEEGotten();
+                        Main.Logger.Log($"Got all EEs in {sw.ElapsedMilliseconds}ms");
+                    };
                 }
                 else
-#else
-                if (i == count-1)
+                //#else
+                /* if (i == count-1)
+                 {
+                     request.completed += (AsyncOperation _) => { if (request.asset != null) HandleEEGotten((EquipmentEntity)request.asset, assetguid); sw.Stop(); HandleFinalEEGotten(); };
+                 }
+                 else*/
+            //#endif
+            /*
+            {
+                request.completed += (AsyncOperation _) =>
                 {
-                    request.completed += (AsyncOperation _) => { if (request.asset != null) HandleEEGotten((EquipmentEntity)request.asset, assetguid); sw.Stop(); HandleFinalEEGotten(); };
-                }
-                else
-#endif
-                {
-                    request.completed += (AsyncOperation _) => { if (request.asset != null) HandleEEGotten((EquipmentEntity)request.asset, assetguid); };
-                }
-            }
+
+                    if (request.asset != null) HandleEEGotten((EquipmentEntity)request.asset, assetguid);
+                };
+            }*/
+            //}
+            // sw2.Stop();
+            // Main.Logger.Log("adsadasd " + sw2.ElapsedMilliseconds);
         }
         public static void HandleFinalEEGotten()
         {
-            AllEEs.OrderBy(a => a.Name);
+            //m_AllEEs.OrderBy(a => a.Name);
+            Main.Logger.Log("Got Final EE");
         }
-        public static void HandleEEGotten(EquipmentEntity ee,string guid)
+        public static void HandleEEGotten(EquipmentEntity ee, string guid)
         {
-            AllEEs.Add(new EEInfo(ProcessEEName(ee.name), ee.name, guid));
+            // Main.Logger.Log($"Got EE {ee.name}");
+            m_AllEEs.Add(new EEInfo(ProcessEEName(ee.name), ee.name, guid));
         }
         //Old slow EE getter
-        /*public static EEInfo[] GetEEs()
+        public static List<EEInfo> GetEEs()
         {
-            if (GetCachedEEs(out var deserialized))
+            if (GetCachedEEs(out var deserialized) == true)
             {
-                return deserialized.allEEs;
+                foreach (var ee in deserialized.allEEs)
+                {
+                    NameToEEInfo.Add(ee.Name_Internal, ee);
+                }
+                return deserialized.allEEs.ToList();
             }
             else
             {
@@ -238,7 +426,7 @@ namespace VisualAdjustments2
                     async Task<List<KeyValuePair<string, string>>> GetEEGuids(Dictionary<string, string> list)
                     {
                         var toload = new List<KeyValuePair<string, string>>();
-                        foreach (var value in list.Where(b => (b.Value[0] == 'e' && b.Value[1] == 'q')))
+                        foreach (var value in list.Where(b => (b.Value[0] == 'e' && b.Value[1] == 'e' && b.Value[2] == '_')))
                         {
                             await Task.Run(() => { toload.Add(value); }).ConfigureAwait(false);
                         }
@@ -254,7 +442,7 @@ namespace VisualAdjustments2
                     sw2.Start();
                     foreach (var guid in task.Result)
                     {
-                        var obj = LoadEE(guid.Key);
+                        var obj = LoadEE(guid.Key, guid.Value);
                         if (obj != null)
                         {
                             if (obj.Resource != null)
@@ -272,7 +460,11 @@ namespace VisualAdjustments2
                     {
                         foreach (var loaded in templist)
                         {
-                            await Task.Run(() => { eeinfolist.Add(new EEInfo(ProcessEEName(loaded.Value), loaded.Value, loaded.Key)); }).ConfigureAwait(false);
+                            await Task.Run(() =>
+                            {
+                                var eeinfo = new EEInfo(ProcessEEName(loaded.Value), loaded.Value, loaded.Key);
+                                eeinfolist.Add(eeinfo); NameToEEInfo.Add(loaded.Value, eeinfo);
+                            }).ConfigureAwait(false);
                         }
                         return eeinfolist;
                     }
@@ -290,11 +482,11 @@ namespace VisualAdjustments2
 #endif
                     var ResultToArray = task2.Result.ToArray();
                     SaveCachedEEs(ResultToArray);
-                    return ResultToArray;
+                    return task2.Result;
                 }
                 else throw (new Exception("GUID Map null, what? how?"));
             }
-        }*/
+        }
         /* private static EEInfo[] m_AllEEs;
          public static EEInfo[] AllEEs
          {
@@ -307,7 +499,15 @@ namespace VisualAdjustments2
                  return m_AllEEs;
              }
          }*/
-        public static List<EEInfo> AllEEs;
+        public static List<EEInfo> m_AllEEs;
+        public static List<EEInfo> AllEEs
+        {
+            get
+            {
+                if (m_AllEEs == null) m_AllEEs = GetEEs();
+                return m_AllEEs;
+            }
+        }
         public static string ProcessEEName(string ee)
         {
             var stringarray = ee.Split('_');
@@ -318,7 +518,7 @@ namespace VisualAdjustments2
                 if (!hassetrace && raceidentifiers.Keys.TryFind(a => s == a, out string raceout))
                 {
                     var RaceString = raceidentifiers[raceout];
-                    newarray.Add(RaceString);
+                    newarray.Add(RaceString + " ");
                     hassetrace = true;
                 }
                 else if (s == "M")
@@ -333,7 +533,7 @@ namespace VisualAdjustments2
                 {
                     newarray.Add("Any");
                 }
-                else if ((s != "EE" && s != "KEE" && s != "Buff") && s.Length > 1)
+                else if ((s != "EE" && s != "KEE" && s != "Buff" && s != "NPC") && s.Length > 1)
                 {
                     StringBuilder SB = new System.Text.StringBuilder(s);
                     var b = 0;
@@ -352,7 +552,7 @@ namespace VisualAdjustments2
             StringBuilder sb = new System.Text.StringBuilder();
             for (int i = 0; i < newarray.Count; i++)
             {
-                sb.Append(newarray[i]);
+                sb.Append(' ' + newarray[i]);
                 //  concatstring = concatstring.Concat(' ').Concat(newarray[i]);
             }
             /* foreach (var item in newarray)

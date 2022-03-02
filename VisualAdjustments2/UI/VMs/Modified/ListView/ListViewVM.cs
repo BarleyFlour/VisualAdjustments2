@@ -27,7 +27,6 @@ namespace VisualAdjustments2.UI
                 tviewModel.SetSelected(this.SelectedEntity.Value == tviewModel);
             }
         }
-
         public override bool TryDoSelect(ListViewItemVM viewModel)
         {
             if (this.SelectedEntity == null)
@@ -50,6 +49,10 @@ namespace VisualAdjustments2.UI
                 return true;
             }
             return false;
+        }
+        public override void DisposeImplementation()
+        {
+            base.DisposeImplementation();
         }
         public ReactiveProperty<ListViewItemVM> SelectedEntity;
     }

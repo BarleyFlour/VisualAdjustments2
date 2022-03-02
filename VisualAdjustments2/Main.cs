@@ -11,6 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using VisualAdjustments2.Infrastructure;
 using UnityEngine;
+using System.Collections;
+using Kingmaker.BundlesLoading;
+using System.Diagnostics;
 #if DEBUG
 using UnityModManagerNet;
 #endif
@@ -40,8 +43,8 @@ namespace VisualAdjustments2
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 modEntry.OnGUI = OnGUI;
                 modEntry.OnUnload = Unload;
-                ResourceLoader.StartEEGetting();
-
+                //ResourceLoader.GetEEs();
+                //ResourceLoader.StartEEGetting();
             }
             catch (Exception e)
             {
@@ -82,9 +85,37 @@ namespace VisualAdjustments2
         private static void OnGUI()
 #endif
         {
-            if(GUILayout.Button("Test"))
+            if (GUILayout.Button("EEGetOld"))
             {
-                Main.Logger.Log(GameVersion.GetVersion());
+                ResourceLoader.StartEEGetting();
+            }
+            if (GUILayout.Button("EEGetNew"))
+            {
+               // ResourceLoader.StartEEGetting2();
+            }
+            if(GUILayout.Button("EEGuidCompare"))
+            {
+                try
+                {
+                /*    var guaranteedarray = ResourceLoader.GuaranteedCorrect.ToArray();
+                   // var arraytocheck = ResourceLoader.m_AllEEs.ToArray();
+                    int x = 0;
+                    /*foreach (var stuff in guaranteedarray)
+                    {
+                        Main.Logger.Log($"Stuff:{(guaranteedarray[x].ToString() == arraytocheck[x].ToString()).ToString()}");
+
+                        x++;
+                    }*//*
+                    for (int i = 0; i < guaranteedarray.Length; i++)
+                    {
+                        Main.Logger.Log("a");
+                        Main.Logger.Log($"Stuff:{(guaranteedarray[i].ToString() == arraytocheck[i].ToString()).ToString()}");
+                    }*/
+                }
+                catch(Exception e)
+                {
+                    Main.Logger.Error(e.ToString());
+                }
             }
             GUILayout.Label("Hello world!");
             if (GUILayout.Button("SerializationTest"))
@@ -109,12 +140,12 @@ namespace VisualAdjustments2
                     Main.Logger.Log($"Deserialized: {thing}");
                 }
             }
-            if(GUILayout.Button("DollSaveTest"))
+            if (GUILayout.Button("DollSaveTest"))
             {
                 var asd = Kingmaker.Game.Instance.Player.AllCharacters.First().GetDollState();
                 Main.Logger.Log(asd.ToString());
             }
-            if(GUILayout.Button("DollRecoverTest"))
+            if (GUILayout.Button("DollRecoverTest"))
             {
                 var doll = Kingmaker.Game.Instance.Player.AllCharacters.First().GetDollState();
                 Kingmaker.Game.Instance.Player.AllCharacters.First().SaveDollState(doll);

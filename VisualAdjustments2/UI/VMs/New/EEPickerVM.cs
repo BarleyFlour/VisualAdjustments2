@@ -1,4 +1,5 @@
-﻿using Kingmaker.Blueprints;
+﻿using Kingmaker;
+using Kingmaker.Blueprints;
 using Kingmaker.BundlesLoading;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Visual.CharacterSystem;
@@ -27,8 +28,19 @@ namespace VisualAdjustments2.UI
             {
                 reactive.Add(new ListViewItemVM(kv));
             }
+            var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
+            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
+            {
+                //Main.Logger.Log(ee.name);
+                var inf = ee.ToEEInfo();
+                if(inf != null)
+                {
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value));
+                }
+                
+            }
             base.AddDisposable(AllEEs.Value = new ListViewVM(reactive, new ReactiveProperty<ListViewItemVM>(reactive.First())));
-            base.AddDisposable(CurrentEEs.Value = new ListViewVM(reactive, new ReactiveProperty<ListViewItemVM>(reactive.First())));
+            base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.First())));
             //CurrentEEs = new ListViewVM();
         }
         public override void DisposeImplementation()

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VisualAdjustments2.UI
 {
-    public class EquipmentPCView : ViewBase<EquipmentVM>
+    public class EquipmentPCView : VisualAdjustments2ServiceWindowVM<EquipmentVM>
     {
         public void Initialize()
         {
@@ -15,10 +15,12 @@ namespace VisualAdjustments2.UI
         }
         public override void BindViewImplementation()
         {
+            base.BindViewImplementation();
         }
 
         public override void DestroyViewImplementation()
         {
+            base.DestroyViewImplementation();
         }
     }
 }
