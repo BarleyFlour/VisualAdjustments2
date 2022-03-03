@@ -23,6 +23,7 @@ namespace VisualAdjustments2.UI
             base.gameObject.SetActive(true);
             base.BindViewImplementation();
             this.m_DisplayName.text = base.ViewModel.DisplayName;
+            this.m_IconText.text = base.ViewModel.AddOrRemove ? ListViewItemVM.Add : ListViewItemVM.Remove;
         }
         public override void DestroyViewImplementation()
         {
@@ -37,5 +38,6 @@ namespace VisualAdjustments2.UI
             }
         }
         public TextMeshProUGUI m_DisplayName;
+        public TextMeshProUGUI m_IconText;
     }
 }

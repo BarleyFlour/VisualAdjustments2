@@ -4,12 +4,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
+using Kingmaker.Visual.CharacterSystem;
 using Owlcat.Runtime.Core.Logging;
+using UniRx;
 
 namespace VisualAdjustments2.Infrastructure
 {
     public static class Utilities
     {
+       /* public class EEPoller : UnityEngine.MonoBehaviour, IDisposable
+        {
+            public Character character;
+            Action<List<EquipmentEntity>> UpdateCurrentEEs;
+            public EEPoller(Kingmaker.Visual.CharacterSystem.Character characterIn,Action<List<EquipmentEntity>> action)
+            {
+                character = characterIn;
+                UpdateCurrentEEs = action;
+            }
+            int prevlength;
+            public void Update()
+            {
+                var count = character.EquipmentEntities.Count;
+                prevlength = count;
+                if(count != prevlength)
+                {
+                    UpdateCurrentEEs(character.EquipmentEntities);
+                }
+            }
+            public void Dispose()
+            {
+                UnityEngine.Component.Destroy(this);
+            }
+        }*/
         [HarmonyPatch(typeof(LogChannel))]
         public static class LOG_BE_QUIET
         {

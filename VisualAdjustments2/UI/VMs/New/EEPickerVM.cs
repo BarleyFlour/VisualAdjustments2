@@ -14,6 +14,7 @@ using UnityEngine;
 
 namespace VisualAdjustments2.UI
 {
+    // TODO: Preview system mby?
     public class EEPickerVM : BaseDisposable, IDisposable, IViewModel, IBaseDisposable
     {
         public ReactiveProperty<ListViewVM> AllEEs = new ReactiveProperty<ListViewVM>();
@@ -26,19 +27,22 @@ namespace VisualAdjustments2.UI
             ReactiveCollection<ListViewItemVM> reactive = new ReactiveCollection<ListViewItemVM>();
             foreach(var kv in ResourceLoader.AllEEs)
             {
-                reactive.Add(new ListViewItemVM(kv));
+                reactive.Add(new ListViewItemVM(kv,true));
             }
             var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
             foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
             {
                 //Main.Logger.Log(ee.name);
                 var inf = ee.ToEEInfo();
-                if(inf != null)
+                if(inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
                 {
-                    CurrentReactive.Add(new ListViewItemVM(inf.Value));
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value,false));
                 }
                 
             }
+
+           // bool v = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar..;
+           // base.AddDisposable(v);
             base.AddDisposable(AllEEs.Value = new ListViewVM(reactive, new ReactiveProperty<ListViewItemVM>(reactive.First())));
             base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.First())));
             //CurrentEEs = new ListViewVM();

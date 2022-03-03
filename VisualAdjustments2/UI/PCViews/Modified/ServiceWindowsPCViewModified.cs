@@ -1,4 +1,5 @@
 ﻿using Kingmaker.UI.Common.Animations;
+using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Common;
 using Kingmaker.UI.MVVM._PCView.ServiceWindows;
 using Kingmaker.UI.MVVM._VM.ServiceWindows.Menu;
 using Owlcat.Runtime.UI.MVVM;
@@ -57,6 +58,7 @@ namespace VisualAdjustments2.UI
         public EquipmentPCView m_EquipmentPCView;
         public CharGenAppearancePhaseDetailedPCViewModified m_DollPCView;
         public ServiceWindowMenuPCViewModified m_ServiceWindowMenuPcView;
+        public DollCharacterController m_DollRoom;
         public FadeAnimator m_Background;
         public bool m_IsInit;
     }

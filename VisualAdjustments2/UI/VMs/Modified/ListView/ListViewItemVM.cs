@@ -15,11 +15,14 @@ namespace VisualAdjustments2.UI
 {
     public class ListViewItemVM : SelectionGroupEntityVM
     {
-		public ListViewItemVM(EEInfo ee) : base(false)
+		public const string Add = "<<";
+		public const string Remove = ">>";
+		public ListViewItemVM(EEInfo ee,bool addorremove) : base(false)
 		{
 			this.Guid = ee.GUID;
 			this.DisplayName = ee.Name;
 			this.InternalName = ee.Name_Internal;
+			this.AddOrRemove = addorremove;
 			base.AddDisposable(this);
 		}
 		public bool HasText(string searchRequest)
@@ -38,5 +41,6 @@ namespace VisualAdjustments2.UI
 		public readonly string DisplayName;
 		public readonly string InternalName;
 		public readonly string Guid;
+		public bool AddOrRemove;
 	}
 }

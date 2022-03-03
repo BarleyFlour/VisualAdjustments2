@@ -149,7 +149,7 @@ namespace VisualAdjustments2
                 }
                 // Main.Logger.Log(currentchar.CharacterName);
 
-                var lvl = new LevelUpController(currentchar, false, LevelUpState.CharBuildMode.SetName);
+                //var lvl = new LevelUpController(currentchar, false, LevelUpState.CharBuildMode.SetName);
                 //var viewmodel = new CharGenAppearancePhaseVMModified(lvl, doll, false);
                 //newcomp.Bind(viewmodel);
                 //newcomp.BindViewImplementation();
@@ -178,6 +178,7 @@ namespace VisualAdjustments2
                     labelcomp.text = "Visual";
                     var component = newbutton.gameObject.GetComponent<ServiceWindowsMenuEntityPCView>();
 
+                    var dollroomcomp = newdollroom.GetComponent<DollCharacterController>();
                     //Button stuff
                     {
 
@@ -248,11 +249,13 @@ namespace VisualAdjustments2
                     gameobject2.transform.SetParent(newgameobject.transform);
                     var EEPickerPCView = gameobject2.AddComponent<EEPickerPCView>();
                     {
+                        EEPickerPCView.m_dollCharacterController = dollroomcomp;
                         var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
                         alleelistview.transform.localPosition = new Vector3(650, -50, 0);
                         var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                         var newcompl = alleelistview.AddComponent<ListPCView>();
-                        newcompl.SetupFromChargenList(oldcomp, "Current EE's");
+                        newcompl.SetupFromChargenList(oldcomp, true);
+                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
                         UnityEngine.Component.Destroy(oldcomp);
                         EEPickerPCView.m_AllEEs = newcompl;
                     }
@@ -261,8 +264,7 @@ namespace VisualAdjustments2
                         alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
                         var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                         var newcompl = alleelistview.AddComponent<ListPCView>();
-                        newcompl.SetupFromChargenList(oldcomp, "All EE's");
-                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
+                        newcompl.SetupFromChargenList(oldcomp, false);
                         UnityEngine.Component.Destroy(oldcomp);
                         EEPickerPCView.m_CurrentEEs = newcompl;
                     }
@@ -288,6 +290,7 @@ namespace VisualAdjustments2
                         compPCView.m_EEPickerPCView = EEPickerPCView;
                         compPCView.m_EquipmentPCView = EquipmentPCView;
                         compPCView.m_FXViewerPCView = FXViewerPCView;
+                        compPCView.m_DollRoom = dollroomcomp;
                         ServiceWindowsVM_ShowWindow_Patch.swPCView = compPCView;
                     }
                 }
