@@ -15,14 +15,24 @@ namespace VisualAdjustments2.UI
 {
     public class ListViewItemVM : SelectionGroupEntityVM
     {
-		public const string Add = "<<";
-		public const string Remove = ">>";
-		public ListViewItemVM(EEInfo ee,bool addorremove) : base(false)
+		public const string Add = "<";
+		public const string Remove = ">";
+		public ListViewItemVM(EEInfo ee,bool addorremove,Action<ListViewItemVM> OnSelectAction) : base(false)
 		{
 			this.Guid = ee.GUID;
 			this.DisplayName = ee.Name;
 			this.InternalName = ee.Name_Internal;
 			this.AddOrRemove = addorremove;
+			this.action = OnSelectAction;
+			base.AddDisposable(this);
+		}
+		public ListViewItemVM(ListViewItemVM ToClone, bool addorremove, Action<ListViewItemVM> OnSelectAction) : base(false)
+		{
+			this.Guid = ToClone.Guid;
+			this.DisplayName = ToClone.DisplayName;
+			this.InternalName = ToClone.InternalName;
+			this.AddOrRemove = addorremove;
+			this.action = OnSelectAction;
 			base.AddDisposable(this);
 		}
 		public bool HasText(string searchRequest)
@@ -31,7 +41,7 @@ namespace VisualAdjustments2.UI
 		}
 		public override void DoSelectMe()
 		{
-
+			//action(this);
 		}
 		public override void DisposeImplementation()
 		{
@@ -42,5 +52,6 @@ namespace VisualAdjustments2.UI
 		public readonly string InternalName;
 		public readonly string Guid;
 		public bool AddOrRemove;
+		public Action<ListViewItemVM> action;
 	}
 }

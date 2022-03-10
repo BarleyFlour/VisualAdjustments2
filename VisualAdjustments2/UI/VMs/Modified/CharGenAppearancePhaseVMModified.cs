@@ -29,6 +29,12 @@ using TMPro;
 using UniRx;
 using UnityEngine;
 
+
+
+//Add apply button
+//Add a list of actions to take when applying
+//Remove the automatic saving
+
 namespace VisualAdjustments2
 {
     public class CharGenAppearancePhaseVMModified : CharGenPhaseBaseVM

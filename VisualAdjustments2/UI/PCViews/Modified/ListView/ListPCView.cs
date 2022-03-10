@@ -25,6 +25,7 @@ using System.Collections.ObjectModel;
 using Kingmaker.UI;
 using UnityEngine.UI;
 using System.Reflection;
+using Owlcat.Runtime.UI.Controls.Button;
 
 namespace VisualAdjustments2.UI
 {
@@ -69,11 +70,8 @@ namespace VisualAdjustments2.UI
                 var acronymTMP = acronym.GetComponent<TextMeshProUGUI>();
                 acronymTMP.fontSizeMax = 46;
                 acronymTMP.fontSize = 46;
-                acronymTMP.text = "&";
                 acronymTMP.verticalAlignment = VerticalAlignmentOptions.Geometry;
-                acronymTMP.horizontalAlignment = HorizontalAlignmentOptions.Flush;
-
-                
+                acronymTMP.horizontalAlignment = HorizontalAlignmentOptions.Center;
               //  newcomp.m_IconText = acronymTMP;
                 oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
                 UnityEngine.Component.Destroy(oldview);
@@ -82,12 +80,16 @@ namespace VisualAdjustments2.UI
                 var InstantiatedButton = UnityEngine.GameObject.Instantiate(StaticCanvas.Instance.transform.Find("ServiceWindowsPCView/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"),newcomp.transform);
                 var icon = InstantiatedButton.Find("Icon");
                 icon.gameObject.SetActive(true);
+                newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
                 UnityEngine.Component.DestroyImmediate(icon.gameObject.GetComponent<Image>(),true);
                 var newtxt = icon.gameObject.AddComponent<TextMeshProUGUI>(acronymTMP);
                 newtxt.text = ">>";
                 newtxt.fontSizeMin = 45;
                 newcomp.m_IconText = newtxt;
                 iconplace.gameObject.SetActive(false);
+
+                var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
+                Layout.spacing = 10;
                 /*newtxt.font = acronymTMP.font;
                 newtxt.alignment = TextAlignmentOptions.CenterGeoAligned;
                 newtxt.horizontalAlignment = HorizontalAlignmentOptions.Geometry;
@@ -121,7 +123,7 @@ namespace VisualAdjustments2.UI
             this.AllOrCurrent = AllOrCurrent;
             if (m_Template == null)
             {
-                var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First());
+                var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First()); 
                 instantiated.ConvertToListPCView();
                 if (AllOrCurrent)
                 {
@@ -150,9 +152,9 @@ namespace VisualAdjustments2.UI
         }
         public override void BindViewImplementation()
         {
-            base.BindViewImplementation();
+            //base.BindViewImplementation();
             this.Initialize();
-            var searchVM = new CharGenFeatureSearchVM();
+            var searchVM = new EESearchVM();
             base.AddDisposable(searchVM);
             m_CharGenFeatureSearchView.Bind(searchVM);
             if (this.m_CharGenFeatureSearchView != null)

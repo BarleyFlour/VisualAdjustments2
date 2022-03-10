@@ -65,7 +65,18 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\BubblesSaveHooker.cs" />
+    <Compile Include="Infrastructure\CharacterSettings.cs" />
+    <Compile Include="Infrastructure\EeInfraStructure.cs" />
+    <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
+    <Compile Include="UI\PCViews\Modified\BarleySlideSelectorPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\DollControllerVA.cs" />
+    <Compile Include="UI\PCViews\Modified\EEColorPickerPCView.cs" />
+    <Compile Include="UI\PCViews\New\ColorPreviewView.cs" />
+    <Compile Include="UI\PCViews\New\ToggleGroupPCView.cs" />
+    <Compile Include="UI\VMs\Modified\ColorSelectorSliderVM.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\EESearchVM.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListViewItemPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ServiceWindowMenuSelectorPCView.cs" />
@@ -83,6 +94,7 @@
     <Compile Include="UI\VMs\Modified\ListView\ListViewItemVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />
+    <Compile Include="UI\VMs\New\ColorPreviewVM.cs" />
     <Compile Include="UI\VMs\New\EEPickerVM.cs" />
     <Compile Include="UI\VMs\New\EquipmentVM.cs" />
     <Compile Include="UI\VMs\New\FXViewerVM.cs" />
@@ -135,6 +147,9 @@
     </Reference>
     <Reference Include="Owlcat.SharedTypes">
       <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Owlcat.SharedTypes.dll</HintPath>
+    </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Rewired_Core.dll</HintPath>
     </Reference>
     <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
