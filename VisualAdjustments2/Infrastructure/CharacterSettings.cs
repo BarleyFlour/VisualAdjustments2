@@ -32,6 +32,13 @@ namespace VisualAdjustments2.Infrastructure
     }
     public struct SerializableColor
     {
+        public SerializableColor(Color col)
+        {
+            r = col.r;
+            g = col.g;
+            b = col.b;
+        }
+
         public float r;
         public float g;
         public float b;
@@ -104,28 +111,41 @@ namespace VisualAdjustments2.Infrastructure
             public SerializableColor CustomColorRGB;
             public void Apply(EquipmentEntity ee, Character character)
             {
-                if (CustomColor)
+                try
                 {
-                    var tex = new Texture2D(1, 1);
-                    var col = CustomColorRGB.ToColor();
-                    tex.SetPixel(1, 1, col);
-                    if (PrimOrSec)
+                    if (CustomColor)
                     {
-                        ee.PrimaryRamps.Add(tex);
-                        var index = ee.PrimaryRamps.IndexOf(tex);
-                        character.SetPrimaryRampIndex(ee, index);
+                        var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
+                        {
+                            filterMode = FilterMode.Bilinear
+                        };
+                        
+                        var col = CustomColorRGB.ToColor();
+                        tex.SetPixel(1, 1, col);
+                        tex.Apply();
+                        if (PrimOrSec)
+                        {
+                            ee.PrimaryColorsProfile.Ramps.Add(tex);
+                            var index = ee.PrimaryColorsProfile.Ramps.IndexOf(tex);
+                            character.SetPrimaryRampIndex(ee, index);
+                        }
+                        else
+                        {
+                            ee.SecondaryColorsProfile.Ramps.Add(tex);
+                            var index = ee.SecondaryColorsProfile.Ramps.IndexOf(tex);
+                            character.SetSecondaryRampIndex(ee, index);
+                        }
                     }
                     else
                     {
-                        ee.SecondaryRamps.Add(tex);
-                        var index = ee.SecondaryRamps.IndexOf(tex);
-                        character.SetSecondaryRampIndex(ee, index);
+                        if (PrimOrSec) character.SetPrimaryRampIndex(ee, Index);
+                        else character.SetSecondaryRampIndex(ee, Index);
                     }
+                    character.IsDirty = true;
                 }
-                else
+                catch(Exception e)
                 {
-                    if (PrimOrSec) character.SetPrimaryRampIndex(ee, Index);
-                    else character.SetSecondaryRampIndex(ee, Index);
+                    Main.Logger.Error(e.ToString());
                 }
             }
         }

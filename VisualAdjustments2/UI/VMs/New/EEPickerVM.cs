@@ -32,6 +32,7 @@ namespace VisualAdjustments2.UI
     }
     public class EEPickerVM : BaseDisposable, IDisposable, IViewModel, IBaseDisposable
     {
+        // TODO: add action that applies color
         public Dictionary<string,EEApplyAction> applyActions = new Dictionary<string, EEApplyAction>();
 
         public ReactiveProperty<UnitDescriptor> UnitDescriptor;
@@ -66,6 +67,7 @@ namespace VisualAdjustments2.UI
             // base.AddDisposable(v);
             base.AddDisposable(AllEEs.Value = new ListViewVM(reactive, new ReactiveProperty<ListViewItemVM>(reactive.FirstOrDefault())));
             base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault())));
+            
             //CurrentEEs = new ListViewVM();
         }
         private void OnUnitChanged()
@@ -132,7 +134,76 @@ namespace VisualAdjustments2.UI
         }
         public void ApplyColor(Color col,bool PrimOrSec)
         {
-            this.Sel
+#if DEBUG
+            Main.Logger.Log("TriedApply");
+#endif
+            try
+            {
+                if (this.applyActions.TryGetValue(this.CurrentEEs.Value.SelectedEntity.Value.Guid, out EEApplyAction val) && val.GetType() == typeof(AddEE))
+                {
+                    var addee = (AddEE)val;
+                    if (PrimOrSec)
+                    {
+                        Main.Logger.Log("Prim");
+                        var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
+                        ColInf.CustomColor = true;
+                        ColInf.CustomColorRGB = new SerializableColor(col);
+                        addee.PrimaryCol = ColInf;
+                        ColInf.Apply(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid), Game.Instance.UI.Common.DollRoom.m_Avatar);
+                        //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
+                    }
+                    else
+                    {
+                        Main.Logger.Log("Sec");
+                        var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
+                        ColInf.CustomColor = true;
+                        ColInf.CustomColorRGB = new SerializableColor(col);
+                        addee.SecondaryCol = ColInf;
+                        ColInf.Apply(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid), Game.Instance.UI.Common.DollRoom.m_Avatar);
+                        //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
+                    }
+                }
+                else
+                {
+                    var ee = this.UnitDescriptor.Value.Unit.GetSettings().EeSettings.EEs.FirstOrDefault(a => a.GUID == this.CurrentEEs.Value.SelectedEntity.Value.Guid);
+                    if (ee != null)
+                    {
+                        var addee = ee;
+                        if (PrimOrSec)
+                        {
+                            var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
+                            ColInf.CustomColor = true;
+                            ColInf.CustomColorRGB = new SerializableColor(col);
+                            addee.Primary = ColInf;
+                            addee.Apply(Game.Instance.UI.Common.DollRoom.m_Avatar);
+                            //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
+
+                            var addaction = new AddEE(addee.GUID);
+                            addaction.PrimaryCol = ColInf;
+                            addaction.SecondaryCol = addee.Secondary;
+                            this.applyActions.Add(addaction.GUID, addaction);
+                        }
+                        else
+                        {
+                            var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
+                            ColInf.CustomColor = true;
+                            ColInf.CustomColorRGB = new SerializableColor(col);
+                            addee.Secondary = ColInf;
+                            addee.Apply(Game.Instance.UI.Common.DollRoom.m_Avatar);
+                            //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
+
+                            var addaction = new AddEE(addee.GUID);
+                            addaction.PrimaryCol = addee.Primary;
+                            addaction.SecondaryCol = ColInf;
+                            this.applyActions.Add(addaction.GUID,addaction);
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+            }
         }
         public override void DisposeImplementation()
         {

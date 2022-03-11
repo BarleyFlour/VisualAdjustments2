@@ -98,6 +98,7 @@ namespace VisualAdjustments2.UI
 			this.m_R_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistR));
 			this.m_G_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistG));
 			this.m_B_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistB));
+
 			/*if (unit != null)
 			{
 				this.m_HelmEntityView.Bind(UIStrings.Instance.CharacterSheet.VisualSettingsShowHelmet, delegate

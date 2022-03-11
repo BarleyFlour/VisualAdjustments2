@@ -26,7 +26,7 @@ namespace VisualAdjustments2.Infrastructure
             {
                 if (__instance.View?.CharacterAvatar != null && __instance.IsPlayerFaction)
                 {
-                    foreach (var action in __instance.GetSettings().EeSettings.EEs)
+                    foreach (var action in __instance.GetSettings()?.EeSettings?.EEs)
                     {
                         //Main.Logger.Log($"Action of type {action.actionType}, Guid:{action.GUID}");
                         action.Apply(__instance.View.CharacterAvatar);
@@ -59,7 +59,12 @@ namespace VisualAdjustments2.Infrastructure
             var character = unitData.View.CharacterAvatar;
             var loadedEE = ResourcesLibrary.TryGetResource<EquipmentEntity>(GUID);
             if (!character.EquipmentEntities.Any(a => a.name == loadedEE.name)) character.AddEquipmentEntity(loadedEE);
-            if (!settings.EeSettings.EEs.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add)) settings.EeSettings.EEs.Add(new EE_Applier(this.GUID, EE_Applier.ActionType.Add));
+            var applier = new EE_Applier(this.GUID, EE_Applier.ActionType.Add);
+            applier.Primary = this.PrimaryCol;
+            applier.Secondary = this.SecondaryCol;
+            if (!settings.EeSettings.EEs.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add)) settings.EeSettings.EEs.Add(applier);
+            this.PrimaryCol.Apply(loadedEE,character);
+            this.SecondaryCol.Apply(loadedEE, character);
         }
     }
     public class RemoveEE : EEApplyAction

@@ -39,6 +39,7 @@ namespace VisualAdjustments2.UI
             base.BindViewImplementation();
             Initialize();
             m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+            m_EEColorPicker.m_ConfirmButton.OnLeftClick.AddListener(() => { this.ViewModel?.ApplyColor(m_EEColorPicker.m_Color.m_ToColor.color, m_EEColorPicker.PrimaryOrSecondary); });
             m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
             this.AddDisposable(base.ViewModel.AllEEs.Value);
             this.m_AllEEs.Bind(base.ViewModel.AllEEs.Value);
