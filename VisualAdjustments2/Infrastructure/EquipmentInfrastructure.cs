@@ -13,7 +13,7 @@ namespace VisualAdjustments2.Infrastructure
         [HarmonyLib.HarmonyPatch(typeof(UnitEntityView),nameof(UnitEntityView.AddItemEquipment))]
         public static bool Prefix(UnitEntityView __instance,ItemEntity item)
         {
-            if (!__instance.Data.IsPlayerFaction) return true;
+            if (!__instance.Data.IsPlayerFaction && Kingmaker.Game.Instance.Player.AllCharacters.Contains(__instance.Data)) return true;
             var settings = __instance.Data.GetSettings();
             if (settings.HideEquipmentDict.TryGetValue(item.Blueprint.ItemType,out bool val))
             {

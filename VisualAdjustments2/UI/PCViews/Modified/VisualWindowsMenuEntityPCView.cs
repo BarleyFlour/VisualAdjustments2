@@ -9,15 +9,6 @@ using TMPro;
 
 namespace VisualAdjustments2.UI
 {
-    public static class VisualWindowsMenuEntityVMExtensions
-    {
-        public static void SetupFromServicePCView(this VisualWindowsMenuEntityPCView newView, ServiceWindowsMenuEntityPCView old)
-        {
-            newView.m_Button = old.m_Button;
-            newView.m_Button.m_OnLeftClick.RemoveAllListeners();
-            newView.m_Label = old.m_Label;
-        }
-    }
     public class VisualWindowsMenuEntityPCView : SelectionGroupEntityView<VisualWindowsMenuEntityVM>
     {
         public static string GetVisualWindowLabel(VisualWindowType windowtype)

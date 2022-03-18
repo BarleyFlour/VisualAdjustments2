@@ -31,7 +31,7 @@ namespace VisualAdjustments2
             this.m_OnSelect = onSelect;
             this.UnitDescriptor = Game.Instance.SelectionCharacter.SelectedUnit;
             this.CreateEntities();
-            this.m_SelectedEntity = new ReactiveProperty<VisualWindowsMenuEntityVM>();
+            this.m_SelectedEntity = new ReactiveProperty<VisualWindowsMenuEntityVM>(this.m_EntitiesList.First());
             base.AddDisposable(this.SelectionGroup = new SelectionGroupRadioVM<VisualWindowsMenuEntityVM>(this.m_EntitiesList, this.m_SelectedEntity));
             base.AddDisposable(this.m_SelectedEntity.Skip(1).Subscribe(new Action<VisualWindowsMenuEntityVM>(this.OnEntitySelected)));
             base.AddDisposable(this.UnitDescriptor.Subscribe(new Action<UnitDescriptor>(this.OnUnitChanged)));

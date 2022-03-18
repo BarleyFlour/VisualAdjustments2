@@ -15,11 +15,13 @@ namespace VisualAdjustments2.Infrastructure
     public class CharacterSettings
     {
         public EESettings EeSettings = new EESettings();
+        public string ClassGUID;
         public class EESettings
         {
             public List<EE_Applier> EEs = new List<EE_Applier>();
         }
         public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict = SetupDict();
+        public SerializedDollState doll;
         public static Dictionary<ItemsFilter.ItemType, bool> SetupDict()
         {
             var newdict = new Dictionary<ItemsFilter.ItemType, bool>();
@@ -96,8 +98,6 @@ namespace VisualAdjustments2.Infrastructure
         public string GUID;
         public ColorInfo Primary = new ColorInfo(true);
         public ColorInfo Secondary = new ColorInfo(false);
-
-
         public class ColorInfo
         {
             public bool PrimOrSec;

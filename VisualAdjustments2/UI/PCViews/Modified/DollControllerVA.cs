@@ -21,66 +21,10 @@ using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2.UI
 {
-	public static class DollRoomExtensions
-    {
-		public static void SetupInfoBar(this DollRoom __instance,UnitEntityData player, bool force = false, BlueprintClassAdditionalVisualSettings additionalVisualSettings = null)
-		{
-			PFLog.Default.Log("SetupInfo", Array.Empty<object>());
-			if (((player != null) ? player.View : null) == null)
-			{
-				return;
-			}
-			if (additionalVisualSettings == null)
-			{
-				ClassData visualSettingsProvider = player.Progression.GetVisualSettingsProvider();
-				additionalVisualSettings = ((visualSettingsProvider != null) ? visualSettingsProvider.CharacterClass.GetAdditionalVisualSettings(visualSettingsProvider.Level) : null);
-			}
-			UnitEntityView unitEntityView = player.View.Or(null);
-			Character character = (unitEntityView != null) ? unitEntityView.CharacterAvatar : null;
-			if (__instance.m_Unit == player && __instance.m_OriginalAvatar != null && __instance.m_OriginalAvatar == character && !force)
-			{
-				__instance.m_Avatar.SetAdditionalVisualSettings(additionalVisualSettings);
-				__instance.UpdateCharacter();
-				return;
-			}
-			__instance.Cleanup();
-			__instance.m_Unit = player;
-			__instance.m_OriginalAvatar = character;
-			if (__instance.m_OriginalAvatar == null)
-			{
-				UnitEntityView unitEntityView2 = __instance.SetupSimpleAvatar(player);
-				__instance.SetupAnimationManager(unitEntityView2.GetComponentInChildren<UnitAnimationManager>());
-				return;
-			}
-			Character character2 = __instance.CreateAvatar(__instance.m_OriginalAvatar, __instance.Unit.Gender, __instance.Unit.Progression.Race.RaceId, __instance.m_Unit.ToString(), additionalVisualSettings);
-			__instance.SetAvatar(character2);
-			character2.transform.localScale = player.View.transform.localScale;
-			Vector3 localScale = new Vector3(player.View.OriginalScale.x / player.View.transform.localScale.x, player.View.OriginalScale.y / player.View.transform.localScale.y, player.View.OriginalScale.z / player.View.transform.localScale.z);
-			character2.transform.parent.localScale = localScale;
-			if (player.View.OverrideDollRoomScale != Vector3.zero)
-			{
-				Vector3 localScale2 = new Vector3(character2.transform.parent.localScale.x * player.View.OverrideDollRoomScale.x, character2.transform.parent.localScale.y * player.View.OverrideDollRoomScale.y, character2.transform.parent.localScale.z * player.View.OverrideDollRoomScale.z);
-				character2.transform.parent.localScale = localScale2;
-			}
-			IKController component = __instance.Unit.View.GetComponent<IKController>();
-			IKController ikcontroller = __instance.m_Avatar.gameObject.AddComponent<IKController>();
-			ikcontroller.DollRoom = __instance;
-			ikcontroller.CharacterSystem = __instance.m_Avatar;
-			ikcontroller.Settings = ((component != null) ? component.Settings : null);
-			UnitEntityView component2 = __instance.m_OriginalAvatar.GetComponent<UnitEntityView>();
-			if (component2 != null)
-			{
-				ikcontroller.CharacterUnitEntity = component2;
-			}
-			__instance.Update(false);
-			__instance.SetupAnimationManager(character2.AnimationManager);
-			character2.AnimationManager.Tick();
-			character2.AnimationManager.LocoMotionHandle.Action.OnUpdate(character2.AnimationManager.LocoMotionHandle, 0.1f);
-		}
-	}
     public class DollControllerVA : MonoBehaviour
     {
 		public void Initialize()

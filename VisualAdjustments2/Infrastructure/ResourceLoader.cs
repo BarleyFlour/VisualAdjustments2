@@ -31,17 +31,6 @@ namespace VisualAdjustments2
         [JsonProperty] public EEInfo[] allEEs;
         [JsonProperty] public string Version;
     }
-    public static class EEInfo_Extensions
-    {
-        public static EEInfo? ToEEInfo(this EquipmentEntity ee)
-        {
-            if (ResourceLoader.NameToEEInfo.TryGetValue(ee.name, out EEInfo val))
-            {
-                return val;
-            }
-            return null;
-        }
-    }
     public struct EEInfo
     {
         public EEInfo(string name, string internalname, string guid)

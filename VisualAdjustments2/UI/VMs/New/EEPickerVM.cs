@@ -144,7 +144,7 @@ namespace VisualAdjustments2.UI
                     var addee = (AddEE)val;
                     if (PrimOrSec)
                     {
-                        Main.Logger.Log("Prim");
+                        //Main.Logger.Log("Prim");
                         var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                         ColInf.CustomColor = true;
                         ColInf.CustomColorRGB = new SerializableColor(col);
@@ -154,7 +154,7 @@ namespace VisualAdjustments2.UI
                     }
                     else
                     {
-                        Main.Logger.Log("Sec");
+                        //Main.Logger.Log("Sec");
                         var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                         ColInf.CustomColor = true;
                         ColInf.CustomColorRGB = new SerializableColor(col);
@@ -196,6 +196,38 @@ namespace VisualAdjustments2.UI
                             addaction.PrimaryCol = addee.Primary;
                             addaction.SecondaryCol = ColInf;
                             this.applyActions.Add(addaction.GUID,addaction);
+                        }
+                    }
+                    else
+                    {
+                        var addee = new EE_Applier(this.CurrentEEs.Value.SelectedEntity.Value.Guid,EE_Applier.ActionType.Add);
+                        if (PrimOrSec)
+                        {
+                            var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
+                            ColInf.CustomColor = true;
+                            ColInf.CustomColorRGB = new SerializableColor(col);
+                            addee.Primary = ColInf;
+                            addee.Apply(Game.Instance.UI.Common.DollRoom.m_Avatar);
+                            //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
+
+                            var addaction = new AddEE(addee.GUID);
+                            addaction.PrimaryCol = ColInf;
+                            addaction.SecondaryCol = addee.Secondary;
+                            this.applyActions.Add(addaction.GUID, addaction);
+                        }
+                        else
+                        {
+                            var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
+                            ColInf.CustomColor = true;
+                            ColInf.CustomColorRGB = new SerializableColor(col);
+                            addee.Secondary = ColInf;
+                            addee.Apply(Game.Instance.UI.Common.DollRoom.m_Avatar);
+                            //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
+
+                            var addaction = new AddEE(addee.GUID);
+                            addaction.PrimaryCol = addee.Primary;
+                            addaction.SecondaryCol = ColInf;
+                            this.applyActions.Add(addaction.GUID, addaction);
                         }
                     }
                 }

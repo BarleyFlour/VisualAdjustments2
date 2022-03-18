@@ -14,6 +14,7 @@ using Kingmaker.Visual.CharacterSystem;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.EntitySystem;
 using Kingmaker.UnitLogic.Parts;
+using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2
 {
@@ -23,17 +24,17 @@ namespace VisualAdjustments2
         {
             [JsonProperty] public string GUID;
             [JsonProperty] public int colorIndex;
-            public SerializedDollPrint(string printGUID,int colorRampIndex)
+            public SerializedDollPrint(string printGUID, int colorRampIndex)
             {
                 GUID = printGUID;
                 colorIndex = colorRampIndex;
             }
-            public void Apply(DollState state,int index)
+            public void Apply(DollState state, int index)
             {
                 var eel = new EquipmentEntityLink();
                 eel.AssetId = GUID;
-                state.SetWarpaint(eel,index);
-                state.SetWarpaintColor(colorIndex,index);
+                state.SetWarpaint(eel, index);
+                state.SetWarpaintColor(colorIndex, index);
             }
             public DollState.DollPrint Deserialize()
             {
@@ -149,7 +150,7 @@ namespace VisualAdjustments2
                 {
                     var deconstructed = Warprints.Select(a => a.Deserialize()).ToList();
                     doll.Warprints = deconstructed;
-                    for(var x = 0; deconstructed.Count > x; x++)
+                    for (var x = 0; deconstructed.Count > x; x++)
                     {
                         var print = deconstructed[x];
                         if (print != null)
@@ -200,7 +201,7 @@ namespace VisualAdjustments2
                 }
                 return doll;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Main.Logger.Error(e.ToString());
                 throw e;
@@ -213,11 +214,10 @@ namespace VisualAdjustments2
         {
             try
             {
-                var KVStorage = Kingmaker.Game.Instance.Player.Ensure<EntityPartKeyValueStorage>().GetStorage("VisualAdjustments2");
-                if (KVStorage.TryGetValue(data.UniqueId, out string serialized))
+                var settings = data.GetSettings();
+                if (settings.doll != null)
                 {
-                    var deserialized = JsonConvert.DeserializeObject<SerializedDollState>(serialized);
-                    return deserialized.GetDollState();
+                    return settings.doll.GetDollState();
                 }
                 else
                 {
@@ -232,26 +232,43 @@ namespace VisualAdjustments2
                 throw e;
             }
         }
-        public static void SaveDollState(this UnitEntityData data, DollState doll,bool Apply = true)
+        public static void SaveDollState(this UnitEntityData data, DollState doll, bool Apply = true)
         {
             try
             {
-                var ToSerialize = new SerializedDollState(doll);
-                var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(ToSerialize);
-                var KVStorage = Kingmaker.Game.Instance.Player.Ensure<EntityPartKeyValueStorage>().GetStorage("VisualAdjustments2");
-                if (KVStorage.ContainsKey(data.UniqueId))
-                {
-                    KVStorage[data.UniqueId] = serialized;
-                }
-                else
-                {
-                    KVStorage.Add(data.UniqueId, serialized);
-                }
-                if(Apply)
+                var settings = data.GetSettings();
+                settings.doll = new SerializedDollState(doll);
+
+                /* var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(ToSerialize);
+                 var KVStorage = Kingmaker.Game.Instance.Player.Ensure<EntityPartKeyValueStorage>().GetStorage("VisualAdjustments2");
+                 if (KVStorage.ContainsKey(data.UniqueId))
+                 {
+                     KVStorage[data.UniqueId] = serialized;
+                 }
+                 else
+                 {
+                     KVStorage.Add(data.UniqueId, serialized);
+                 }*/
+                if (Apply)
                 {
                     var unitPartDollData = data.Ensure<UnitPartDollData>();
-                    unitPartDollData.SetDefault(doll.CreateData());
-                    //data.View.
+                    if (data.Get<UnitPartDollData>().Default != null)
+                    {
+                        data.View?.CharacterAvatar?.RemoveEquipmentEntities(unitPartDollData?.Default?.EquipmentEntityIds?.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
+                        var newDoll = doll.CreateData();
+                        unitPartDollData.SetDefault(newDoll);
+                        data.View.CharacterAvatar.AddEquipmentEntities(newDoll.EquipmentEntityIds.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
+                        newDoll.ApplyRampIndices(data.View.CharacterAvatar);
+                    }
+                    else
+                    {
+                        // data.View?.CharacterAvatar?.RemoveEquipmentEntities(unitPartDollData?.Default?.EquipmentEntityIds?.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
+                        var newDoll = doll.CreateData();
+                        unitPartDollData.SetDefault(newDoll);
+                        data.View.CharacterAvatar.AddEquipmentEntities(newDoll.EquipmentEntityIds.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
+                        newDoll.ApplyRampIndices(data.View.CharacterAvatar);
+                    }
+
                 }
                 Main.Logger.Log($"Saved Doll for {data.CharacterName}");
             }

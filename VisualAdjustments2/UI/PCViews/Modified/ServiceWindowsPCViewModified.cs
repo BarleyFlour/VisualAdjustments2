@@ -27,7 +27,6 @@ namespace VisualAdjustments2.UI
             {
                 return;
             }
-            this.m_DollPCView?.Initialize();
             this.m_FXViewerPCView?.Initialize();
             this.m_EquipmentPCView?.Initialize();
             this.m_ServiceWindowMenuPcView?.Initialize();
@@ -39,7 +38,7 @@ namespace VisualAdjustments2.UI
             base.AddDisposable(base.ViewModel.EEPickerVM.Subscribe(new Action<EEPickerVM>(this.m_EEPickerPCView.Bind)));
             base.AddDisposable(base.ViewModel.FXViewerVM.Subscribe(new Action<FXViewerVM>(this.m_FXViewerPCView.Bind)));
             base.AddDisposable(base.ViewModel.EquipmentVM.Subscribe(new Action<EquipmentVM>(this.m_EquipmentPCView.Bind)));
-            base.AddDisposable(base.ViewModel.DollVM.Subscribe(new Action<CharGenAppearancePhaseVMModified>(this.m_DollPCView.Bind)));
+            base.AddDisposable(base.ViewModel.DollVM.Subscribe(new Action<DollVM>(this.m_DollPCView.Bind)));
             base.AddDisposable(base.ViewModel.ServiceWindowsMenuVM.Subscribe(delegate (ServiceWindowsMenuVMModified vm)
             {
                 if (vm != null)
@@ -52,11 +51,12 @@ namespace VisualAdjustments2.UI
         }
         public override void DestroyViewImplementation()
         {
+            
         }
         public EEPickerPCView m_EEPickerPCView;
         public FXViewerPCView m_FXViewerPCView;
         public EquipmentPCView m_EquipmentPCView;
-        public CharGenAppearancePhaseDetailedPCViewModified m_DollPCView;
+        public DollPCView m_DollPCView;
         public ServiceWindowMenuPCViewModified m_ServiceWindowMenuPcView;
         public DollCharacterController m_DollRoom;
         public FadeAnimator m_Background;

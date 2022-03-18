@@ -89,13 +89,6 @@ namespace VisualAdjustments2.Infrastructure
             }
         }
     }
-    public static class SettingsExtension
-    {
-        public static CharacterSettings GetSettings(this UnitEntityData unit)
-        {
-            return GlobalCharacterSettings.Instance.ForCharacter(unit);
-        }
-    }
     public class GlobalCharacterSettings
     {
         public CharacterSettings ForCharacter(UnitEntityData unit)
@@ -110,6 +103,6 @@ namespace VisualAdjustments2.Infrastructure
         }
 
         public Dictionary<string, CharacterSettings> PerCharacter = new Dictionary<string, CharacterSettings>();
-        public static GlobalCharacterSettings Instance;// = new GlobalCharacterSettings();
+        public static GlobalCharacterSettings Instance = new GlobalCharacterSettings();
     }
 }

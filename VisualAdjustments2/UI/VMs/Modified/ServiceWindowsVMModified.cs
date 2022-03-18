@@ -2,7 +2,9 @@
 using Kingmaker.PubSubSystem;
 using Kingmaker.UI;
 using Kingmaker.UI.MVVM._VM.ServiceWindows;
+using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Class.LevelUp;
+using Kingmaker.UnitLogic.Parts;
 using Owlcat.Runtime.UI.MVVM;
 using System;
 using System.Collections.Generic;
@@ -75,8 +77,6 @@ namespace VisualAdjustments2.UI
             //this.CurrentWindow = type;
             value.SelectWindow(type);
         }
-
-        // Token: 0x0600444A RID: 17482 RVA: 0x0019296C File Offset: 0x00190B6C
         public void OnSelectWindow(VisualWindowType type)
         {
             //Main.Logger.Log("OnSelectWindow");
@@ -126,17 +126,7 @@ namespace VisualAdjustments2.UI
                     case VisualWindowType.Doll:
                         if (this.DollVM.Value == null)
                         {
-
-                            var unit = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
-                            var doll = unit.GetDollState();
-                            if (doll.Race != null)
-                            {
-                                var lvlcontroller = new LevelUpController(unit, false, LevelUpState.CharBuildMode.SetName);
-                                lvlcontroller.Doll = doll;
-                                //CharGenAppearancePhaseVMModified.pcview.gameObject.SetActive(true);
-                                CharGenAppearancePhaseVMModified.pcview.transform.parent.gameObject.SetActive(true);
-                                base.AddDisposable(this.DollVM.Value = new CharGenAppearancePhaseVMModified(lvlcontroller, doll, false));
-                            }
+                            base.AddDisposable(this.DollVM.Value = new DollVM());
                             return;
                         }
                         return;
@@ -172,7 +162,7 @@ namespace VisualAdjustments2.UI
                     }
                 case VisualWindowType.Doll:
                     {
-                        CharGenAppearancePhaseVMModified value2 = this.DollVM.Value;
+                        DollVM value2 = this.DollVM.Value;
                         if (value2 != null)
                         {
                             value2.Dispose();
@@ -233,7 +223,7 @@ namespace VisualAdjustments2.UI
 
         public ReactiveProperty<FXViewerVM> FXViewerVM = new ReactiveProperty<FXViewerVM>();
 
-        public ReactiveProperty<CharGenAppearancePhaseVMModified> DollVM = new ReactiveProperty<CharGenAppearancePhaseVMModified>();
+        public ReactiveProperty<DollVM> DollVM = new ReactiveProperty<DollVM>();
 
         public VisualWindowType CurrentWindow;
     }

@@ -20,23 +20,6 @@ using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Common;
 namespace VisualAdjustments2.UI
 
 {
-    public static class BarleySlideSelectorPCViewExtensions
-    {
-        public static void SetupFromSlideSelector(this BarleySlideSelectorPCView newcomp,SlideSelectorPCView oldcomp)
-        {
-            newcomp.m_ButtonNext = oldcomp.m_ButtonNext;
-            newcomp.m_ButtonPrevious = oldcomp.m_ButtonPrevious;
-            newcomp.m_CalculateHandleSize = oldcomp.m_CalculateHandleSize;
-            newcomp.m_Counter = oldcomp.m_Counter;
-            newcomp.m_Label = oldcomp.m_Label;
-            newcomp.m_Slider = oldcomp.m_Slider;
-            newcomp.m_SliderRect = oldcomp.m_SliderRect;
-            newcomp.m_SliderSlideArea = oldcomp.m_SliderSlideArea;
-            newcomp.m_Value = oldcomp.m_Value;
-
-            UnityEngine.Component.Destroy(oldcomp);
-        }
-    }
     public class BarleySlideSelectorPCView : ViewBase<StringSequentialSelectorVM>, IScrollHandler, IEventSystemHandler
     {
         public string m_Prefix;

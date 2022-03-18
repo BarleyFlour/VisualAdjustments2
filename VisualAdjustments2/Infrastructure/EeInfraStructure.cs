@@ -24,7 +24,7 @@ namespace VisualAdjustments2.Infrastructure
         {
             try
             {
-                if (__instance.View?.CharacterAvatar != null && __instance.IsPlayerFaction)
+                if (__instance.View?.CharacterAvatar != null && __instance.IsPlayerFaction && Kingmaker.Game.Instance.Player.AllCharacters.Contains(__instance))
                 {
                     foreach (var action in __instance.GetSettings()?.EeSettings?.EEs)
                     {

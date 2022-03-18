@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 using Owlcat.Runtime.UI.Controls.Button;
+using Kingmaker.UI.ServiceWindow;
 
 namespace VisualAdjustments2.UI
 {
@@ -27,7 +28,7 @@ namespace VisualAdjustments2.UI
             this.AddDisposable(base.ViewModel.CurrentEEs.Value);
             m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
             m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
-
+            this.m_VisualSettings.Dispose();
         }
         public override void BindViewImplementation()
         {
@@ -45,6 +46,7 @@ namespace VisualAdjustments2.UI
             this.m_AllEEs.Bind(base.ViewModel.AllEEs.Value);
             this.AddDisposable(base.ViewModel.CurrentEEs.Value);
             this.m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
+            this.m_VisualSettings.Dispose();
         }
 
         public override void DestroyViewImplementation()
@@ -53,6 +55,7 @@ namespace VisualAdjustments2.UI
             m_EEColorPicker.Dispose();
             this.m_dollCharacterController.Unbind();
         }
+        public CharacterVisualSettingsView m_VisualSettings;
         public DollCharacterController m_dollCharacterController;
         public ListPCView m_AllEEs;
         public ListPCView m_CurrentEEs;

@@ -21,27 +21,6 @@ using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2.UI
 {
-	public static class EEColorPickerPCViewExtensions
-    {
-		public static void SetupFromVisualSettings(this EEColorPickerPCView newcomp, CharacterVisualSettingsView oldcomp)
-		{
-			newcomp.m_SettingsBtn = oldcomp.m_SettingsBtn;
-			newcomp.m_Title = oldcomp.m_Title;
-			newcomp.m_Window = oldcomp.m_Window;
-			newcomp.m_WindowShow = oldcomp.m_WindowShow;
-			newcomp.m_OnClickDispose = oldcomp.m_OnClickDispose;
-			var windowcontainer = newcomp.transform.Find("WindowContainer");
-			var layout = windowcontainer.gameObject.GetComponent<VerticalLayoutGroup>();
-			layout.childControlWidth = true;
-			layout.childScaleWidth = true;
-			layout.spacing = -15;
-			var sizefitter = windowcontainer.gameObject.GetComponent<ContentSizeFitterExtended>();
-			sizefitter.m_VerticalFit = ContentSizeFitterExtended.FitMode.MinSize;
-			windowcontainer.Find("ShowBackpackContainer").gameObject.SetActive(false);
-			windowcontainer.Find("ShowHelmContainer").gameObject.SetActive(false);
-			windowcontainer.Find("ShowClothContainer").gameObject.SetActive(false);
-		}
-	}
 	public class EEColorPickerPCView : MonoBehaviour, IDisposable
 	{
 		public void Intialize()

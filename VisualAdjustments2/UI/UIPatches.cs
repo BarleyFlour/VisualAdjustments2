@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
+using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.EntitySystem.Entities;
@@ -63,8 +64,6 @@ namespace VisualAdjustments2
         {
             try
             {
-
-
                 //var currentchar = Kingmaker.UI.Common.UIUtility.GetCurrentCharacter();
                 var currentchar = Kingmaker.Game.Instance.Player.AllCharacters.First();
                 var doll = currentchar.GetDollState();
@@ -120,13 +119,13 @@ namespace VisualAdjustments2
                     newcomp.m_HornColorSelectorView = appearancecomponent.m_HornColorSelectorView;
                     newcomp.m_HornSelectorPcView = appearancecomponent.m_HornSelectorPcView;
                     newcomp.m_LeftAnimator = appearancecomponent.m_LeftAnimator;
-                    newcomp.m_PageAnimator = appearancecomponent.m_PageAnimator;
+                    //newcomp.m_PageAnimator = appearancecomponent.m_PageAnimator;
                     newcomp.m_PrimaryOutfitColorSelectorView = appearancecomponent.m_PrimaryOutfitColorSelectorView;
-                    newcomp.m_RectTransform = appearancecomponent.m_RectTransform;
+                   // newcomp.m_RectTransform = appearancecomponent.m_RectTransform;
                     newcomp.m_RightAnimator = appearancecomponent.m_RightAnimator;
                     newcomp.m_ScarSelectorPcView = appearancecomponent.m_ScarSelectorPcView;
                     newcomp.m_SecondaryOutfitColorSelectorView = appearancecomponent.m_SecondaryOutfitColorSelectorView;
-                    newcomp.m_ShowRequest = appearancecomponent.m_ShowRequest;
+                    //newcomp.m_ShowRequest = appearancecomponent.m_ShowRequest;
                     newcomp.m_TargetSizeInfoDollTransform = appearancecomponent.m_TargetSizeInfoDollTransform;
                     newcomp.m_TatooColorSelectorView = appearancecomponent.m_TatooColorSelectorView;
                     newcomp.m_TatooPaginator = appearancecomponent.m_TatooPaginator;
@@ -146,7 +145,17 @@ namespace VisualAdjustments2
                     var comp = RaceSelector.GetComponent<SlideSelectorPCView>();
                     newcomp.m_RaceSelectorPCView = comp;
 
-
+                    //Apply button
+                    var ApplyButtonGameObject = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage"), newcomp.transform);
+                    ApplyButtonGameObject.localPosition = new Vector3(-195, -398, 0);
+                    ApplyButtonGameObject.Find("Button/FinneanLabel").gameObject.SetActive(false);
+                    ApplyButtonGameObject.Find("Button/StashLabel").GetComponent<TextMeshProUGUI>().text = "Apply";
+                    var owlbutt = ApplyButtonGameObject.Find("Button").GetComponent<OwlcatButton>();
+                    owlbutt.OnLeftClick.AddListener(() =>
+                    {
+                        Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit?.SaveDollState(newcomp.ViewModel.DollState);
+                    });
+                    newcomp.m_ApplyButton = owlbutt;
                     // comp.BindViewImplementation();
                 }
                 // Main.Logger.Log(currentchar.CharacterName);
@@ -215,9 +224,31 @@ namespace VisualAdjustments2
 
                     UnityEngine.Object.Destroy(inventory);
 
+                    var windowcontainer = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView/WindowContainer");
+                    windowcontainer.localPosition = new Vector3(-267, 169, 0);
+
                     var oldpcview = newselectionbar.gameObject.GetComponent<ServiceWindowMenuPCView>();
 
                     var comp = newselectionbar.gameObject.AddComponent<ServiceWindowMenuPCViewModified>();
+
+                    var NewButton = GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage"), newgameobject.transform);
+                    NewButton.localScale = new Vector3((float)1.5, (float)1.5, 1);
+
+                    var cmp = NewButton.gameObject.AddComponent<CreateDollPCView>();
+                    cmp.Button = NewButton.Find("Button").GetComponent<OwlcatButton>();
+                    cmp.Button.OnLeftClick.AddListener(() => { });
+                    cmp.Label = NewButton.Find("Button/StashLabel").GetComponent<TextMeshProUGUI>();
+                    Component.Destroy(NewButton.GetComponent<Image>());
+                    NewButton.Find("Button/FinneanLabel").gameObject.SetActive(false);
+                    NewButton.gameObject.SetActive(false);
+
+                    var NewButton2 = GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage"), newcomp.transform);
+                    //NewButton2.localScale = new Vector3((float)1.5, (float)1.5, 1);
+                    NewButton2.localPosition = new Vector3(58,-398,0);
+                    newcomp.m_DeleteDollButton = NewButton2.Find("Button").GetComponent<OwlcatButton>();
+                    NewButton2.Find("Button/FinneanLabel").gameObject.SetActive(false);
+                    NewButton2.gameObject.SetActive(false);
+                    NewButton2.Find("Button/StashLabel").GetComponent<TextMeshProUGUI>().text = "Delete Doll";
 
                     comp.m_Animator = oldpcview.m_Animator;
                     comp.m_BindDisposable = oldpcview.m_BindDisposable;
@@ -248,6 +279,8 @@ namespace VisualAdjustments2
                     gameobject.SetActive(false);
 
                     EEPickerPCView EEPickerPCView = CreateEEPicker(newgameobject, dollroomcomp);
+                    EEPickerPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
+                    //EEPickerPCView.m_VisualSettings = newcomp.VisualSettings;
 
                     var gameobject3 = new GameObject("Equipment");
                     gameobject3.transform.SetParent(newgameobject.transform);
@@ -261,13 +294,25 @@ namespace VisualAdjustments2
                     {
                         var oldcomp = newgameobject.transform.parent.GetComponent<ServiceWindowsPCView>();
                         var compPCView = newgameobject.AddComponent<ServiceWindowsPCViewModified>();
+
+                        var Doll = new GameObject("Doll");
+                        Doll.transform.SetParent(newgameobject.transform);
+                        var DollPCView = Doll.AddComponent<DollPCView>();
+                        
+
+                        compPCView.m_DollPCView = DollPCView;
+                        DollPCView.m_CharGenAppearancePCView = newcomp;
+                        DollPCView.m_CreateDollPCView = cmp;
+                        DollPCView.m_CreateDollPCView.Button.OnLeftClick.AddListener(() => { DollPCView.ViewModel?.AddUnitPart(); });
+
                         compPCView.m_Background = oldcomp.m_Background;
                         compPCView.m_ServiceWindowMenuPcView = comp;
-                        compPCView.m_DollPCView = newcomp;
                         compPCView.m_EEPickerPCView = EEPickerPCView;
                         compPCView.m_EquipmentPCView = EquipmentPCView;
                         compPCView.m_FXViewerPCView = FXViewerPCView;
                         compPCView.m_DollRoom = dollroomcomp;
+
+                        newcomp.m_DeleteDollButton.OnLeftClick.AddListener(() => { DollPCView.DeleteDoll(); });
                         ServiceWindowsVM_ShowWindow_Patch.swPCView = compPCView;
                     }
                 }
@@ -318,15 +363,15 @@ namespace VisualAdjustments2
                     var settings = EEPickerPCView.ViewModel.UnitDescriptor.Value.Unit.GetSettings();
                     foreach (var action in EEPickerPCView.ViewModel?.applyActions)
                     {
-                        action.Value.Apply(EEPickerPCView.ViewModel.UnitDescriptor.Value.Unit,settings);
+                        action.Value.Apply(EEPickerPCView.ViewModel.UnitDescriptor.Value.Unit, settings);
                     }
-                    });
+                });
                 EEPickerPCView.m_ApplyButton = owlbutt;
             }
             //Colour picker
             {
-                var ColPicker = UnityEngine.Object.Instantiate(newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"),EEPickerPCView.transform);
-                ColPicker.localPosition = new Vector3(398,-419,0);
+                var ColPicker = UnityEngine.Object.Instantiate(newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"), EEPickerPCView.transform);
+                ColPicker.localPosition = new Vector3(398, -419, 0);
                 var window = ColPicker.Find("WindowContainer");
                 window.localPosition = new Vector3(-262, 164, 0);
                 var oldcomp = ColPicker.GetComponent<CharacterVisualSettingsView>();
@@ -416,7 +461,7 @@ namespace VisualAdjustments2
                 }
                 //RGB Sliders
                 {
-                    var newsliderR = UnityEngine.Object.Instantiate(newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/Tatoo/SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)"),newcomp.transform.Find("WindowContainer"));
+                    var newsliderR = UnityEngine.Object.Instantiate(newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/Tatoo/SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)"), newcomp.transform.Find("WindowContainer"));
                     var oldcomp_R = newsliderR.GetComponent<SlideSelectorPCView>();
                     var newcomp_R = newsliderR.gameObject.AddComponent<BarleySlideSelectorPCView>();
                     newcomp_R.SetupFromSlideSelector(oldcomp_R);
@@ -560,7 +605,7 @@ namespace VisualAdjustments2
 
 
                         // if (pcview == null || swPCView == null) throw new NullReferenceException("[HarmonyPatch(typeof(ServiceWindowsVM), nameof(ServiceWindowsVM.OnSelectWindow))]");
-                        
+
                         var swVM = new ServiceWindowsVMModified();
                         if (swPCView != null) swPCView.Bind(swVM);
 
@@ -613,7 +658,7 @@ namespace VisualAdjustments2
                 {
                     ServiceWindowsVM_ShowWindow_Patch.pcview?.ViewModel?.Dispose();
                     ServiceWindowsVM_ShowWindow_Patch.swPCView?.ViewModel?.Dispose();
-                    CharGenAppearancePhaseVMModified.charController?.Unbind();
+                    //CharGenAppearancePhaseVMModified.charController?.Unbind();
                     return;
                 }
             }
