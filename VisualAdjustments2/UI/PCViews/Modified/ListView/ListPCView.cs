@@ -32,21 +32,24 @@ namespace VisualAdjustments2.UI
 {
     public class ListPCView : SelectionGroupViewWithFilterPCView<ListViewVM, ListViewItemVM, ListViewItemPCView>
     {
-        private const string currentconst = "Current EEs";
-        private const string allconst = "All EEs";
-        public readonly string[] SelectorString = { allconst, currentconst };
-        public bool AllOrCurrent;
-        public ListViewItemPCView m_Template;
-        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp, bool AllOrCurrent)
+        public static string[] EESearchTerms = new string[]
         {
-            this.m_CharGenFeatureSearchView = oldcomp.m_CharGenFeatureSearchView;
+            "Helm",
+            "Boot",
+            "Wing"
+        };
+        public ListViewItemPCView m_Template;
+        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp,bool LeftOrRight, string LabelText)
+        {
+            var newpcview = oldcomp.gameObject.AddComponent<ListSearchPCView>();
+            newpcview.SetupFromChargenFeatureSearchPCView(oldcomp.m_CharGenFeatureSearchView);
+            this.m_CharGenFeatureSearchView = newpcview;
             this.m_SearchRequestEntitiesNotFound = oldcomp.m_SearchRequestEntitiesNotFound;
-            this.AllOrCurrent = AllOrCurrent;
             if (m_Template == null)
             {
                 var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First()); 
                 instantiated.ConvertToListPCView();
-                if (AllOrCurrent)
+                if (LeftOrRight)
                 {
                     instantiated.transform.Find("TextContainer").SetAsLastSibling();
                     instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.left = 20;
@@ -59,7 +62,7 @@ namespace VisualAdjustments2.UI
             }
             this.m_SelectorHeader = this.transform.Find("HeaderH2/Label").GetComponent<TextMeshProUGUI>();
 
-            this.m_SelectorHeader.text = AllOrCurrent ? SelectorString[0] : SelectorString[1];
+            this.m_SelectorHeader.text = LabelText;
             this.SlotPrefab = m_Template;
             this.VirtualList = oldcomp.VirtualList;
         }
@@ -75,7 +78,7 @@ namespace VisualAdjustments2.UI
         {
             //base.BindViewImplementation();
             this.Initialize();
-            var searchVM = new EESearchVM();
+            var searchVM = new EESearchVM(new string[] {"","","",""});
             base.AddDisposable(searchVM);
             m_CharGenFeatureSearchView.Bind(searchVM);
             if (this.m_CharGenFeatureSearchView != null)
@@ -113,7 +116,7 @@ namespace VisualAdjustments2.UI
         {
             if (a.DisplayName == b.DisplayName) return 1; else return 0;
         }
-        public CharGenFeatureSearchPCView m_CharGenFeatureSearchView;
+        public ListSearchPCView m_CharGenFeatureSearchView;
         public TextMeshProUGUI m_SearchRequestEntitiesNotFound;
         private TextMeshProUGUI m_SelectorHeader;
         public BoolReactiveProperty HasVisibleElements = new BoolReactiveProperty(true);

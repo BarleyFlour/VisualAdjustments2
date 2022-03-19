@@ -75,6 +75,7 @@
     <Compile Include="UI\PCViews\Modified\BarleySlideSelectorPCView.cs" />
     <Compile Include="UI\PCViews\Modified\DollControllerVA.cs" />
     <Compile Include="UI\PCViews\Modified\EEColorPickerPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\ListView\ListSearchPCView.cs" />
     <Compile Include="UI\PCViews\New\ColorPreviewView.cs" />
     <Compile Include="UI\PCViews\New\CreateDollPCView.cs" />
     <Compile Include="UI\PCViews\New\DollPCView.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="UI\VMs\Modified\CharGenAppearancePhaseVMModified.cs" />
     <Compile Include="DollStateSerialization.cs" />
     <Compile Include="UI\VMs\Modified\ListView\CurrentEEsVM.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\EquipmentListVM.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\ListSearchVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewItemVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />

@@ -1,4 +1,8 @@
-﻿using Owlcat.Runtime.UI.MVVM;
+﻿using Kingmaker;
+using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Common;
+using Kingmaker.UI.ServiceWindow;
+using Owlcat.Runtime.UI.Controls.Button;
+using Owlcat.Runtime.UI.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +20,17 @@ namespace VisualAdjustments2.UI
         public override void BindViewImplementation()
         {
             base.BindViewImplementation();
+            m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+            this.m_VisualSettings.Dispose();
         }
 
         public override void DestroyViewImplementation()
         {
             base.DestroyViewImplementation();
         }
+        public OwlcatButton m_ApplyButton;
+        public ListPCView m_ListPCView;
+        public CharacterVisualSettingsView m_VisualSettings;
+        public DollCharacterController m_dollCharacterController;
     }
 }

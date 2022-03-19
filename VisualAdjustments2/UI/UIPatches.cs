@@ -79,8 +79,6 @@ namespace VisualAdjustments2
                 newgameobject.transform.localScale = new UnityEngine.Vector3(1, 1, 1);
                 newgameobject.transform.localPosition = new UnityEngine.Vector3(0, 0, 0);
 
-                // TODO: instantiate the FXViewer, EEPicker & Equipment PCViews
-
 
 
 
@@ -121,7 +119,7 @@ namespace VisualAdjustments2
                     newcomp.m_LeftAnimator = appearancecomponent.m_LeftAnimator;
                     //newcomp.m_PageAnimator = appearancecomponent.m_PageAnimator;
                     newcomp.m_PrimaryOutfitColorSelectorView = appearancecomponent.m_PrimaryOutfitColorSelectorView;
-                   // newcomp.m_RectTransform = appearancecomponent.m_RectTransform;
+                    // newcomp.m_RectTransform = appearancecomponent.m_RectTransform;
                     newcomp.m_RightAnimator = appearancecomponent.m_RightAnimator;
                     newcomp.m_ScarSelectorPcView = appearancecomponent.m_ScarSelectorPcView;
                     newcomp.m_SecondaryOutfitColorSelectorView = appearancecomponent.m_SecondaryOutfitColorSelectorView;
@@ -158,6 +156,7 @@ namespace VisualAdjustments2
                     newcomp.m_ApplyButton = owlbutt;
                     // comp.BindViewImplementation();
                 }
+
                 // Main.Logger.Log(currentchar.CharacterName);
 
                 //var lvl = new LevelUpController(currentchar, false, LevelUpState.CharBuildMode.SetName);
@@ -244,7 +243,7 @@ namespace VisualAdjustments2
 
                     var NewButton2 = GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage"), newcomp.transform);
                     //NewButton2.localScale = new Vector3((float)1.5, (float)1.5, 1);
-                    NewButton2.localPosition = new Vector3(58,-398,0);
+                    NewButton2.localPosition = new Vector3(58, -398, 0);
                     newcomp.m_DeleteDollButton = NewButton2.Find("Button").GetComponent<OwlcatButton>();
                     NewButton2.Find("Button/FinneanLabel").gameObject.SetActive(false);
                     NewButton2.gameObject.SetActive(false);
@@ -278,6 +277,7 @@ namespace VisualAdjustments2
                     gameobject.transform.localScale = new Vector3(1, 1, 1);
                     gameobject.SetActive(false);
 
+
                     EEPickerPCView EEPickerPCView = CreateEEPicker(newgameobject, dollroomcomp);
                     EEPickerPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
                     //EEPickerPCView.m_VisualSettings = newcomp.VisualSettings;
@@ -289,6 +289,24 @@ namespace VisualAdjustments2
                     gameobject3.transform.localScale = new Vector3(1, 1, 1);
                     gameobject3.SetActive(false);
 
+
+
+                    {
+                        {
+                            EquipmentPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
+                        }
+                        EquipmentPCView.m_dollCharacterController = dollroomcomp;
+                        var alleelistview = GameObject.Instantiate(gameobject3.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject3.transform);
+                        alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
+                        var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
+                        var newcompl = alleelistview.AddComponent<ListPCView>();
+                        newcompl.SetupFromChargenList(oldcomp, false,"Equipment");
+                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
+                        UnityEngine.Component.Destroy(oldcomp);
+                        EquipmentPCView.m_ListPCView = newcompl;
+                    }
+
+
                     newselectionbar.transform.localScale = oldbar.transform.localScale;
                     //Add visual adjustments Window PCView
                     {
@@ -298,7 +316,7 @@ namespace VisualAdjustments2
                         var Doll = new GameObject("Doll");
                         Doll.transform.SetParent(newgameobject.transform);
                         var DollPCView = Doll.AddComponent<DollPCView>();
-                        
+
 
                         compPCView.m_DollPCView = DollPCView;
                         DollPCView.m_CharGenAppearancePCView = newcomp;
@@ -328,25 +346,25 @@ namespace VisualAdjustments2
             var gameobject2 = new GameObject("EEPicker");
             gameobject2.transform.SetParent(newgameobject.transform);
             var EEPickerPCView = gameobject2.AddComponent<EEPickerPCView>();
-            //Current EEs List
+            //All EEs List
             {
                 EEPickerPCView.m_dollCharacterController = dollroomcomp;
                 var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
                 alleelistview.transform.localPosition = new Vector3(650, -50, 0);
                 var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                 var newcompl = alleelistview.AddComponent<ListPCView>();
-                newcompl.SetupFromChargenList(oldcomp, true);
+                newcompl.SetupFromChargenList(oldcomp, true,"All EEs");
                 newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
                 UnityEngine.Component.Destroy(oldcomp);
                 EEPickerPCView.m_AllEEs = newcompl;
             }
-            //All EEs list
+            //Current EEs list
             {
                 var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
                 alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
                 var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                 var newcompl = alleelistview.AddComponent<ListPCView>();
-                newcompl.SetupFromChargenList(oldcomp, false);
+                newcompl.SetupFromChargenList(oldcomp, false,"Current EEs");
                 UnityEngine.Component.Destroy(oldcomp);
                 EEPickerPCView.m_CurrentEEs = newcompl;
             }

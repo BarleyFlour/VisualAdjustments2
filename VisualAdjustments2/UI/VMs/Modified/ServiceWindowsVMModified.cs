@@ -112,7 +112,7 @@ namespace VisualAdjustments2.UI
                     case VisualWindowType.Equipment:
                         if (this.EquipmentVM.Value == null)
                         {
-                            base.AddDisposable(this.EquipmentVM.Value = new EquipmentVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit));
+                            base.AddDisposable(this.EquipmentVM.Value = new EquipmentVM());
                             return;
                         }
                         return;

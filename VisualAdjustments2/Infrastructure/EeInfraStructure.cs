@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace VisualAdjustments2.Infrastructure
 {
-    // TODO: proper settings system with caching so i dont have to de/serialize all the time
 
 
 

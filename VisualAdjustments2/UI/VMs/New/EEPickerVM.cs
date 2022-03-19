@@ -17,7 +17,6 @@ using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2.UI
 {
-    // TODO: Make this check if in EEPicker or smthn
     [HarmonyLib.HarmonyPatch(typeof(Character),nameof(Character.CopyEquipmentFrom))]
     public static class asdsadasd
     {
@@ -32,7 +31,6 @@ namespace VisualAdjustments2.UI
     }
     public class EEPickerVM : BaseDisposable, IDisposable, IViewModel, IBaseDisposable
     {
-        // TODO: add action that applies color
         public Dictionary<string,EEApplyAction> applyActions = new Dictionary<string, EEApplyAction>();
 
         public ReactiveProperty<UnitDescriptor> UnitDescriptor;
@@ -72,7 +70,6 @@ namespace VisualAdjustments2.UI
         }
         private void OnUnitChanged()
         {
-            // TODO: Change logic here
             {
                 var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
                 foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)

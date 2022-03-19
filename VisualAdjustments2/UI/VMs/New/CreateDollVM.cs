@@ -14,8 +14,6 @@ namespace VisualAdjustments2.UI
 {
     public class CreateDollVM : BaseDisposable, IDisposable, IViewModel, IBaseDisposable
     {
-        // TODO: Parent VM for this and doll thing
-
         public ReactiveProperty<string> ToDisplay = new ReactiveProperty<string>();
         public string charname;
         public CreateDollVM()

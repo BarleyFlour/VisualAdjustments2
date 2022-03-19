@@ -91,7 +91,6 @@ namespace VisualAdjustments2.UI
                     base.AddDisposable(this.createDollVM.Value = newvm);
                     // newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { newvm.Dispose(); this.m_DollAppearanceVM.Value?.Dispose(); this.ShowWindow(VisualWindowType.Doll); }));
                     // newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { newvm.Dispose(); this.ShowWindow(VisualWindowType.Doll); }));
-                    // TODO: Create doll button if no doll present.
                 }
             }
             catch(Exception e)

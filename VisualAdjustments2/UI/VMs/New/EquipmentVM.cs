@@ -10,12 +10,17 @@ namespace VisualAdjustments2.UI
 {
     public class EquipmentVM : BaseDisposable, IDisposable, IViewModel, IBaseDisposable
     {
-        public EquipmentVM(UnitEntityData data)
+        public EquipmentVM()
         {
-
+            base.AddDisposable(this);
         }
         public override void DisposeImplementation()
         {
         }
+        public void OnCharacterChanged()
+        {
+
+        }
+        public EquipmentListVM m_EquipmentListVM;
     }
 }
