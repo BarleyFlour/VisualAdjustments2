@@ -30,7 +30,7 @@ using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2.UI
 {
-    public class ListPCView : SelectionGroupViewWithFilterPCView<ListViewVM, ListViewItemVM, ListViewItemPCView>
+    public class BuffListPCView : SelectionGroupViewWithFilterPCView<BuffListViewVM, BuffButtonVM, BuffButtonPCView>
     {
         public static string[] EESearchTerms = new string[]
         {
@@ -38,8 +38,8 @@ namespace VisualAdjustments2.UI
             "",
             ""
         };
-        public ListViewItemPCView m_Template;
-        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp,bool LeftOrRight, string LabelText)
+        public BuffButtonPCView m_Template;
+        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp, bool LeftOrRight, string LabelText)
         {
             var newpcview = oldcomp.gameObject.AddComponent<ListSearchPCView>();
             newpcview.SetupFromChargenFeatureSearchPCView(oldcomp.m_CharGenFeatureSearchView);
@@ -47,18 +47,20 @@ namespace VisualAdjustments2.UI
             this.m_SearchRequestEntitiesNotFound = oldcomp.m_SearchRequestEntitiesNotFound;
             if (m_Template == null)
             {
-                var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First()); 
-                instantiated.ConvertToListPCView();
+                var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First());
+                instantiated.ConvertToBuffButtonPCView();
                 if (LeftOrRight)
                 {
-                    instantiated.transform.Find("TextContainer").SetAsLastSibling();
-                    instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.left = 20;
+                    instantiated.transform.Find("NonUsable(Clone)").SetAsFirstSibling();
+                    instantiated.transform.Find("Background").SetAsFirstSibling();
+                    instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.left = 24;
                 }
                 else
                 {
-                    instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.right = 12;
+                    instantiated.transform.Find("NonUsable(Clone)").SetAsLastSibling();
+                    instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.right = 18;
                 }
-                m_Template = instantiated.GetComponent<ListViewItemPCView>();
+                m_Template = instantiated.GetComponent<BuffButtonPCView>();
             }
             this.m_SelectorHeader = this.transform.Find("HeaderH2/Label").GetComponent<TextMeshProUGUI>();
 
@@ -78,7 +80,7 @@ namespace VisualAdjustments2.UI
         {
             //base.BindViewImplementation();
             this.Initialize();
-            var searchVM = new EESearchVM(new string[] {"","","",""});
+            var searchVM = new EESearchVM(new string[] { "", "", "", "" });
             base.AddDisposable(searchVM);
             m_CharGenFeatureSearchView.Bind(searchVM);
             if (this.m_CharGenFeatureSearchView != null)
@@ -95,7 +97,7 @@ namespace VisualAdjustments2.UI
                 this.OnSearchRequestChanged(null);
             }));
             this.OnCollectionChanged();
-            base.AddDisposable(this.VirtualList.Subscribe<ListViewItemVM>(this.VisibleCollection));
+            base.AddDisposable(this.VirtualList.Subscribe<BuffButtonVM>(this.VisibleCollection));
             this.TryScrollToSelectedElement();
         }
         public override void DestroyViewImplementation()
@@ -109,16 +111,17 @@ namespace VisualAdjustments2.UI
             this.VisibleCollection.Clear();
             base.OnCollectionChanged();
             base.TryScrollToSelectedElement();
-            this.HasVisibleElements.Value = this.VisibleCollection.Any<ListViewItemVM>();
+            this.HasVisibleElements.Value = this.VisibleCollection.Any<BuffButtonVM>();
         }
-        public override bool IsVisible(ListViewItemVM entity)
+        public override bool IsVisible(BuffButtonVM entity)
         {
             string searchRequest = this.m_CharGenFeatureSearchView.SearchRequest.Value;
             return string.IsNullOrEmpty(searchRequest) || entity.HasText(searchRequest);
         }
-        public override int EntityComparer(ListViewItemVM a, ListViewItemVM b)
+        public override int EntityComparer(BuffButtonVM a, BuffButtonVM b)
         {
-            return string.Compare(a.DisplayName, b.DisplayName, StringComparison.CurrentCultureIgnoreCase);
+            return string.Compare(a.FeatureName, b.FeatureName, StringComparison.CurrentCultureIgnoreCase);
+            //if (a.FeatureName == b.FeatureName) return 1; else return 0;
         }
         public ListSearchPCView m_CharGenFeatureSearchView;
         public TextMeshProUGUI m_SearchRequestEntitiesNotFound;

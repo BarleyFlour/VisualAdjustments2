@@ -18,54 +18,94 @@ using UnityEngine;
 using HarmonyLib;
 using Kingmaker.UI.MVVM._VM.MainMenu;
 using Kingmaker.UI.MVVM._PCView.MainMenu;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
+using Kingmaker.UnitLogic.Buffs.Blueprints;
+using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.Abilities.Components.Base;
+using Kingmaker.UnitLogic.Abilities.Components;
+using Kingmaker.UnitLogic.Mechanics.Actions;
+using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2
 {
-    public class SerializedEEList
+    public class SerializedResourceList
     {
-        public SerializedEEList(EEInfo[] allees, string version)
+        [JsonProperty] public string Version;
+    }
+    public class SerializedEEList : SerializedResourceList
+    {
+        public SerializedEEList(ResourceInfo[] allees, string version)
         {
             allEEs = allees;
             Version = version;
         }
-        [JsonProperty] public EEInfo[] allEEs;
-        [JsonProperty] public string Version;
+        [JsonProperty] public ResourceInfo[] allEEs;
     }
-    public struct EEInfo
+    public class SerializedFXList : SerializedResourceList
     {
-        public EEInfo(string name, string internalname, string guid)
+        public SerializedFXList(ResourceInfo[] allfxs, string version)
+        {
+            allFXs = allfxs;
+            Version = version;
+        }
+        [JsonProperty] public ResourceInfo[] allFXs;
+    }
+    public struct ResourceInfo
+    {
+        public ResourceInfo(string name, string internalname, string guid, Type bptype)
         {
             Name = name;
             Name_Internal = internalname;
             GUID = guid;
+            BPType = bptype;
         }
         [JsonProperty] public readonly string Name;
         [JsonProperty] public readonly string Name_Internal;
         [JsonProperty] public readonly string GUID;
+        [JsonProperty] public readonly Type BPType;
     }
     public static class ResourceLoader
     {
-        public static Dictionary<string, EEInfo> NameToEEInfo = new Dictionary<string, EEInfo>();
+        public static Dictionary<string, List<string>> AbilityGuidToFXGuids = new Dictionary<string, List<string>>();
+        public static Dictionary<string, ResourceInfo> NameToEEInfo = new Dictionary<string, ResourceInfo>();
         public static ResourcesLibrary.LoadedResource LoadEE(string assetid, string assetBundleName)
         {
-            var sw = new Stopwatch();
-            sw.Start();
+            // var sw = new Stopwatch();
+            //sw.Start();
             AssetBundle assetBundle = BundlesLoadService.Instance?.RequestBundle(assetBundleName);
-            sw.Stop();
-            Main.Logger.Log($"Got Bundle in {sw.ElapsedTicks} ticks");
-            sw.Restart();
+            //  sw.Stop();
+            // Main.Logger.Log($"Got Bundle in {sw.ElapsedTicks} ticks");
+            // sw.Restart();
             var resource = assetBundle.LoadAsset_Internal(assetid, typeof(EquipmentEntity));
-            sw.Stop();
-            Main.Logger.Log($"Loaded Asset in {sw.ElapsedTicks} ticks");
-            sw.Restart();
+            // sw.Stop();
+            // Main.Logger.Log($"Loaded Asset in {sw.ElapsedTicks} ticks");
+            // sw.Restart();
             var Loaded = new ResourcesLibrary.LoadedResource();
             Loaded.Resource = resource;
             Loaded.AssetId = assetid;
-            sw.Stop();
-            Main.Logger.Log($"Made LoadedResource in {sw.ElapsedTicks} ticks");
+            //  sw.Stop();
+            // Main.Logger.Log($"Made LoadedResource in {sw.ElapsedTicks} ticks");
             return Loaded;
         }
-
+        public static ResourcesLibrary.LoadedResource LoadFX(string assetid, string assetBundleName)
+        {
+            // var sw = new Stopwatch();
+            //sw.Start();
+            AssetBundle assetBundle = BundlesLoadService.Instance?.RequestBundle(assetBundleName);
+            //  sw.Stop();
+            // Main.Logger.Log($"Got Bundle in {sw.ElapsedTicks} ticks");
+            // sw.Restart();
+            var resource = assetBundle.LoadAsset_Internal(assetid, typeof(GameObject));
+            // sw.Stop();
+            // Main.Logger.Log($"Loaded Asset in {sw.ElapsedTicks} ticks");
+            // sw.Restart();
+            var Loaded = new ResourcesLibrary.LoadedResource();
+            Loaded.Resource = resource;
+            Loaded.AssetId = assetid;
+            //  sw.Stop();
+            // Main.Logger.Log($"Made LoadedResource in {sw.ElapsedTicks} ticks");
+            return Loaded;
+        }
         public static Dictionary<string, string> resourceguidmap;
         public static Dictionary<string, string> GetResourceGuidMap()
         {
@@ -99,9 +139,10 @@ namespace VisualAdjustments2
             ["DE"] = "Drow"
 
         };
-        public static void SaveCachedEEs(EEInfo[] array)
+        public static void SaveCachedResources<T>(ResourceInfo[] array) where T : SerializedResourceList
         {
-            var filepath = Path.Combine(Main.ModEntry.Path, "CachedEEs.json");
+
+            var filepath = typeof(T) == typeof(SerializedEEList) ? Path.Combine(Main.ModEntry.Path, "CachedEEs.json") : Path.Combine(Main.ModEntry.Path, "CachedFXs.json");
             try
             {
                 JsonSerializer serializer = new JsonSerializer();
@@ -111,7 +152,14 @@ namespace VisualAdjustments2
                 using (StreamWriter sw = new StreamWriter(filepath))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, new SerializedEEList(array, GameVersion.GetVersion()));
+                    if (typeof(T) == typeof(SerializedEEList))
+                    {
+                        serializer.Serialize(writer, new SerializedEEList(array, GameVersion.GetVersion()));
+                    }
+                    else
+                    {
+                        serializer.Serialize(writer, new SerializedFXList(array, GameVersion.GetVersion()));
+                    }
                 }
             }
             catch (Exception ex)
@@ -130,13 +178,13 @@ namespace VisualAdjustments2
             BarleyHandleAssets(request.assetBundle);
             yield return null;
         }*/
-        public static bool GetCachedEEs(out SerializedEEList info)
+        public static bool GetCachedResources<T>(out T info) where T : SerializedResourceList
         {
 #if DEBUG
             // info = null;
             //  return false;
 #endif
-            var filepath = Path.Combine(Main.ModEntry.Path, "CachedEEs.json");
+            var filepath = typeof(T) == typeof(SerializedEEList) ? Path.Combine(Main.ModEntry.Path, "CachedEEs.json") : Path.Combine(Main.ModEntry.Path, "CachedFXs.json");
             if (File.Exists(filepath))
             {
                 try
@@ -145,7 +193,7 @@ namespace VisualAdjustments2
                     using (StreamReader sr = new StreamReader(filepath))
                     using (JsonTextReader reader = new JsonTextReader(sr))
                     {
-                        SerializedEEList deserialized = serializer.Deserialize<SerializedEEList>(reader);
+                        T deserialized = serializer.Deserialize<T>(reader);
                         if (deserialized == null)
                         {
                             info = null;
@@ -268,7 +316,7 @@ namespace VisualAdjustments2
         }
         public static void StartEEGetting()
         {
-            m_AllEEs = new List<EEInfo>();
+            m_AllEEs = new List<ResourceInfo>();
             var sw = new Stopwatch();
             sw.Start();
             foreach (var x in GetResourceGuidMap().Where(b => b.Value[0] == 'e' && b.Value[1] == 'e' && b.Value[2] == '_'))
@@ -386,12 +434,231 @@ namespace VisualAdjustments2
         public static void HandleEEGotten(EquipmentEntity ee, string guid)
         {
             // Main.Logger.Log($"Got EE {ee.name}");
-            m_AllEEs.Add(new EEInfo(ProcessEEName(ee.name), ee.name, guid));
+            m_AllEEs.Add(new ResourceInfo(ProcessEEName(ee.name), ee.name, guid, typeof(EquipmentEntity)));
+        }
+        public static Type[] FXAbilityTypes = new Type[]
+        {
+            typeof(BlueprintAbility)
+        };
+        public class FXBlockerHolder
+        {
+            [JsonProperty] public List<string> FXGuids = new List<string>();
+            [JsonProperty] public List<FXBlocker> FXBlockers = new List<FXBlocker>();
+            public void Recache()
+            {
+                var all = FXBlockers.SelectMany(z => z.FXGuids);
+                FXGuids.Clear();
+                foreach (var fx in all)
+                {
+                    FXGuids.Add(fx);
+                }
+            }
+        }
+        public class FXBlocker
+        {
+            public string DisplayName;
+            public string AbilityGUID;
+            public List<string> FXGuids = new List<string>();
+            public FXBlocker(BlueprintAbility ability)
+            {
+                this.AbilityGUID = ability.AssetGuidThreadSafe;
+                var c = ability?.GetComponent<AbilityEffectRunAction>()?.Actions?.Actions;
+                if (c != null && c.Length > 0)
+                {
+                    var buff = ((ContextActionApplyBuff)c.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
+                    if (buff != null)
+                    {
+                        if (!buff.FxOnRemove.AssetId.IsNullOrEmpty()) this.FXGuids.Add(buff.FxOnRemove.AssetId);
+                        if (!buff.FxOnStart.AssetId.IsNullOrEmpty()) this.FXGuids.Add(buff.FxOnStart.AssetId);
+                    }
+                    this.DisplayName = ability.m_DisplayName;
+                }
+            }
+        }
+        ///settings contains fxblockers, remove specific fxblockers from UI & recache, have buffhandler check all FXGuids, maybe reactive property nonsense?
+        public static Dictionary<string, FXBlocker> AbilityGuidToFXBlocker = new Dictionary<string, FXBlocker>();
+        public static List<ResourceInfo> GetFXs()
+        {
+            var wack = new List<ResourceInfo>();
+            var allbp = Kingmaker.Cheats.Utilities.GetAllBlueprints();
+            foreach (var activatable in allbp.Entries.Where(b => b.Type == typeof(BlueprintActivatableAbility)))
+            {
+                var bp = ResourcesLibrary.TryGetBlueprint<BlueprintActivatableAbility>(activatable.Guid);
+                if (!bp.HiddenInInspector && bp.m_Buff.guid != null && bp.m_Buff.guid != "")
+                {
+                    wack.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
+                    Main.Logger.Log(bp.NameForAcronym);
+                }
+            }
+            var templist = new List<BlueprintAbility>();
+            var wack2 = new List<FXBlocker>();
+            foreach (var ability in allbp.Entries.Where(b => b.Type == typeof(BlueprintAbility)))
+            {
+                /*var bp = ResourcesLibrary.TryGetBlueprint<BlueprintAbility>(ability.Guid);
+                var cmp = bp.GetComponent<AbilityEffectRunAction>();
+                var cmp2 = cmp != null && (bool)(cmp?.Actions?.Actions?.Where(b => b?.GetType() == typeof(ContextActionApplyBuff) == true).Any(c => ((ContextActionApplyBuff)c)?.Buff?.FxOnStart?.AssetId != ""));*/
+                //if (cmp2)
+                var bp = ResourcesLibrary.TryGetBlueprint<BlueprintAbility>(ability.Guid);
+
+
+                if (!bp.HiddenInInspector && bp.GetBeneficialBuffs())
+                {
+                    //Main.Logger.Log(ability.Name);
+                    var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
+                    if (firstMatch != null)
+                    {
+                        var c = bp?.GetComponent<AbilityEffectRunAction>()?.Actions?.Actions;
+                        if (c != null && c.Length > 0)
+                        {
+                            var a = ((ContextActionApplyBuff)c.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
+                            if (a != null)
+                            {
+                                Main.Logger.Log($"Merged: {bp.NameForAcronym}");
+                                if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false && firstMatch.FXGuids.Contains(a.FxOnRemove.AssetId)) firstMatch.FXGuids.Add(a.FxOnRemove.AssetId);
+                                if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false && firstMatch.FXGuids.Contains(a.FxOnStart.AssetId)) firstMatch.FXGuids.Add(a.FxOnStart.AssetId);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        wack.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
+                        wack2.Add(new FXBlocker(bp));
+                    }
+                }
+            }
+
+            return wack;
+            foreach (var bp in templist)
+            {
+                bool TryMerge()
+                {
+                    var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
+                    if (firstMatch != null)
+                    {
+                        var a = ((ContextActionApplyBuff)bp.GetComponent<AbilityEffectRunAction>()?.Actions?.Actions?.FirstOrDefault(c => c.GetType() == typeof(ContextActionApplyBuff))).Buff;
+                        if (a != null)
+                        {
+                            if (!a.FxOnRemove.AssetId.IsNullOrEmpty() && firstMatch.FXGuids.Contains(a.FxOnRemove.AssetId)) firstMatch.FXGuids.Add(a.FxOnRemove.AssetId);
+                            if (!a.FxOnStart.AssetId.IsNullOrEmpty() && firstMatch.FXGuids.Contains(a.FxOnStart.AssetId)) firstMatch.FXGuids.Add(a.FxOnStart.AssetId);
+                        }
+                    }
+                    else
+                    {
+                        wack2.Add(new FXBlocker(bp));
+                    }
+                    return false;
+                    //   if (wack.Any(a => a.Name == bp.m_DisplayName))) return true;
+                }
+                //if (TryMerge())
+                //  wack.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
+            }
+            return wack;
+            if (GetCachedResources<SerializedFXList>(out var deserializedFX) == true)
+            {
+                // foreach (var ee in deserializedFX.allFXs)
+                // {
+                //   NameToEEInfo.Add(ee.Name_Internal, ee);
+                //}
+                return deserializedFX.allFXs.ToList();
+            }
+            else
+            {
+                var list = new List<ResourceInfo>();
+                var AbilitiesWithFX = Kingmaker.Cheats.Utilities.GetAllBlueprints().Entries.Where(a => a.Type == typeof(BlueprintBuff));
+                foreach (var c in AbilitiesWithFX)
+                {
+                    var loaded = ResourcesLibrary.TryGetBlueprint<BlueprintBuff>(c.Guid);
+                    if (((loaded.FxOnStart != null && loaded.FxOnStart.AssetId != "") || (loaded.FxOnRemove != null && loaded.FxOnRemove.AssetId != "")) && loaded.m_Flags != 0 && loaded.m_DisplayName != "" && loaded.NameForAcronym != "") list.Add(new ResourceInfo(loaded.m_DisplayName, loaded.NameForAcronym, c.Guid, c.m_Type));
+                    // Main.Logger.Log($"{c.Name} : Type = {c.Type.Name}");
+
+                }
+                list.Sort((x, y) => string.Compare(x.Name, y.Name));
+                SaveCachedResources<SerializedFXList>(list.ToArray());
+                return list;
+            }
+            /*{
+#if DEBUG
+                var sw = new Stopwatch();
+                sw.Start();
+#endif
+                if (GetResourceGuidMap() != null)
+                {
+#if DEBUG
+                    var sw4 = new Stopwatch();
+                    sw4.Start();
+#endif
+                    var templist = new List<KeyValuePair<string, string>>();
+                    async Task<List<KeyValuePair<string, string>>> GetEEGuids(Dictionary<string, string> list)
+                    {
+                        var toload = new List<KeyValuePair<string, string>>();
+                        //foreach (var value in list.Where(b => (b.Value[0] == 'e' && b.Value[1] == 'e' && b.Value[2] == '_')))
+                        //foreach (var value in list.Where(b => b.Value.Length > 3 && b.Value[b.Value.Length - 1] == 'x' && b.Value[b.Value.Length - 2] == 'f' && b.Value[b.Value.Length - 3] == '.'))
+                        foreach(var value in list.Where(b => b.Value.EndsWith(".fx")))
+                        {
+                            await Task.Run(() => { toload.Add(value); }).ConfigureAwait(false);
+                        }
+                        return toload;
+                    }
+                    var task = GetEEGuids(GetResourceGuidMap());
+                    task.Wait();
+#if DEBUG
+                    sw4.Stop();
+                    Main.Logger.Log($"Processed KVs in {sw4.ElapsedMilliseconds}ms");
+#endif
+                    var sw2 = new Stopwatch();
+                    sw2.Start();
+                    foreach (var guid in task.Result)
+                    {
+                        Main.Logger.Log(guid.Key);
+                        var obj = LoadFX(guid.Key, guid.Value);
+                        if (obj != null)
+                        {
+                            if (obj.Resource != null)
+                                templist.Add(new KeyValuePair<string, string>(guid.Key, obj.Resource.name));
+                        }
+                    }
+#if DEBUG
+                    sw2.Stop();
+                    Main.Logger.Log($"Loaded FXs in {sw2.ElapsedMilliseconds}ms");
+                    var sw3 = new Stopwatch();
+                    sw3.Start();
+#endif
+                    var eeinfolist = new List<ResourceInfo>();
+                    async Task<List<ResourceInfo>> Stuff()
+                    {
+                        foreach (var loaded in templist)
+                        {
+                            await Task.Run(() =>
+                            {
+                                var eeinfo = new ResourceInfo(ProcessEEName(loaded.Value), loaded.Value, loaded.Key);
+                                eeinfolist.Add(eeinfo); NameToEEInfo.Add(loaded.Value, eeinfo);
+                            }).ConfigureAwait(false);
+                        }
+                        return eeinfolist;
+                    }
+                    var task2 = Stuff();
+                    task2.Wait();
+#if DEBUG
+                    sw3.Stop();
+                    Main.Logger.Log($"Strings processed in {sw3.Elapsed}ms");
+#endif
+                    ResourcesLibrary.CleanupLoadedCache();
+#if DEBUG
+                    sw.Stop();
+                    Main.Logger.Log($"Got all FX's in {sw.ElapsedMilliseconds}ms");
+                    Main.Logger.Log($"String processing took {sw.ElapsedMilliseconds - sw2.ElapsedMilliseconds - sw3.ElapsedMilliseconds}");
+#endif
+                    var ResultToArray = task2.Result.ToArray();
+                    SaveCachedResources<SerializedFXList>(ResultToArray);
+                    return task2.Result;
+                }
+                else throw (new Exception("GUID Map null, what? how?"));
+            }*/
         }
         //Old slow EE getter
-        public static List<EEInfo> GetEEs()
+        public static List<ResourceInfo> GetEEs()
         {
-            if (GetCachedEEs(out var deserialized) == true)
+            if (GetCachedResources<SerializedEEList>(out var deserialized) == true)
             {
                 foreach (var ee in deserialized.allEEs)
                 {
@@ -444,14 +711,14 @@ namespace VisualAdjustments2
                     var sw3 = new Stopwatch();
                     sw3.Start();
 #endif
-                    var eeinfolist = new List<EEInfo>();
-                    async Task<List<EEInfo>> Stuff()
+                    var eeinfolist = new List<ResourceInfo>();
+                    async Task<List<ResourceInfo>> Stuff()
                     {
                         foreach (var loaded in templist)
                         {
                             await Task.Run(() =>
                             {
-                                var eeinfo = new EEInfo(ProcessEEName(loaded.Value), loaded.Value, loaded.Key);
+                                var eeinfo = new ResourceInfo(ProcessEEName(loaded.Value), loaded.Value, loaded.Key, typeof(EquipmentEntity));
                                 eeinfolist.Add(eeinfo); NameToEEInfo.Add(loaded.Value, eeinfo);
                             }).ConfigureAwait(false);
                         }
@@ -469,8 +736,9 @@ namespace VisualAdjustments2
                     Main.Logger.Log($"Got all EE's in {sw.ElapsedMilliseconds}ms");
                     Main.Logger.Log($"String processing took {sw.ElapsedMilliseconds - sw2.ElapsedMilliseconds - sw3.ElapsedMilliseconds}");
 #endif
+                    task2.Result.Sort((x, y) => string.Compare(x.Name, y.Name));
                     var ResultToArray = task2.Result.ToArray();
-                    SaveCachedEEs(ResultToArray);
+                    SaveCachedResources<SerializedEEList>(ResultToArray);
                     return task2.Result;
                 }
                 else throw (new Exception("GUID Map null, what? how?"));
@@ -488,13 +756,22 @@ namespace VisualAdjustments2
                  return m_AllEEs;
              }
          }*/
-        public static List<EEInfo> m_AllEEs;
-        public static List<EEInfo> AllEEs
+        public static List<ResourceInfo> m_AllEEs;
+        public static List<ResourceInfo> AllEEs
         {
             get
             {
                 if (m_AllEEs == null) m_AllEEs = GetEEs();
                 return m_AllEEs;
+            }
+        }
+        public static List<ResourceInfo> m_AllFXs;
+        public static List<ResourceInfo> AllFXs
+        {
+            get
+            {
+                if (m_AllFXs == null) m_AllFXs = GetFXs();
+                return m_AllFXs;
             }
         }
         public static string ProcessEEName(string ee)

@@ -66,6 +66,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\BubblesSaveHooker.cs" />
+    <Compile Include="Infrastructure\Bubble_Extension_Methods.cs" />
+    <Compile Include="Infrastructure\BuffHandler.cs" />
     <Compile Include="Infrastructure\CharacterSettings.cs" />
     <Compile Include="Infrastructure\ClassEquipment.cs" />
     <Compile Include="Infrastructure\EeInfraStructure.cs" />
@@ -75,6 +77,8 @@
     <Compile Include="UI\PCViews\Modified\BarleySlideSelectorPCView.cs" />
     <Compile Include="UI\PCViews\Modified\DollControllerVA.cs" />
     <Compile Include="UI\PCViews\Modified\EEColorPickerPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\ListView\BuffButtonPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\ListView\BuffListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListSearchPCView.cs" />
     <Compile Include="UI\PCViews\New\ColorPreviewView.cs" />
     <Compile Include="UI\PCViews\New\CreateDollPCView.cs" />
@@ -82,6 +86,8 @@
     <Compile Include="UI\PCViews\New\ToggleGroupPCView.cs" />
     <Compile Include="UI\PCViews\Modified\CharGenAppearancePhaseDetailedPCViewModified.cs" />
     <Compile Include="UI\VMs\Modified\ColorSelectorSliderVM.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\BuffButtonVM.cs" />
+    <Compile Include="UI\VMs\Modified\ListView\BuffListViewVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\EESearchVM.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListViewItemPCView.cs" />
@@ -101,7 +107,6 @@
     <Compile Include="UI\VMs\Modified\ListView\ListViewItemVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />
-    <Compile Include="UI\VMs\New\ColorPreviewVM.cs" />
     <Compile Include="UI\VMs\New\CreateDollVM.cs" />
     <Compile Include="UI\VMs\New\DollVM.cs" />
     <Compile Include="UI\VMs\New\EEPickerVM.cs" />
@@ -113,7 +118,6 @@
     <Compile Include="UI\VMs\Modified\ServiceWindowsMenuVMModified.cs" />
     <Compile Include="UI\VMs\Modified\ServiceWindowsVMModified.cs" />
     <Compile Include="UI\UIPatches.cs" />
-    <Compile Include="UI\VMs\New\SearchableBoxVM.cs" />
     <Compile Include="UI\VMs\New\VisualAdjustments2VM.cs" />
   </ItemGroup>
   <ItemGroup>

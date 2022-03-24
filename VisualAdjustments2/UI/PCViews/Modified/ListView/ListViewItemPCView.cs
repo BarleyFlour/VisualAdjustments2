@@ -30,6 +30,7 @@ namespace VisualAdjustments2.UI
         public override void DestroyViewImplementation()
         {
             base.DestroyViewImplementation();
+            m_AddButton.OnLeftClick.RemoveListener(OnClickAddRemove);
           //  base.gameObject.SetActive(false);
         }
         public void OnClickAddRemove()

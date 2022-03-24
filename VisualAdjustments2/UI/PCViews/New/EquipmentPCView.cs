@@ -20,13 +20,14 @@ namespace VisualAdjustments2.UI
         public override void BindViewImplementation()
         {
             base.BindViewImplementation();
-            m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+            this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
             this.m_VisualSettings.Dispose();
         }
 
         public override void DestroyViewImplementation()
         {
             base.DestroyViewImplementation();
+            this.m_dollCharacterController.Unbind();
         }
         public OwlcatButton m_ApplyButton;
         public ListPCView m_ListPCView;

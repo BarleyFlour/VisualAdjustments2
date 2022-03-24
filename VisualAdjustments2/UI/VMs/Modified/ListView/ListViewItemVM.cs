@@ -17,7 +17,7 @@ namespace VisualAdjustments2.UI
     {
 		public const string Add = "<";
 		public const string Remove = ">";
-		public ListViewItemVM(EEInfo ee,bool addorremove,Action<ListViewItemVM> OnSelectAction) : base(false)
+		public ListViewItemVM(ResourceInfo ee,bool addorremove,Action<ListViewItemVM> OnSelectAction) : base(false)
 		{
 			this.Guid = ee.GUID;
 			this.DisplayName = ee.Name;

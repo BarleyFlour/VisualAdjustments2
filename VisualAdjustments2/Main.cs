@@ -14,9 +14,12 @@ using UnityEngine;
 using System.Collections;
 using Kingmaker.BundlesLoading;
 using System.Diagnostics;
+using Kingmaker.Blueprints;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
 #if DEBUG
 using UnityModManagerNet;
 #endif
+using Kingmaker.Visual.Particles;
 
 namespace VisualAdjustments2
 {
@@ -89,9 +92,14 @@ namespace VisualAdjustments2
             {
                 ResourceLoader.StartEEGetting();
             }
-            if (GUILayout.Button("EEGetNew"))
+            if (GUILayout.Button("FXGet"))
             {
-               // ResourceLoader.StartEEGetting2();
+                var a = ResourceLoader.GetFXs();
+              //  FxHelper.SpawnFxOnUnit(ResourcesLibrary.TryGetResource<GameObject>(a.First().GUID),Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View);
+            }
+            if(GUILayout.Button(""))
+            {
+
             }
             if(GUILayout.Button("EEGuidCompare"))
             {

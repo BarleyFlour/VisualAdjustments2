@@ -62,9 +62,9 @@ namespace VisualAdjustments2.Infrastructure
                 throw;
             }
         }
-        public static EEInfo? ToEEInfo(this EquipmentEntity ee)
+        public static ResourceInfo? ToEEInfo(this EquipmentEntity ee)
         {
-            if (ResourceLoader.NameToEEInfo.TryGetValue(ee.name, out EEInfo val))
+            if (ResourceLoader.NameToEEInfo.TryGetValue(ee.name, out ResourceInfo val))
             {
                 return val;
             }
@@ -330,6 +330,79 @@ namespace VisualAdjustments2.Infrastructure
                 newtxt.fontStyle = FontStyles.Bold;
                 newtxt.color = acronymTMP.color;
                 newcomp.m_IconText = newtxt;*/
+
+                return newcomp;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw e;
+            }
+        }
+        public static BuffButtonPCView ConvertToBuffButtonPCView(this CharGenFeatureSelectorItemPCView oldview)
+        {
+            try
+            {
+                var newcomp = oldview.gameObject.AddComponent<BuffButtonPCView>();
+                newcomp.m_Button = oldview.m_Button;
+                newcomp.m_FeatureAcronymText = oldview.m_FeatureAcronymText;
+                newcomp.m_FeatureImage = oldview.m_FeatureImage;
+                newcomp.m_FeatureNameText = oldview.m_FeatureNameText;
+                newcomp.m_NotAvailableLabel = oldview.m_NotAvailableLabel;
+                newcomp.m_FeatureDescription = oldview.transform.Find("TextContainer/Description").GetComponent<TextMeshProUGUI>();
+                //newcomp.m_DisplayName = oldview.m_FeatureNameText;
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("CollapseButton"));
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("RecommendationPlace"));
+                /*foreach(var comp in oldview.transform.Find("IconPlace").GetComponents<Component>().Concat(oldview.transform.Find("IconPlace").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+                foreach (var comp in oldview.transform.Find("TextContainer/Description").GetComponents<Component>().Concat(oldview.transform.Find("TextContainer/Description").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("IconPlace"), true);
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("TextContainer/Description"), true);*/
+                var iconplace = oldview.transform.Find("IconPlace");
+                //iconplace.localScale = new Vector3((float)0.75, (float)0.75, (float)0.75);
+                var bg = iconplace.Find("BG");
+                //bg.Find("Icon").gameObject.SetActive(false);
+                var acronym = bg.Find("Acronym");
+                acronym.gameObject.SetActive(true);
+                var acronymTMP = acronym.GetComponent<TextMeshProUGUI>();
+                acronymTMP.fontSizeMax = 46;
+                acronymTMP.fontSize = 46;
+                acronymTMP.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                acronymTMP.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                //  newcomp.m_IconText = acronymTMP;
+                //oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
+                UnityEngine.Component.Destroy(oldview);
+
+
+                var InstantiatedButton = UnityEngine.GameObject.Instantiate(StaticCanvas.Instance.transform.Find("ServiceWindowsPCView/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                var icon = InstantiatedButton.Find("Icon");
+                icon.gameObject.SetActive(true);
+                newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
+                UnityEngine.Component.DestroyImmediate(icon.gameObject.GetComponent<Image>(), true);
+                var newtxt = icon.gameObject.AddComponent<TextMeshProUGUI>(acronymTMP);
+                newtxt.text = "";
+                newtxt.fontSizeMin = 45;
+                newcomp.m_IconText = newtxt;
+               // iconplace.gameObject.SetActive(false);
+
+                var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
+                Layout.spacing = 10;
+                Layout.padding.left = 10;
+                newtxt.font = acronymTMP.font;
+                newtxt.alignment = TextAlignmentOptions.CenterGeoAligned;
+                newtxt.horizontalAlignment = HorizontalAlignmentOptions.Geometry;
+                newtxt.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                newtxt.fontSizeMax = 46;
+                newtxt.material = acronymTMP.material;
+                newtxt.fontStyle = FontStyles.Bold;
+                newtxt.color = acronymTMP.color;
+                newcomp.m_IconText = newtxt;
 
                 return newcomp;
             }

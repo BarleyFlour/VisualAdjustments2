@@ -215,7 +215,7 @@ namespace VisualAdjustments2
                     UnityEngine.Object.Destroy(top.Find("Character").gameObject);
                     var inventory = top.Find("Inventory").gameObject;
 
-                    var FXViewerButton = CreateButton(inventory, top, "FX Viewer");
+                    var FXViewerButton = CreateButton(inventory, top, "Buff Viewer");
                     var DollButton = CreateButton(inventory, top, "Doll");
                     var EquipmentButton = CreateButton(inventory, top, "Equipment");
                     var EEPickerButton = CreateButton(inventory, top, "EE Picker");
@@ -276,7 +276,32 @@ namespace VisualAdjustments2
                     gameobject.transform.localPosition = new Vector3(0, 0, 0);
                     gameobject.transform.localScale = new Vector3(1, 1, 1);
                     gameobject.SetActive(false);
-
+                    {
+                        FXViewerPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
+                        FXViewerPCView.m_dollCharacterController = dollroomcomp;
+                        //Current FXs List
+                        {
+                            var alleelistview = GameObject.Instantiate(gameobject.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject.transform);
+                            alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
+                            var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
+                            var newcompl = alleelistview.AddComponent<BuffListPCView>();
+                            newcompl.SetupFromChargenList(oldcomp, false, "Current Buffs");
+                            UnityEngine.Component.Destroy(oldcomp);
+                            FXViewerPCView.m_AllFX = newcompl;
+                            newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
+                            FXViewerPCView.m_CurrentFX = newcompl;
+                        }
+                        //All FXs list
+                        {
+                            var alleelistview = GameObject.Instantiate(gameobject.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject.transform);
+                            alleelistview.transform.localPosition = new Vector3(650, -50, 0);
+                            var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
+                            var newcompl = alleelistview.AddComponent<BuffListPCView>();
+                            newcompl.SetupFromChargenList(oldcomp, true, "All Buffs");
+                            UnityEngine.Component.Destroy(oldcomp);
+                            FXViewerPCView.m_AllFX = newcompl;
+                        }
+                    }
 
                     EEPickerPCView EEPickerPCView = CreateEEPicker(newgameobject, dollroomcomp);
                     EEPickerPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
@@ -294,8 +319,9 @@ namespace VisualAdjustments2
                     {
                         {
                             EquipmentPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
+                            EquipmentPCView.m_dollCharacterController = dollroomcomp;
                         }
-                        EquipmentPCView.m_dollCharacterController = dollroomcomp;
+                        
                         var alleelistview = GameObject.Instantiate(gameobject3.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject3.transform);
                         alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
                         var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();

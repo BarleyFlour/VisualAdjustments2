@@ -15,10 +15,16 @@ namespace VisualAdjustments2.Infrastructure
     public class CharacterSettings
     {
         public EESettings EeSettings = new EESettings();
+        public Buff_Settings Fx_Settings = new Buff_Settings();
         public string ClassGUID;
         public class EESettings
         {
             public List<EE_Applier> EEs = new List<EE_Applier>();
+        }
+        public class Buff_Settings
+        {
+            public bool WhiteOrBlackList = false;
+            public List<string> Xlist = new List<string>();
         }
         public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict = SetupDict();
         public SerializedDollState doll;
@@ -49,6 +55,7 @@ namespace VisualAdjustments2.Infrastructure
             return new Color(r, g, b);
         }
     }
+    
     public class EE_Applier
     {
         public enum ActionType
