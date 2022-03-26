@@ -27,6 +27,7 @@ using Kingmaker.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Mechanics;
 using Kingmaker.EntitySystem;
 using Kingmaker.UnitLogic.Abilities.Components.AreaEffects;
+using Kingmaker.UnitLogic.ActivatableAbilities;
 
 namespace VisualAdjustments2.Infrastructure
 {
@@ -93,6 +94,20 @@ namespace VisualAdjustments2.Infrastructure
             return false;
         }
         public static bool GetBeneficialBuffs(this BlueprintAbility spell)
+        {
+            //LogVerbose(level, $"getting buffs for spell: {spell.Name}");
+            // spell = spell.DeTouchify();
+            // LogVerbose(level, $"detouchified-to: {spell.Name}");
+            if (spell.TryGetComponent<AbilityEffectRunAction>(out var runAction))
+            {
+                return runAction.Actions.Actions.Where(a => a.GetBeneficialBuffs()).Any();
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static bool GetBeneficialBuffs(this BlueprintActivatableAbility spell)
         {
             //LogVerbose(level, $"getting buffs for spell: {spell.Name}");
             // spell = spell.DeTouchify();

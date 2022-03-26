@@ -365,6 +365,8 @@ namespace VisualAdjustments2.Infrastructure
                 UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("IconPlace"), true);
                 UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("TextContainer/Description"), true);*/
                 var iconplace = oldview.transform.Find("IconPlace");
+                var vertlayoutworkaround = iconplace.GetComponent<VerticalLayoutGroupWorkaround>();
+                vertlayoutworkaround.padding.left = 10;
                 //iconplace.localScale = new Vector3((float)0.75, (float)0.75, (float)0.75);
                 var bg = iconplace.Find("BG");
                 //bg.Find("Icon").gameObject.SetActive(false);

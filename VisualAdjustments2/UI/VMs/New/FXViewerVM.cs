@@ -25,19 +25,19 @@ namespace VisualAdjustments2.UI
         {
             base.AddDisposable(this);
             var allBuffs = new ReactiveCollection<BuffButtonVM>();
-            foreach(var buff in ResourceLoader.AllFXs)
+            foreach (var buff in ResourceLoader.AllFXs)
             {
-                allBuffs.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.GUID),true,this.AddListItem));
+                allBuffs.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.GUID), true, this.AddListItem));
             }
             ReactiveCollection<BuffButtonVM> reactive = new ReactiveCollection<BuffButtonVM>();
             /*foreach (var kv in ResourceLoader.AllEEs)
             {
                 reactive.Add(new ListViewItemVM(kv, true, AddListItem));
             }*/
-           // var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
-            foreach(var buff in data.GetSettings().Fx_Settings.Xlist)
+            // var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
+            foreach (var buff in data.GetSettings().Fx_Settings.fXBlockerHolder.FXBlockers)
             {
-                reactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff),false,this.RemoveListItem));
+                reactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
             }
             /*foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
             {
@@ -50,7 +50,7 @@ namespace VisualAdjustments2.UI
             this.UnitDescriptor = Game.Instance.SelectionCharacter.SelectedUnit;
             base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitDescriptor _)
             {
-               // this.OnUnitChanged();
+                // this.OnUnitChanged();
             }));
             base.AddDisposable(m_AllFX.Value = new BuffListViewVM(allBuffs, new ReactiveProperty<BuffButtonVM>(null)));
             base.AddDisposable(m_CurrentFX.Value = new BuffListViewVM(reactive, new ReactiveProperty<BuffButtonVM>(null)));
@@ -68,7 +68,12 @@ namespace VisualAdjustments2.UI
                 {
                     this.m_CurrentFX?.Value?.EntitiesCollection.Remove(item);
                     var settings = this.UnitDescriptor.Value.Unit.GetSettings();
-                    if (settings.Fx_Settings.Xlist.Contains(item.Feature.AssetGuidThreadSafe)) settings.Fx_Settings.Xlist.Remove(item.Feature.AssetGuidThreadSafe);
+                   // if (settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
+                    {
+                        settings.Fx_Settings.fXBlockerHolder.FXBlockers.Remove(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
+                        settings.Fx_Settings.fXBlockerHolder.Recache();
+                    }
+
                 }
             }
             catch (Exception e)
@@ -81,9 +86,13 @@ namespace VisualAdjustments2.UI
         {
             try
             {
-                if (!this.m_CurrentFX?.Value?.EntitiesCollection.Any(a => a.Feature.AssetGuid == item.Feature.AssetGuid) == true) this.m_CurrentFX?.Value.EntitiesCollection.Add(new BuffButtonVM(item.Feature, false,RemoveListItem));
+                if (!this.m_CurrentFX?.Value?.EntitiesCollection.Any(a => a.Feature.AssetGuid == item.Feature.AssetGuid) == true) this.m_CurrentFX?.Value.EntitiesCollection.Add(new BuffButtonVM(item.Feature, false, RemoveListItem));
                 var settings = this.UnitDescriptor.Value.Unit.GetSettings();
-                if (!settings.Fx_Settings.Xlist.Contains(item.Feature.AssetGuidThreadSafe)) settings.Fx_Settings.Xlist.Add(item.Feature.AssetGuidThreadSafe);
+               // if (!settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
+                {
+                    settings.Fx_Settings.fXBlockerHolder.FXBlockers.Add(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
+                    settings.Fx_Settings.fXBlockerHolder.Recache();
+                }
                 //Main.Logger.Log(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid).ToString());
                 /*if(Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName))*/
                 // Game.Instance.UI.Common.DollRoom.m_Avatar.AddEquipmentEntity(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid));

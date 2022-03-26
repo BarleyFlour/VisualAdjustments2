@@ -24,7 +24,7 @@ namespace VisualAdjustments2.Infrastructure
         public class Buff_Settings
         {
             public bool WhiteOrBlackList = false;
-            public List<string> Xlist = new List<string>();
+            public ResourceLoader.FXBlockerHolder fXBlockerHolder = new ResourceLoader.FXBlockerHolder();
         }
         public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict = SetupDict();
         public SerializedDollState doll;

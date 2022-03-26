@@ -62,8 +62,8 @@ namespace VisualAdjustments2.Infrastructure
             applier.Primary = this.PrimaryCol;
             applier.Secondary = this.SecondaryCol;
             if (!settings.EeSettings.EEs.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add)) settings.EeSettings.EEs.Add(applier);
-            this.PrimaryCol.Apply(loadedEE,character);
-            this.SecondaryCol.Apply(loadedEE, character);
+            this.PrimaryCol?.Apply(loadedEE,character);
+            this.SecondaryCol?.Apply(loadedEE, character);
         }
     }
     public class RemoveEE : EEApplyAction

@@ -287,8 +287,6 @@ namespace VisualAdjustments2
                             var newcompl = alleelistview.AddComponent<BuffListPCView>();
                             newcompl.SetupFromChargenList(oldcomp, false, "Current Buffs");
                             UnityEngine.Component.Destroy(oldcomp);
-                            FXViewerPCView.m_AllFX = newcompl;
-                            newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
                             FXViewerPCView.m_CurrentFX = newcompl;
                         }
                         //All FXs list
@@ -300,6 +298,7 @@ namespace VisualAdjustments2
                             newcompl.SetupFromChargenList(oldcomp, true, "All Buffs");
                             UnityEngine.Component.Destroy(oldcomp);
                             FXViewerPCView.m_AllFX = newcompl;
+                            newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
                         }
                     }
 
@@ -327,7 +326,7 @@ namespace VisualAdjustments2
                         var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                         var newcompl = alleelistview.AddComponent<ListPCView>();
                         newcompl.SetupFromChargenList(oldcomp, false,"Equipment");
-                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
+                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 333;
                         UnityEngine.Component.Destroy(oldcomp);
                         EquipmentPCView.m_ListPCView = newcompl;
                     }
