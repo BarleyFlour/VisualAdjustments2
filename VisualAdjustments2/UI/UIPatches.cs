@@ -27,6 +27,7 @@ using Kingmaker.UnitLogic.Class.LevelUp;
 using Kingmaker.UnitLogic.Components;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
+using Owlcat.Runtime.Core.Utils;
 using Owlcat.Runtime.UI.Controls.Button;
 using Owlcat.Runtime.UI.MVVM;
 using Owlcat.Runtime.UI.SelectionGroup;
@@ -287,6 +288,54 @@ namespace VisualAdjustments2
                             var newcompl = alleelistview.AddComponent<BuffListPCView>();
                             newcompl.SetupFromChargenList(oldcomp, false, "Current Buffs");
                             UnityEngine.Component.Destroy(oldcomp);
+                            {
+                                var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
+
+                                var PrimSec = new GameObject("PrimSec");
+                                var togglegroup = PrimSec.AddComponent<ToggleGroupHandler>();
+                                PrimSec.transform.SetParent(alleelistview.transform);
+                                // var layoutelement = PrimSec.AddComponent<LayoutElement>();
+                                //layoutelement.m_FlexibleHeight = 5;
+                                // layoutelement.m_MinHeight = 5;
+                                //layoutelement.m_PreferredHeight = 5;
+
+
+
+                                var horizontalLayoutGroup = PrimSec.AddComponent<HorizontalLayoutGroup>();
+                                horizontalLayoutGroup.childForceExpandHeight = false;
+                                horizontalLayoutGroup.childScaleHeight = false;
+                                horizontalLayoutGroup.padding.left = 5;
+                                horizontalLayoutGroup.padding.right = 12;
+                                horizontalLayoutGroup.spacing = 5;
+
+
+                                var PrimButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
+                                togglegroup.m_PrimarySelected = UnityEngine.Object.Instantiate(SelectedTransform, PrimButton.transform).gameObject;
+                                UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<CanvasGroup>());
+                                UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<Image>());
+                                var LeftButtonElement = PrimButton.EnsureComponent<LayoutElement>();
+                                LeftButtonElement.minHeight = 30;
+
+                                PrimButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                PrimButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Whitelist";
+                                PrimButton.gameObject.AddComponent<LayoutElement>();
+
+                                var SecButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
+                                togglegroup.m_SecondarySelected = UnityEngine.Object.Instantiate(SelectedTransform, SecButton.transform).gameObject;
+                                UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<CanvasGroup>());
+                                UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<Image>());
+
+
+                                SecButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                SecButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Blacklist";
+                                SecButton.gameObject.AddComponent<LayoutElement>();
+                                var RightButtonElement = SecButton.EnsureComponent<LayoutElement>();
+                                RightButtonElement.minHeight = 30;
+
+                                togglegroup.Setup(PrimButton.GetComponent<OwlcatButton>(), SecButton.GetComponent<OwlcatButton>());
+                                FXViewerPCView.m_WhiteOrBlacklist = togglegroup;
+                                togglegroup.transform.SetSiblingIndex(1);
+                            }
                             FXViewerPCView.m_CurrentFX = newcompl;
                         }
                         //All FXs list
@@ -298,7 +347,7 @@ namespace VisualAdjustments2
                             newcompl.SetupFromChargenList(oldcomp, true, "All Buffs");
                             UnityEngine.Component.Destroy(oldcomp);
                             FXViewerPCView.m_AllFX = newcompl;
-                            newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
+                            newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 333;
                         }
                     }
 
@@ -320,13 +369,13 @@ namespace VisualAdjustments2
                             EquipmentPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
                             EquipmentPCView.m_dollCharacterController = dollroomcomp;
                         }
-                        
+
                         var alleelistview = GameObject.Instantiate(gameobject3.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject3.transform);
                         alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
                         var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                         var newcompl = alleelistview.AddComponent<ListPCView>();
-                        newcompl.SetupFromChargenList(oldcomp, false,"Equipment");
-                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 333;
+                        newcompl.SetupFromChargenList(oldcomp, false, "Equipment");
+                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 500;
                         UnityEngine.Component.Destroy(oldcomp);
                         EquipmentPCView.m_ListPCView = newcompl;
                     }
@@ -378,7 +427,7 @@ namespace VisualAdjustments2
                 alleelistview.transform.localPosition = new Vector3(650, -50, 0);
                 var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                 var newcompl = alleelistview.AddComponent<ListPCView>();
-                newcompl.SetupFromChargenList(oldcomp, true,"All EEs");
+                newcompl.SetupFromChargenList(oldcomp, true, "All EEs");
                 newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 666;
                 UnityEngine.Component.Destroy(oldcomp);
                 EEPickerPCView.m_AllEEs = newcompl;
@@ -389,7 +438,7 @@ namespace VisualAdjustments2
                 alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
                 var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                 var newcompl = alleelistview.AddComponent<ListPCView>();
-                newcompl.SetupFromChargenList(oldcomp, false,"Current EEs");
+                newcompl.SetupFromChargenList(oldcomp, false, "Current EEs");
                 UnityEngine.Component.Destroy(oldcomp);
                 EEPickerPCView.m_CurrentEEs = newcompl;
             }

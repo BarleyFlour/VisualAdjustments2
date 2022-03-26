@@ -31,7 +31,8 @@ namespace VisualAdjustments2.UI
             this.m_FeatureNameText.text = str;
             this.m_FeatureAcronymText.text = base.ViewModel.FeatureAcronym;
             this.m_FeatureAcronymText.gameObject.SetActive(!string.IsNullOrEmpty(base.ViewModel.FeatureAcronym));
-            this.m_FeatureDescription.text = base.ViewModel.FeatureAcronymName;
+            // this.m_FeatureDescription.text = base.ViewModel.FeatureAcronymName;
+            this.m_FeatureDescription.text = base.ViewModel.FeatureDescription;
             this.m_FeatureDescription.gameObject.SetActive(true);
             m_AddButton.OnLeftClick.AddListener(OnClickAddRemove);
             this.m_IconText.text = base.ViewModel.AddOrRemove ? ListViewItemVM.Add : ListViewItemVM.Remove;

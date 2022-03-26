@@ -44,12 +44,14 @@ namespace VisualAdjustments2
     }
     public class SerializedFXList : SerializedResourceList
     {
-        public SerializedFXList(ResourceInfo[] allfxs, string version)
+        public SerializedFXList(ResourceInfo[] allfxs, Dictionary<string, ResourceLoader.FXBlocker> fxblockers, string version)
         {
             allFXs = allfxs;
             Version = version;
+            AbilityGuidToFXBlocker = fxblockers;
         }
         [JsonProperty] public ResourceInfo[] allFXs;
+        [JsonProperty] public Dictionary<string, ResourceLoader.FXBlocker> AbilityGuidToFXBlocker = new Dictionary<string, ResourceLoader.FXBlocker>();
     }
     public struct ResourceInfo
     {
@@ -159,7 +161,7 @@ namespace VisualAdjustments2
                     }
                     else
                     {
-                        serializer.Serialize(writer, new SerializedFXList(array, GameVersion.GetVersion()));
+                        serializer.Serialize(writer, new SerializedFXList(array, AbilityGuidToFXBlocker, GameVersion.GetVersion()));
                     }
                 }
             }
@@ -457,17 +459,21 @@ namespace VisualAdjustments2
         }
         public class FXBlocker
         {
-            public string DisplayName;
-            public string AbilityGUID;
-            public HashSet<string> AllAbilityGUIDs = new HashSet<string>();
-            public HashSet<string> FXGuids = new HashSet<string>();
+            [JsonProperty] public string DisplayName;
+            [JsonProperty] public string AbilityGUID;
+            [JsonProperty] public HashSet<string> AllAbilityGUIDs = new HashSet<string>();
+            [JsonProperty] public HashSet<string> FXGuids = new HashSet<string>();
+            public FXBlocker()
+            {
+
+            }
             public FXBlocker(BlueprintAbility ability)
             {
                 this.AbilityGUID = ability.AssetGuidThreadSafe;
 
                 void Merge(BlueprintBuff a)
                 {
-                    Main.Logger.Log($"Merged: {ability.NameForAcronym}");
+                   // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
                     this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
                     if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnRemove.AssetId);
                     if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnStart.AssetId);
@@ -488,7 +494,7 @@ namespace VisualAdjustments2
                             var z = ((ContextActionApplyBuff)b.IfTrue.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
                             if (z != null)
                             {
-                                Main.Logger.Log($"MergedConditionalIfTrue {ability.NameForAcronym}");
+                            //    Main.Logger.Log($"MergedConditionalIfTrue {ability.NameForAcronym}");
                                 Merge(z);
                             }
                         }
@@ -497,7 +503,7 @@ namespace VisualAdjustments2
                             var z = ((ContextActionApplyBuff)b.IfFalse.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
                             if (z != null)
                             {
-                                Main.Logger.Log($"MergedConditionalIfFalse {ability.NameForAcronym}");
+                              //  Main.Logger.Log($"MergedConditionalIfFalse {ability.NameForAcronym}");
                                 Merge(z);
                             }
                         }
@@ -512,10 +518,10 @@ namespace VisualAdjustments2
 
                 void Merge(BlueprintBuff a)
                 {
-                    Main.Logger.Log($"Merged: {ability.NameForAcronym}");
+                   // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
                     this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
                     if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnRemove.AssetId);
-                    if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false ) this.FXGuids.Add(a.FxOnStart.AssetId);
+                    if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnStart.AssetId);
                 }
                 Merge(ability.Buff);
                 this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
@@ -526,138 +532,16 @@ namespace VisualAdjustments2
         public static Dictionary<string, FXBlocker> AbilityGuidToFXBlocker = new Dictionary<string, FXBlocker>();
         public static List<ResourceInfo> GetFXs()
         {
-            var wack = new List<ResourceInfo>();
-            var allbp = Kingmaker.Cheats.Utilities.GetAllBlueprints();
-            var templist = new List<BlueprintAbility>();
-            var wack2 = new List<FXBlocker>();
-            foreach (var activatable in allbp.Entries.Where(b => b.Type == typeof(BlueprintActivatableAbility)))
-            {
-                var bp = ResourcesLibrary.TryGetBlueprint<BlueprintActivatableAbility>(activatable.Guid);
-                var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
-                if (firstMatch != null)
-                {
-                    //void Merge(BlueprintBuff a)
-                   // {
-                        Main.Logger.Log($"Merged: {bp.NameForAcronym}");
-                        firstMatch.AllAbilityGUIDs.Add(bp.AssetGuidThreadSafe);
-                        if (bp.Buff.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(bp.Buff.FxOnRemove.AssetId);
-                        if (bp.Buff.FxOnStart?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(bp.Buff.FxOnStart.AssetId);
-                   // }
 
-                }
-                else if (bp.m_Buff.guid != null && bp.m_Buff.guid != "" && bp.GetBeneficialBuffs())
-                {
-                    
-                    Main.Logger.Log(bp.NameForAcronym + " Activatable");
-                    wack.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
-                    var blocker = new FXBlocker(bp);
-                    AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
-                    wack2.Add(blocker);
-                    Main.Logger.Log(bp.NameForAcronym);
-                }
-            }
-            foreach (var ability in allbp.Entries.Where(b => b.Type == typeof(BlueprintAbility)))
-            {
-                /*var bp = ResourcesLibrary.TryGetBlueprint<BlueprintAbility>(ability.Guid);
-                var cmp = bp.GetComponent<AbilityEffectRunAction>();
-                var cmp2 = cmp != null && (bool)(cmp?.Actions?.Actions?.Where(b => b?.GetType() == typeof(ContextActionApplyBuff) == true).Any(c => ((ContextActionApplyBuff)c)?.Buff?.FxOnStart?.AssetId != ""));*/
-                //if (cmp2)
-                var bp = ResourcesLibrary.TryGetBlueprint<BlueprintAbility>(ability.Guid);
-
-
-                if (!bp.HiddenInInspector && bp.GetBeneficialBuffs())
-                {
-                    //Main.Logger.Log(ability.Name);
-                    var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
-                    if (firstMatch != null)
-                    {
-                        void Merge(BlueprintBuff a)
-                        {
-                            Main.Logger.Log($"Merged: {bp.NameForAcronym}");
-                            firstMatch.AllAbilityGUIDs.Add(bp.AssetGuidThreadSafe);
-                            if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(a.FxOnRemove.AssetId);
-                            if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false ) firstMatch.FXGuids.Add(a.FxOnStart.AssetId);
-                        }
-                        var c = bp?.GetComponent<AbilityEffectRunAction>()?.Actions?.Actions;
-                        if (c != null && c.Length > 0)
-                        {
-                            var a = ((ContextActionApplyBuff)c.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
-                            if (a != null)
-                            {
-                                Merge(a);
-                            }
-                            var b = ((Conditional)c.FirstOrDefault(x => x?.GetType() == typeof(Conditional)));
-                            if (b != null)
-                            {
-                                if (b.IfTrue?.Actions != null)
-                                {
-                                    var z = ((ContextActionApplyBuff)b.IfTrue.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
-                                    if(z != null)
-                                    {
-                                        Main.Logger.Log($"MergedConditionalIfTrue {bp.NameForAcronym}");
-                                        Merge(z);
-                                    }
-                                }
-                                if(b.IfFalse?.Actions != null)
-                                {
-                                    var z = ((ContextActionApplyBuff)b.IfFalse.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
-                                    if (z != null)
-                                    {
-                                        Main.Logger.Log($"MergedConditionalIfFalse {bp.NameForAcronym}");
-                                        Merge(z);
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        wack.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
-                        var blocker = new FXBlocker(bp);
-                        AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
-                        wack2.Add(blocker);
-                    }
-                }
-            }
-
-            return wack;
-            foreach (var bp in templist)
-            {
-                bool TryMerge()
-                {
-                    var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
-                    if (firstMatch != null)
-                    {
-                        var a = ((ContextActionApplyBuff)bp.GetComponent<AbilityEffectRunAction>()?.Actions?.Actions?.FirstOrDefault(c => c.GetType() == typeof(ContextActionApplyBuff))).Buff;
-                        if (a != null)
-                        {
-                            if (!a.FxOnRemove.AssetId.IsNullOrEmpty()) firstMatch.FXGuids.Add(a.FxOnRemove.AssetId);
-                            if (!a.FxOnStart.AssetId.IsNullOrEmpty()) firstMatch.FXGuids.Add(a.FxOnStart.AssetId);
-                        }
-                    }
-                    else
-                    {
-                        wack2.Add(new FXBlocker(bp));
-                    }
-                    return false;
-                    //   if (wack.Any(a => a.Name == bp.m_DisplayName))) return true;
-                }
-                //if (TryMerge())
-                //  wack.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
-            }
-            return wack;
+            // return resourceInfList;
             if (GetCachedResources<SerializedFXList>(out var deserializedFX) == true)
             {
-                // foreach (var ee in deserializedFX.allFXs)
-                // {
-                //   NameToEEInfo.Add(ee.Name_Internal, ee);
-                //}
+                AbilityGuidToFXBlocker = deserializedFX.AbilityGuidToFXBlocker;
                 return deserializedFX.allFXs.ToList();
             }
             else
             {
-                var list = new List<ResourceInfo>();
+                /*var list = new List<ResourceInfo>();
                 var AbilitiesWithFX = Kingmaker.Cheats.Utilities.GetAllBlueprints().Entries.Where(a => a.Type == typeof(BlueprintBuff));
                 foreach (var c in AbilitiesWithFX)
                 {
@@ -665,10 +549,102 @@ namespace VisualAdjustments2
                     if (((loaded.FxOnStart != null && loaded.FxOnStart.AssetId != "") || (loaded.FxOnRemove != null && loaded.FxOnRemove.AssetId != "")) && loaded.m_Flags != 0 && loaded.m_DisplayName != "" && loaded.NameForAcronym != "") list.Add(new ResourceInfo(loaded.m_DisplayName, loaded.NameForAcronym, c.Guid, c.m_Type));
                     // Main.Logger.Log($"{c.Name} : Type = {c.Type.Name}");
 
+                }*/
+                var resourceInfList = new List<ResourceInfo>();
+                var allbp = Kingmaker.Cheats.Utilities.GetAllBlueprints();
+                var templist = new List<BlueprintAbility>();
+                var wack2 = new List<FXBlocker>();
+                foreach (var activatable in allbp.Entries.Where(b => b.Type == typeof(BlueprintActivatableAbility)))
+                {
+                    var bp = ResourcesLibrary.TryGetBlueprint<BlueprintActivatableAbility>(activatable.Guid);
+                    var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
+                    if (firstMatch != null)
+                    {
+                        //void Merge(BlueprintBuff a)
+                        // {
+                       // Main.Logger.Log($"Merged: {bp.NameForAcronym}");
+                        firstMatch.AllAbilityGUIDs.Add(bp.AssetGuidThreadSafe);
+                        if (bp.Buff.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(bp.Buff.FxOnRemove.AssetId);
+                        if (bp.Buff.FxOnStart?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(bp.Buff.FxOnStart.AssetId);
+                        // }
+
+                    }
+                    else if (bp.m_Buff.guid != null && bp.m_Buff.guid != "" && bp.GetBeneficialBuffs())
+                    {
+
+                       // Main.Logger.Log(bp.NameForAcronym + " Activatable");
+                        resourceInfList.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
+                        var blocker = new FXBlocker(bp);
+                        AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
+                        wack2.Add(blocker);
+                        Main.Logger.Log(bp.NameForAcronym);
+                    }
                 }
-                list.Sort((x, y) => string.Compare(x.Name, y.Name));
-                SaveCachedResources<SerializedFXList>(list.ToArray());
-                return list;
+                foreach (var ability in allbp.Entries.Where(b => b.Type == typeof(BlueprintAbility)))
+                {
+                    if (ability.Guid == "416f867258c24b709bb1b74a2ad1ec89" || ability.Guid == "0bb76d697b7f4d0faa892df309be3710" || ability.Guid == "cbfd9c4f683c4394ba3543058f045682") //Wacky COTW abilities in wrath for some reason.
+                    {
+                        continue;
+                    }
+                    var bp = ResourcesLibrary.TryGetBlueprint<BlueprintAbility>(ability.Guid);
+                    if (!bp.HiddenInInspector && bp.GetBeneficialBuffs())
+                    {
+                        //Main.Logger.Log(ability.Name);
+                        var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);
+                        if (firstMatch != null)
+                        {
+                            void Merge(BlueprintBuff buffBP)
+                            {
+                                //Main.Logger.Log($"Merged: {bp.NameForAcronym}");
+                                firstMatch.AllAbilityGUIDs.Add(bp.AssetGuidThreadSafe);
+                                if (buffBP.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(buffBP.FxOnRemove.AssetId);
+                                if (buffBP.FxOnStart?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(buffBP.FxOnStart.AssetId);
+                            }
+                            var actionsList = bp?.GetComponent<AbilityEffectRunAction>()?.Actions?.Actions;
+                            if (actionsList != null && actionsList.Length > 0)
+                            {
+                                var buff = ((ContextActionApplyBuff)actionsList.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
+                                if (buff != null)
+                                {
+                                    Merge(buff);
+                                }
+                                var conditionalAction = ((Conditional)actionsList.FirstOrDefault(x => x?.GetType() == typeof(Conditional)));
+                                if (conditionalAction != null)
+                                {
+                                    if (conditionalAction.IfTrue?.Actions != null)
+                                    {
+                                        var ifTrueAction = ((ContextActionApplyBuff)conditionalAction.IfTrue.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
+                                        if (ifTrueAction != null)
+                                        {
+                                         //   Main.Logger.Log($"MergedConditionalIfTrue {bp.NameForAcronym}");
+                                            Merge(ifTrueAction);
+                                        }
+                                    }
+                                    if (conditionalAction.IfFalse?.Actions != null)
+                                    {
+                                        var ifFalseAction = ((ContextActionApplyBuff)conditionalAction.IfFalse.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
+                                        if (ifFalseAction != null)
+                                        {
+                                           // Main.Logger.Log($"MergedConditionalIfFalse {bp.NameForAcronym}");
+                                            Merge(ifFalseAction);
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            resourceInfList.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
+                            var blocker = new FXBlocker(bp);
+                            AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
+                            wack2.Add(blocker);
+                        }
+                    }
+                }
+                resourceInfList.Sort((x, y) => string.Compare(x.Name, y.Name));
+                SaveCachedResources<SerializedFXList>(resourceInfList.ToArray());
+                return resourceInfList;
             }
             /*{
 #if DEBUG

@@ -30,27 +30,14 @@ namespace VisualAdjustments2.UI
                 allBuffs.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.GUID), true, this.AddListItem));
             }
             ReactiveCollection<BuffButtonVM> reactive = new ReactiveCollection<BuffButtonVM>();
-            /*foreach (var kv in ResourceLoader.AllEEs)
-            {
-                reactive.Add(new ListViewItemVM(kv, true, AddListItem));
-            }*/
-            // var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
             foreach (var buff in data.GetSettings().Fx_Settings.fXBlockerHolder.FXBlockers)
             {
                 reactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
             }
-            /*foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
-            {
-                var inf = ee.ToEEInfo();
-                if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
-                {
-                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
-                }
-            }*/
             this.UnitDescriptor = Game.Instance.SelectionCharacter.SelectedUnit;
             base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitDescriptor _)
             {
-                // this.OnUnitChanged();
+                this.OnUnitChanged();
             }));
             base.AddDisposable(m_AllFX.Value = new BuffListViewVM(allBuffs, new ReactiveProperty<BuffButtonVM>(null)));
             base.AddDisposable(m_CurrentFX.Value = new BuffListViewVM(reactive, new ReactiveProperty<BuffButtonVM>(null)));
@@ -68,7 +55,7 @@ namespace VisualAdjustments2.UI
                 {
                     this.m_CurrentFX?.Value?.EntitiesCollection.Remove(item);
                     var settings = this.UnitDescriptor.Value.Unit.GetSettings();
-                   // if (settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
+                    // if (settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
                     {
                         settings.Fx_Settings.fXBlockerHolder.FXBlockers.Remove(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
                         settings.Fx_Settings.fXBlockerHolder.Recache();
@@ -88,7 +75,7 @@ namespace VisualAdjustments2.UI
             {
                 if (!this.m_CurrentFX?.Value?.EntitiesCollection.Any(a => a.Feature.AssetGuid == item.Feature.AssetGuid) == true) this.m_CurrentFX?.Value.EntitiesCollection.Add(new BuffButtonVM(item.Feature, false, RemoveListItem));
                 var settings = this.UnitDescriptor.Value.Unit.GetSettings();
-               // if (!settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
+                // if (!settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
                 {
                     settings.Fx_Settings.fXBlockerHolder.FXBlockers.Add(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
                     settings.Fx_Settings.fXBlockerHolder.Recache();
@@ -102,6 +89,28 @@ namespace VisualAdjustments2.UI
             {
 
                 Main.Logger.Error(e.ToString());
+            }
+        }
+        private void OnUnitChanged()
+        {
+            {
+                var CurrentReactive = new ReactiveCollection<BuffButtonVM>();
+                foreach (var buff in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().Fx_Settings.fXBlockerHolder.FXBlockers)
+                {
+                    CurrentReactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
+                }
+                m_CurrentFX.Value?.Dispose();
+                base.AddDisposable(m_CurrentFX.Value = new BuffListViewVM(CurrentReactive, new ReactiveProperty<BuffButtonVM>(CurrentReactive.FirstOrDefault())));
+            }
+            if (this.UnitDescriptor.Value == null)
+            {
+                return;
+            }
+            // this.UpdateCanChangeEquipment();
+            //InventoryStashVM stashVM = this.StashVM;
+            //if (stashVM == null)
+            {
+                //  return;
             }
         }
     }

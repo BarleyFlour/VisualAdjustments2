@@ -54,7 +54,9 @@ namespace VisualAdjustments2.UI
 			this.FeatureAcronymName = feature.NameForAcronym;
 			FeatureTagsComponent component = feature.GetComponent<FeatureTagsComponent>();
 			this.FeatureTags = (UIUtilityTexts.GetFeatureTags((component != null) ? new FeatureTag?(component.FeatureTags) : null) ?? string.Empty);
-			this.FeatureDescription = feature.NameForAcronym;
+			var fxblocker = ResourceLoader.AbilityGuidToFXBlocker[feature.AssetGuidThreadSafe];
+			this.FeatureDescription = fxblocker.AllAbilityGUIDs.Count > 1 ? feature.NameForAcronym : (feature.NameForAcronym + " (Merged)");
+			//this.FeatureDescription = feature.NameForAcronym;
 			if (this.FeatureSprite == null)
 			{
 				this.FeatureSprite = UIUtility.GetIconByText(this.FeatureName);
