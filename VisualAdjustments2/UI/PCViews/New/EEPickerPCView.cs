@@ -22,6 +22,20 @@ namespace VisualAdjustments2.UI
         {
 
         }
+        public void ResetChanges()
+        {
+            this.ViewModel.ResetChanges();
+            m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
+            this.AddDisposable(base.ViewModel.CurrentEEs.Value);
+
+            this.m_dollCharacterController.Unbind();
+
+            this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+
+            m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+            this.m_VisualSettings.Dispose();
+            
+        }
         private void OnCharacterChanged()
         {
             m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
@@ -62,5 +76,7 @@ namespace VisualAdjustments2.UI
         public ListViewItemPCView template;
         public OwlcatButton m_ApplyButton;
         public EEColorPickerPCView m_EEColorPicker;
+        public OwlcatButton m_ResetButton;
+        public OwlcatButton m_ResetAllButton;
     }
 }

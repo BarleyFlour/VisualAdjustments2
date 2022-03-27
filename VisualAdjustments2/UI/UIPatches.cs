@@ -289,10 +289,10 @@ namespace VisualAdjustments2
                             newcompl.SetupFromChargenList(oldcomp, false, "Current Buffs");
                             UnityEngine.Component.Destroy(oldcomp);
                             {
-                                var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
+                               // var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
 
-                                var PrimSec = new GameObject("PrimSec");
-                                var togglegroup = PrimSec.AddComponent<ToggleGroupHandler>();
+                                var PrimSec = new GameObject("ModeHandler");
+                                var togglegroup = PrimSec.AddComponent<ToggleWithTextHandler>();
                                 PrimSec.transform.SetParent(alleelistview.transform);
                                 // var layoutelement = PrimSec.AddComponent<LayoutElement>();
                                 //layoutelement.m_FlexibleHeight = 5;
@@ -307,32 +307,36 @@ namespace VisualAdjustments2
                                 horizontalLayoutGroup.padding.left = 5;
                                 horizontalLayoutGroup.padding.right = 12;
                                 horizontalLayoutGroup.spacing = 5;
+                                horizontalLayoutGroup.childForceExpandWidth = false;
+                                horizontalLayoutGroup.childAlignment = TextAnchor.MiddleLeft;
+
+
 
 
                                 var PrimButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
-                                togglegroup.m_PrimarySelected = UnityEngine.Object.Instantiate(SelectedTransform, PrimButton.transform).gameObject;
-                                UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<CanvasGroup>());
-                                UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<Image>());
+
+                                var LabelGameObject = UnityEngine.GameObject.Instantiate(newgameobject.transform.Find("FXViewer/FeatureSelectorView(Clone)/HeaderH2/Label").gameObject);
+                                LabelGameObject.transform.SetParent(PrimSec.transform);
+
+                                //togglegroup.m_PrimarySelected = UnityEngine.Object.Instantiate(SelectedTransform, PrimButton.transform).gameObject;
+                                //UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<CanvasGroup>());
+                                //UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<Image>());
                                 var LeftButtonElement = PrimButton.EnsureComponent<LayoutElement>();
                                 LeftButtonElement.minHeight = 30;
+                                LeftButtonElement.preferredWidth = 155;  
 
+                                var buttonTextComponent = PrimButton.Find("StashLabel").GetComponent<TextMeshProUGUI>();
+
+                                LabelGameObject.AddComponent<LayoutElement>();
                                 PrimButton.Find("FinneanLabel").gameObject.SetActive(false);
-                                PrimButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Whitelist";
-                                PrimButton.gameObject.AddComponent<LayoutElement>();
 
-                                var SecButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
-                                togglegroup.m_SecondarySelected = UnityEngine.Object.Instantiate(SelectedTransform, SecButton.transform).gameObject;
-                                UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<CanvasGroup>());
-                                UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<Image>());
+                                // var txt = LabelGameObject.AddComponent<TextMeshProUGUI>();
+                                //txt.text = "$";
 
-
-                                SecButton.Find("FinneanLabel").gameObject.SetActive(false);
-                                SecButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Blacklist";
-                                SecButton.gameObject.AddComponent<LayoutElement>();
-                                var RightButtonElement = SecButton.EnsureComponent<LayoutElement>();
-                                RightButtonElement.minHeight = 30;
-
-                                togglegroup.Setup(PrimButton.GetComponent<OwlcatButton>(), SecButton.GetComponent<OwlcatButton>());
+                                LabelGameObject.transform.SetAsLastSibling();
+                                //PrimButton.gameObject.AddComponent<LayoutElement>();
+                                buttonTextComponent.text = "Toggle Mode";
+                                togglegroup.Setup(PrimButton.GetComponent<OwlcatButton>(), LabelGameObject.GetComponent<TextMeshProUGUI>());
                                 FXViewerPCView.m_WhiteOrBlacklist = togglegroup;
                                 togglegroup.transform.SetSiblingIndex(1);
                             }
@@ -424,6 +428,7 @@ namespace VisualAdjustments2
             {
                 EEPickerPCView.m_dollCharacterController = dollroomcomp;
                 var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
+                alleelistview.name = "CurrentEEs";
                 alleelistview.transform.localPosition = new Vector3(650, -50, 0);
                 var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                 var newcompl = alleelistview.AddComponent<ListPCView>();
@@ -435,12 +440,52 @@ namespace VisualAdjustments2
             //Current EEs list
             {
                 var alleelistview = GameObject.Instantiate(gameobject2.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject2.transform);
+                alleelistview.name = "AllEEs";
                 alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
                 var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
                 var newcompl = alleelistview.AddComponent<ListPCView>();
                 newcompl.SetupFromChargenList(oldcomp, false, "Current EEs");
                 UnityEngine.Component.Destroy(oldcomp);
                 EEPickerPCView.m_CurrentEEs = newcompl;
+                //Reset button
+                {
+                    var ResetButtonGameObject = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), alleelistview.transform.Find("HeaderH2"));
+                    // ResetButtonGameObject.localPosition = new Vector3(-195, -398, 0);
+                    ResetButtonGameObject.Find("FinneanLabel").gameObject.SetActive(false);
+                    ResetButtonGameObject.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Reset";
+                    var owlbutt = ResetButtonGameObject.GetComponent<OwlcatButton>();
+                    var element = ResetButtonGameObject.gameObject.AddComponent<LayoutElement>();
+                    element.minWidth = 100;
+                    element.minHeight = 30;
+                    var horizontal = alleelistview.transform.Find("HeaderH2").GetComponent<HorizontalLayoutGroup>();
+                    horizontal.spacing = 10;
+                    owlbutt.OnLeftClick.AddListener(() =>
+                    {
+                        EEPickerPCView.ResetChanges();
+                    });
+                    EEPickerPCView.m_ResetButton = owlbutt;
+                }
+                //Reset Changes
+                {
+                    var ResetButtonGameObject = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), alleelistview.transform.Find("HeaderH2"));
+                    // ResetButtonGameObject.localPosition = new Vector3(-195, -398, 0);
+                    ResetButtonGameObject.Find("FinneanLabel").gameObject.SetActive(false);
+                    ResetButtonGameObject.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Reset To Default";
+                    var owlbutt = ResetButtonGameObject.GetComponent<OwlcatButton>();
+                    var element = ResetButtonGameObject.gameObject.AddComponent<LayoutElement>();
+                    element.minWidth = 175;
+                    element.minHeight = 30;
+                    var horizontal = alleelistview.transform.Find("HeaderH2").GetComponent<HorizontalLayoutGroup>();
+                    horizontal.spacing = 10;
+                    owlbutt.OnLeftClick.AddListener(() =>
+                    {
+                        var unit = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
+                        var settings = unit.GetSettings();
+                        settings.EeSettings.EEs.Clear();
+                        EEPickerPCView.ResetChanges();
+                    });
+                    EEPickerPCView.m_ResetAllButton = owlbutt;
+                }
             }
             //Apply button
             {

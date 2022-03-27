@@ -57,6 +57,6 @@ namespace VisualAdjustments2.UI
         }
         public DollCharacterController m_dollCharacterController;
         public CharacterVisualSettingsView m_VisualSettings;
-        public ToggleGroupHandler m_WhiteOrBlacklist;
+        public ToggleWithTextHandler m_WhiteOrBlacklist;
     }
 }

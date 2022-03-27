@@ -17,7 +17,7 @@ using VisualAdjustments2.Infrastructure;
 
 namespace VisualAdjustments2.UI
 {
-    [HarmonyLib.HarmonyPatch(typeof(Character),nameof(Character.CopyEquipmentFrom))]
+    [HarmonyLib.HarmonyPatch(typeof(Character), nameof(Character.CopyEquipmentFrom))]
     public static class asdsadasd
     {
         public static bool Prefix(Character __instance)
@@ -31,7 +31,24 @@ namespace VisualAdjustments2.UI
     }
     public class EEPickerVM : BaseDisposable, IDisposable, IViewModel, IBaseDisposable
     {
-        public Dictionary<string,EEApplyAction> applyActions = new Dictionary<string, EEApplyAction>();
+        public Dictionary<string, EEApplyAction> applyActions = new Dictionary<string, EEApplyAction>();
+
+        public void ResetChanges()
+        {
+            this.applyActions.Clear();
+            var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
+            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
+            {
+                //Main.Logger.Log(ee.name);
+                var inf = ee.ToEEInfo();
+                if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
+                {
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
+                }
+            }
+            CurrentEEs.Value?.Dispose();
+            base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault())));
+        }
 
         public ReactiveProperty<UnitDescriptor> UnitDescriptor;
         public ReactiveProperty<ListViewVM> AllEEs = new ReactiveProperty<ListViewVM>();
@@ -64,47 +81,36 @@ namespace VisualAdjustments2.UI
             // bool v = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar..;
             // base.AddDisposable(v);
             base.AddDisposable(AllEEs.Value = new ListViewVM(reactive, new ReactiveProperty<ListViewItemVM>(null)));
-            base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(null)));
-            
+            base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault())));
+
             //CurrentEEs = new ListViewVM();
         }
         private void OnUnitChanged()
         {
+            this.applyActions.Clear();
+            var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
+            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
             {
-                var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
-                foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
+                //Main.Logger.Log(ee.name);
+                var inf = ee.ToEEInfo();
+                if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
                 {
-                    //Main.Logger.Log(ee.name);
-                    var inf = ee.ToEEInfo();
-                    if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
-                    {
-                        CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
-                    }
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
                 }
-                CurrentEEs.Value?.Dispose();
-                base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault())));
             }
-            if (this.UnitDescriptor.Value == null)
-            {
-                return;
-            }
-           // this.UpdateCanChangeEquipment();
-            //InventoryStashVM stashVM = this.StashVM;
-            //if (stashVM == null)
-            {
-              //  return;
-            }
+            CurrentEEs.Value?.Dispose();
+            base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault())));
         }
         public void RemoveListItem(ListViewItemVM item)
         {
             try
             {
                 if (this.CurrentEEs?.Value?.EntitiesCollection?.Contains(item) == true)
-                { 
+                {
 
                     this.CurrentEEs?.Value?.EntitiesCollection.Remove(item);
                     Game.Instance.UI.Common.DollRoom.m_Avatar.RemoveEquipmentEntity(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid));
-                    if (!this.applyActions.ContainsKey(item.Guid)) this.applyActions.Add(item.Guid,new RemoveEE(item.Guid));
+                    if (!this.applyActions.ContainsKey(item.Guid)) this.applyActions.Add(item.Guid, new RemoveEE(item.Guid));
                 }
             }
             catch (Exception e)
@@ -119,9 +125,9 @@ namespace VisualAdjustments2.UI
             {
                 if (!this.CurrentEEs?.Value?.EntitiesCollection.Any(a => a.Guid == item.Guid) == true) this.CurrentEEs?.Value.EntitiesCollection.Add(new ListViewItemVM(item, false, RemoveListItem));
                 Main.Logger.Log(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid).ToString());
-                /*if(Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName))*/ 
+                /*if(Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName))*/
                 Game.Instance.UI.Common.DollRoom.m_Avatar.AddEquipmentEntity(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid));
-                if (!this.applyActions.ContainsKey(item.Guid)) this.applyActions.Add(item.Guid,new AddEE(item.Guid));
+                if (!this.applyActions.ContainsKey(item.Guid)) this.applyActions.Add(item.Guid, new AddEE(item.Guid));
             }
             catch (Exception e)
             {
@@ -129,7 +135,7 @@ namespace VisualAdjustments2.UI
                 Main.Logger.Error(e.ToString());
             }
         }
-        public void ApplyColor(Color col,bool PrimOrSec)
+        public void ApplyColor(Color col, bool PrimOrSec)
         {
 #if DEBUG
             Main.Logger.Log("TriedApply");
@@ -192,12 +198,12 @@ namespace VisualAdjustments2.UI
                             var addaction = new AddEE(addee.GUID);
                             addaction.PrimaryCol = addee.Primary;
                             addaction.SecondaryCol = ColInf;
-                            this.applyActions.Add(addaction.GUID,addaction);
+                            this.applyActions.Add(addaction.GUID, addaction);
                         }
                     }
                     else
                     {
-                        var addee = new EE_Applier(this.CurrentEEs.Value.SelectedEntity.Value.Guid,EE_Applier.ActionType.Add);
+                        var addee = new EE_Applier(this.CurrentEEs.Value.SelectedEntity.Value.Guid, EE_Applier.ActionType.Add);
                         if (PrimOrSec)
                         {
                             var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
@@ -229,7 +235,7 @@ namespace VisualAdjustments2.UI
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Main.Logger.Error(e.ToString());
             }

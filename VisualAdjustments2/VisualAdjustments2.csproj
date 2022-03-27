@@ -74,6 +74,7 @@
     <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\Extension_Methods.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
+    <Compile Include="UI\Misc\ToggleWithTextHandler.cs" />
     <Compile Include="UI\PCViews\Modified\BarleySlideSelectorPCView.cs" />
     <Compile Include="UI\PCViews\Modified\DollControllerVA.cs" />
     <Compile Include="UI\PCViews\Modified\EEColorPickerPCView.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="UI\PCViews\New\ColorPreviewView.cs" />
     <Compile Include="UI\PCViews\New\CreateDollPCView.cs" />
     <Compile Include="UI\PCViews\New\DollPCView.cs" />
-    <Compile Include="UI\PCViews\New\ToggleGroupPCView.cs" />
+    <Compile Include="UI\Misc\ToggleGroup.cs" />
     <Compile Include="UI\PCViews\Modified\CharGenAppearancePhaseDetailedPCViewModified.cs" />
     <Compile Include="UI\VMs\Modified\ColorSelectorSliderVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\BuffButtonVM.cs" />
