@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
+using Kingmaker.DLC;
 using Kingmaker.Visual.CharacterSystem;
 using Owlcat.Runtime.Core.Logging;
 using UniRx;
@@ -54,6 +55,20 @@ namespace VisualAdjustments2.Infrastructure
                 if (Quiet.Contains(messageFormat))
                     return false;
                 return true;
+            }
+
+        }
+#endif
+#if DEBUG
+
+        [HarmonyPatch(typeof(DlcStore),nameof(DlcStore.IsPurchased))]
+        public static class thingie
+        {
+            //[HarmonyPatch(typeof(DlcStoreSteam),nameof(DlcStoreSteam.IsPurchased)), HarmonyPrefix]
+            public static bool Prefix(ref bool __result)
+            {
+                __result = true;
+                return false;
             }
 
         }

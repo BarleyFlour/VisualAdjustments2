@@ -3,6 +3,7 @@ using Kingmaker.UI.MVVM._VM.Other.NestedSelectionGroup;
 using Kingmaker.UI.MVVM._VM.Tooltip.Templates;
 using Kingmaker.UI.Tooltip;
 using Owlcat.Runtime.UI.SelectionGroup;
+using Owlcat.Runtime.UI.Tooltips;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace VisualAdjustments2.UI
 		}
 		public override void DoSelectMe()
 		{
-			//action(this);
+			action(this);
 		}
 		public override void DisposeImplementation()
 		{

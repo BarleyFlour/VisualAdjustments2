@@ -27,11 +27,13 @@ using Kingmaker.UnitLogic.Class.LevelUp;
 using Kingmaker.UnitLogic.Components;
 using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Utility;
+using Kingmaker.View.Animation;
 using Owlcat.Runtime.Core.Utils;
 using Owlcat.Runtime.UI.Controls.Button;
 using Owlcat.Runtime.UI.MVVM;
 using Owlcat.Runtime.UI.SelectionGroup;
 using Owlcat.Runtime.UI.SelectionGroup.View;
+using Owlcat.Runtime.UI.VirtualListSystem.Vertical;
 using Owlcat.Runtime.UniRx;
 using TMPro;
 using UniRx;
@@ -289,7 +291,7 @@ namespace VisualAdjustments2
                             newcompl.SetupFromChargenList(oldcomp, false, "Current Buffs");
                             UnityEngine.Component.Destroy(oldcomp);
                             {
-                               // var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
+                                // var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
 
                                 var PrimSec = new GameObject("ModeHandler");
                                 var togglegroup = PrimSec.AddComponent<ToggleWithTextHandler>();
@@ -323,7 +325,7 @@ namespace VisualAdjustments2
                                 //UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<Image>());
                                 var LeftButtonElement = PrimButton.EnsureComponent<LayoutElement>();
                                 LeftButtonElement.minHeight = 30;
-                                LeftButtonElement.preferredWidth = 155;  
+                                LeftButtonElement.preferredWidth = 155;
 
                                 var buttonTextComponent = PrimButton.Find("StashLabel").GetComponent<TextMeshProUGUI>();
 
@@ -367,7 +369,7 @@ namespace VisualAdjustments2
                     gameobject3.SetActive(false);
 
 
-
+                    //Equipment
                     {
                         {
                             EquipmentPCView.m_VisualSettings = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
@@ -375,13 +377,180 @@ namespace VisualAdjustments2
                         }
 
                         var alleelistview = GameObject.Instantiate(gameobject3.transform.parent.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView").gameObject, gameobject3.transform);
-                        alleelistview.transform.localPosition = new Vector3(-650, -50, 0);
+
+                        // alleelistview.transform.Find("StandardScrollView/Viewport").GetComponent<VerticalLayoutGroup>().childScaleWidth = false;
+                        alleelistview.transform.localPosition = new Vector3(650, -50, 0);
                         var oldcomp = alleelistview.GetComponent<CharGenFeatureSelectorPCView>();
-                        var newcompl = alleelistview.AddComponent<ListPCView>();
+                        var newcompl = alleelistview.AddComponent<EquipmentListPCView>();
+
                         newcompl.SetupFromChargenList(oldcomp, false, "Equipment");
-                        newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 500;
+                        ((VirtualListLayoutSettingsVertical)newcompl.VirtualList.LayoutSettings).Width = 530;
+                        //newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 500;
                         UnityEngine.Component.Destroy(oldcomp);
+                        var windowLayout = newcompl.transform.Find("StandardScrollView").gameObject.AddComponent<LayoutElement>();
+                        windowLayout.minHeight = 555;
+                        windowLayout.minWidth = 555;
+                        newcompl.m_CharGenFeatureSearchView.transform.Find("FeatureSearchView").GetComponent<LayoutElement>().minHeight = 56;
+
+                        var header = alleelistview.transform.Find("HeaderH2");
+                        header.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+                        var newDropDown = GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/Sorting/Dropdown"), header);
+                        var layout = newDropDown.gameObject.AddComponent<LayoutElement>();
+                        layout.minWidth = 400;
+                        layout.minHeight = 35;
+                        header.Find("Label").gameObject.SetActive(false);
+                        var dropdown = newDropDown.GetComponent<TMP_DropdownWorkaround>();
+                        //Manual list of appropriate Animstyles and Indices so we dont have empety/unused ones.
+                        Dictionary<int, WeaponAnimationStyle> m_IntToAnim = new Dictionary<int, WeaponAnimationStyle>();
+                        Dictionary<WeaponAnimationStyle, int> m_AnimToInt = new Dictionary<WeaponAnimationStyle,int>();
+                        var enumList = new Dictionary<WeaponAnimationStyle,string>()
+                        {
+                            [WeaponAnimationStyle.Bow] = "Bows",
+                            [WeaponAnimationStyle.Crossbow] = "Crossbows",
+                            [WeaponAnimationStyle.Dagger] = "Daggers",
+                            [WeaponAnimationStyle.ThrownStraight] = "Dart/Javelin",
+                            [WeaponAnimationStyle.Double] = "Double Bladed/Quarterstaves",
+                            [WeaponAnimationStyle.Fencing] = "Fencing Blades",
+                            [WeaponAnimationStyle.PiercingOneHanded] = "One-Handed Polearms",
+                            [WeaponAnimationStyle.SlashingOneHanded] = "One-Handed Slashing/Blunt Weapons",
+                            [WeaponAnimationStyle.Fist] = "Punching Daggers",
+                            [WeaponAnimationStyle.Shield] = "Shields",
+                            [WeaponAnimationStyle.ThrownArc] = "Throwing Axes",
+                            [WeaponAnimationStyle.AxeTwoHanded] = "Two Handed Axes",
+                            [WeaponAnimationStyle.PiercingTwoHanded] = "Two-Handed Polearms",
+                            [WeaponAnimationStyle.SlashingTwoHanded] = "Two-Handed Slashing/Blunt Weapons"
+                        };
+                        for(int i = 0; i < enumList.Count(); i++)
+                        {
+                            var anim = enumList.ElementAt(i);
+                            m_IntToAnim[i] = anim.Key;
+                            m_AnimToInt[anim.Key] = i;
+                            dropdown.options.Add(new TMP_Dropdown.OptionData(anim.Value));
+                        }
+                        dropdown.options.Add(new TMP_Dropdown.OptionData("FX"));
+                        /*foreach (var animstyle in enumList)
+                        {
+                            m_IntToAnim[]
+                            dropdown.options.Add(new TMP_Dropdown.OptionData(animstyle.Value));
+                        }*/
+
+                        //dropdown
+
                         EquipmentPCView.m_ListPCView = newcompl;
+                        //Right block
+                        {
+                            var dollRightBlock = newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock");
+                            var rightBlock = new GameObject("RightBlock");
+                            var weaponOverridePCView = rightBlock.AddComponent<WeaponOverridePCView>();
+                            weaponOverridePCView.m_DropDown = dropdown;
+                            weaponOverridePCView.m_ListPCView = newcompl;
+                            WeaponOverrideVM.m_IntToAnim = m_IntToAnim;
+                            WeaponOverrideVM.m_AnimToInt = m_AnimToInt;
+
+
+                            EquipmentPCView.m_weaponOverridePCView = weaponOverridePCView;
+
+                            rightBlock.transform.SetParent(EquipmentPCView.transform);
+                            var vertlayout = rightBlock.AddComponent<VerticalLayoutGroupWorkaround>(dollRightBlock.GetComponent<VerticalLayoutGroupWorkaround>());
+                            vertlayout.m_TotalMinSize = new Vector2(570, 570);
+                            //var layoutElement = rightBlock.AddComponent<LayoutElement>();
+                            //layoutElement.minWidth = 150;
+                            var rightBlockRectTransform = rightBlock.GetComponent<RectTransform>();
+                            var oldRightBlockRectTransform = dollRightBlock.GetComponent<RectTransform>();
+                            rightBlockRectTransform.anchoredPosition = oldRightBlockRectTransform.anchoredPosition;
+                            rightBlockRectTransform.anchoredPosition3D = oldRightBlockRectTransform.anchoredPosition3D;
+                            rightBlockRectTransform.anchorMax = oldRightBlockRectTransform.anchorMax;
+                            rightBlockRectTransform.anchorMin = oldRightBlockRectTransform.anchorMin;
+                            //rightBlockRectTransform.localPosition = new Vector3(655,0,0);
+                            rightBlock.transform.localPosition = new Vector3(622, 360, rightBlock.transform.localPosition.z);
+                            var dollPageTemplate = newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/FaceWarpaint");
+                            var SlotSelector = GameObject.Instantiate(dollPageTemplate.gameObject, rightBlock.transform);
+
+                            UnityEngine.Object.Destroy(SlotSelector.transform.Find("SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)").gameObject);
+                            var page = SlotSelector.transform.Find("SelectorsPlace/PC_Warpaint_TextureSelector");
+                            var clickablePageNav = SlotSelector.transform.Find("HeaderH2");
+                            SlotSelector.transform.Find("SelectorsPlace/PC_Warpaint_TextureSelector/PalettePlace").gameObject.SetActive(false);
+                            clickablePageNav.transform.SetParent(page);
+                            var lbl = clickablePageNav.Find("Label").GetComponent<TextMeshProUGUI>();
+                            lbl.text = "Weapon Set";
+                            lbl.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                            clickablePageNav.localScale = new Vector3(1, 1, 1);
+                            clickablePageNav.GetComponent<LayoutElement>().minWidth = 550;
+                            var clickableComponent = clickablePageNav.Find("ClickablePageNavigation").GetComponent<ClickablePageNavigation>();
+                            clickableComponent.FillPoints(4);
+
+                            clickableComponent.m_ChooseCallback = (i) =>
+                            {
+                                if (weaponOverridePCView.ViewModel != null)
+                                {
+                                    weaponOverridePCView.ViewModel.slot.Value = i;
+                                    Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Body.CurrentHandEquipmentSetIndex = i;
+                                    var animstyle = Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemBlueprint?.VisualParameters?.AnimStyle;
+                                    if (animstyle != null) weaponOverridePCView.m_DropDown.value = WeaponOverrideVM.m_AnimToInt[(WeaponAnimationStyle)animstyle];
+                                }
+
+                                //EquipmentPCView.ViewModel;
+                            };
+                            clickableComponent.m_Points?.FirstOrDefault()?.OnClick();
+
+                            var vertlayoutclickable = clickablePageNav.GetComponent<HorizontalLayoutGroup>();
+
+
+
+                            //vertlayoutclickable.padding.top = 8;
+
+                            // UnityEngine.Object.Destroy(SlotSelector.transform.Find("SelectorsPlace/PC_Warpaint_TextureSelector").gameObject);
+
+
+                            alleelistview.transform.SetParent(rightBlock.transform);
+                            //prim/sec buttons
+                            {
+                                var vertlayout2 = page.GetComponent<VerticalLayoutGroup>();
+                                vertlayout2.padding.bottom = 2;
+
+                                // var topbar = new GameObject("TopBar");
+
+                                var PrimSec = new GameObject("PrimSec");
+                                PrimSec.transform.SetParent(page.transform);
+                                var le = PrimSec.AddComponent<LayoutElement>();
+                                var HLG = PrimSec.AddComponent<HorizontalLayoutGroup>();
+
+                                var togglegroup = PrimSec.AddComponent<ToggleGroupHandler>();
+                                // topbar.transform.SetParent(window);
+                                //var le = topbar.AddComponent<LayoutElement>();
+                                le.minHeight = 30;
+                                HLG.padding.left = 10;
+                                HLG.padding.right = 15;
+                                HLG.spacing = 5;
+                                // var windowVertLayout = window.GetComponent<VerticalLayoutGroup>();
+                                // windowVertLayout.padding.top = 5;
+                                var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
+
+                                var PrimButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
+                                togglegroup.m_PrimarySelected = UnityEngine.Object.Instantiate(SelectedTransform, PrimButton.transform).gameObject;
+                                UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<CanvasGroup>());
+                                UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<Image>());
+
+                                PrimButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                PrimButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Main Hand";
+                                PrimButton.gameObject.AddComponent<LayoutElement>();
+
+                                var SecButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
+                                togglegroup.m_SecondarySelected = UnityEngine.Object.Instantiate(SelectedTransform, SecButton.transform).gameObject;
+                                UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<CanvasGroup>());
+                                UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<Image>());
+
+
+                                SecButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                SecButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Off Hand";
+                                SecButton.gameObject.AddComponent<LayoutElement>();
+
+                                togglegroup.Setup(PrimButton.GetComponent<OwlcatButton>(), SecButton.GetComponent<OwlcatButton>());
+                                weaponOverridePCView.m_ToggleGroup = togglegroup;
+                                weaponOverridePCView.m_SlotButtons = clickableComponent;
+                            }
+                            weaponOverridePCView.Initialize();
+                        }
                     }
 
 
@@ -482,6 +651,7 @@ namespace VisualAdjustments2
                         var unit = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
                         var settings = unit.GetSettings();
                         settings.EeSettings.EEs.Clear();
+                        unit.RebuildCharacter();
                         EEPickerPCView.ResetChanges();
                     });
                     EEPickerPCView.m_ResetAllButton = owlbutt;
@@ -639,6 +809,10 @@ namespace VisualAdjustments2
                     newcomp.m_ConfirmButton = ApplyButton.GetComponent<OwlcatButton>();
                 }
                 EEPickerPCView.m_EEColorPicker = newcomp;
+                //Ramp Sliders
+                {
+                    //throw new Exception("brunrbughufdhdfhg");
+                }
             }
             gameobject2.transform.localPosition = new Vector3(0, 0, 0);
             gameobject2.transform.localScale = new Vector3(1, 1, 1);

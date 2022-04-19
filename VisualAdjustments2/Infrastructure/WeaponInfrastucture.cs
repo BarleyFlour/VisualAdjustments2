@@ -1,0 +1,150 @@
+﻿using HarmonyLib;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Items.Ecnchantments;
+using Kingmaker.Blueprints.Items.Equipment;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.Items;
+using Kingmaker.Items.Slots;
+using Kingmaker.UI.ServiceWindow;
+using Kingmaker.View.Equipment;
+using Kingmaker.Visual.Particles;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace VisualAdjustments2.Infrastructure
+{
+    //Fx stuff causes sheath fuckery
+    // public class WeaponInfrastucture
+    //  {
+    //[HarmonyPatch(typeof(UnitViewHandSlotData), "VisibleItemBlueprint", MethodType.Getter)]
+    [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.VisibleItemBlueprint), MethodType.Getter)]
+    public static class UnitViewHandsSlotData_VisibleItemBlueprint_Patch
+    {
+        public static void Postfix(UnitViewHandSlotData __instance, ref BlueprintItemEquipmentHand __result)
+        {
+            try
+            {
+                if (!__instance.Owner.IsPlayerFaction) return;
+                var characterSettings = __instance.Owner.GetSettings();
+                if (characterSettings == null) return;
+                if (__instance.VisibleItem == null) return;
+                {
+                    var bp = ((BlueprintItemEquipmentHand)__instance.VisibleItem.Blueprint)?.VisualParameters?.AnimStyle.ToString();
+                    var WeaponOverride = characterSettings.WeaponOverrides.FirstOrDefault(b =>  b.Slot == __instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) && b?.AnimStyle == bp && __instance?.m_IsMainHand == b?.MainOrOffHand);
+                    if (WeaponOverride != null)
+                    {
+                        __result = ResourcesLibrary.TryGetBlueprint<BlueprintItemEquipmentHand>(WeaponOverride.GUID);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Main.Logger.Error(ex.ToString());
+            }
+        }
+    }
+    [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.UpdateWeaponEnchantmentFx))]
+    public static class UnitViewHandSlotData_UpdateWeaponEnchantmentFX_Patch
+    {
+        public static GameObject RespawnFx(GameObject prefab, ItemEntity item)
+        {
+            WeaponSlot weaponSlot = item.HoldingSlot as WeaponSlot;
+            var weaponSnap = weaponSlot?.FxSnapMap;
+            var unit = item.Wielder.Unit?.View;
+            return FxHelper.SpawnFxOnWeapon(prefab, unit, weaponSnap);
+        }
+       
+        public static void Postfix(UnitViewHandSlotData __instance, bool isVisible)
+        {
+            try
+            {
+                if (!Main.IsEnabled) return;
+                if (!__instance.Owner.IsPlayerFaction) return;
+                var characterSettings = __instance.Owner.GetSettings();
+                if (characterSettings == null) return;
+                if (__instance.Slot.MaybeItem == null) return;
+                if (characterSettings.CurrentFXs.ContainsKey(__instance.Slot.MaybeItem))
+                {
+                    foreach (var fxObject in characterSettings.CurrentFXs[__instance.Slot.MaybeItem])
+                    {
+                        FxHelper.Destroy(fxObject);
+                    }
+                    characterSettings.CurrentFXs[__instance.Slot.MaybeItem].Clear();
+                }
+                if (__instance.IsInHand && isVisible)
+                {
+                    if (!characterSettings.CurrentFXs.ContainsKey(__instance.Slot.MaybeItem)) characterSettings.CurrentFXs[__instance.Slot.MaybeItem] = new List<GameObject>();
+                    foreach (var enchantOverride in characterSettings.EnchantOverrides)
+                    {
+                        if ((__instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) == enchantOverride.Slot) && __instance.Slot.IsPrimaryHand == enchantOverride.MainOrOffHand)
+                        {
+                                var blueprint = ResourcesLibrary.TryGetBlueprint<BlueprintWeaponEnchantment>(enchantOverride.GUID);
+                                if (blueprint == null || blueprint.WeaponFxPrefab == null) continue;
+                                var fxObject = RespawnFx(blueprint.WeaponFxPrefab.Load(), __instance.Slot.MaybeItem);
+                                characterSettings.CurrentFXs[__instance.Slot.MaybeItem].Add(fxObject);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Main.Logger.Error(ex.ToString());
+            }
+        }
+    }
+    [HarmonyPatch(typeof(DollRoom), "UpdateAvatarRenderers")]
+    public static class DollRoom_UpdateAvatarRenderers_Patchf
+    {
+        //static FastInvoker<DollRoom, GameObject, object> UnscaleFxTimes;
+        /*static bool Prepare()
+        {
+           // UnscaleFxTimes = Accessors.CreateInvoker<DollRoom, GameObject, object>("UnscaleFxTimes");
+            return true;
+        }*/
+
+        private static void Postfix(DollRoom __instance, UnitViewHandsEquipment ___m_AvatarHands, UnitEntityData ___m_Unit)
+        {
+            try
+            {
+                if (___m_Unit == null) return;
+                if (!___m_Unit.IsPlayerFaction) return;
+                var characterSettings = ___m_Unit.GetSettings();
+                if (characterSettings == null) return;
+                foreach (var isOffhand in new bool[] { true, false })
+                {
+                    WeaponParticlesSnapMap weaponParticlesSnapMap = ___m_AvatarHands?.GetWeaponModel(isOffhand)?.GetComponent<WeaponParticlesSnapMap>();
+                    if (weaponParticlesSnapMap)
+                    {
+                        UnityEngine.Object x = weaponParticlesSnapMap;
+                        UnityEngine.Object y = isOffhand ?
+                            ___m_Unit?.Body?.SecondaryHand.FxSnapMap :
+                            ___m_Unit?.Body?.PrimaryHand.FxSnapMap;
+                        if (x == y)
+                        {
+                            var weapon = isOffhand ?
+                                    ___m_Unit?.Body?.SecondaryHand?.MaybeItem :
+                                    ___m_Unit?.Body?.PrimaryHand?.MaybeItem;
+                            characterSettings.CurrentFXs.TryGetValue(weapon, out List<GameObject> fxObjects);
+                            if (fxObjects != null)
+                            {
+                                foreach (var fxObject in fxObjects)
+                                {
+                                    DollRoom.UnscaleFxTimes(fxObject);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Main.Logger.Error(ex.ToString());
+            }
+        }
+    }
+    //}
+}

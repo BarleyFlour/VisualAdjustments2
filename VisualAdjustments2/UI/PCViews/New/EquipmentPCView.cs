@@ -22,6 +22,7 @@ namespace VisualAdjustments2.UI
             base.BindViewImplementation();
             this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
             this.m_VisualSettings.Dispose();
+            this.m_weaponOverridePCView.Bind(this.ViewModel.m_weaponOverride);
         }
 
         public override void DestroyViewImplementation()
@@ -29,8 +30,9 @@ namespace VisualAdjustments2.UI
             base.DestroyViewImplementation();
             this.m_dollCharacterController.Unbind();
         }
+        public WeaponOverridePCView m_weaponOverridePCView;
         public OwlcatButton m_ApplyButton;
-        public ListPCView m_ListPCView;
+        public EquipmentListPCView m_ListPCView;
         public CharacterVisualSettingsView m_VisualSettings;
         public DollCharacterController m_dollCharacterController;
     }

@@ -33,6 +33,9 @@ using Owlcat.Runtime.Core;
 using Kingmaker.Utility;
 using Kingmaker.Visual.Animation;
 using Owlcat.Runtime.Core.Utils;
+using Kingmaker.Visual.Particles;
+using Kingmaker.Items.Slots;
+using Kingmaker.Items;
 
 namespace VisualAdjustments2.Infrastructure
 {
@@ -170,28 +173,33 @@ namespace VisualAdjustments2.Infrastructure
                         //EquipmentEntity ee = enumerator2.Current;
                         if (customizationOptions.Heads.Contains((EquipmentEntityLink link) => link.Load(false) == ee))
                         {
-                            state.Head = new DollState.EEAdapter(ee);
+                            state.Head = new DollState.EEAdapter(customizationOptions.Heads.FirstOrDefault(a => a.Load() == ee));
+                            //state.Head = new DollState.EEAdapter(ee);
                         }
                         if (customizationOptions.Eyebrows.Contains((EquipmentEntityLink link) => link.Load(false) == ee))
                         {
-                            state.Eyebrows = new DollState.EEAdapter(ee);
+                            state.Eyebrows = new DollState.EEAdapter(customizationOptions.Eyebrows.FirstOrDefault(a => a.Load() == ee));
+                            ///state.Eyebrows = new DollState.EEAdapter(ee);
                         }
                         if (customizationOptions.Hair.Contains((EquipmentEntityLink link) => link.Load(false) == ee))
                         //if (ee.name.Contains("Hair") || ee.name.Contains("hair"))
                         {
-                            state.Hair = new DollState.EEAdapter(ee);
+                            state.Hair = new DollState.EEAdapter(customizationOptions.Hair.FirstOrDefault(a => a.Load() == ee));
+                            //state.Hair = new DollState.EEAdapter(ee);
                         }
                         if (customizationOptions.Beards.Contains((EquipmentEntityLink link) => link.Load(false) == ee))
                         {
-                            state.Beard = new DollState.EEAdapter(ee);
+                            state.Beard = new DollState.EEAdapter(customizationOptions.Beards.FirstOrDefault(a => a.Load() == ee));
+                            //state.Beard = new DollState.EEAdapter(ee);
                         }
                         if (customizationOptions.Horns.Contains((EquipmentEntityLink link) => link.Load(false) == ee))
                         {
-                            state.Horn = new DollState.EEAdapter(ee);
+                            state.Horn = new DollState.EEAdapter(customizationOptions.Horns.FirstOrDefault(a => a.Load() == ee));
+                            // state.Horn = new DollState.EEAdapter(ee);
                         }
                         if (state.Scars.Contains((EquipmentEntityLink link) => link.Load(false) == ee))
                         {
-                            var NewEEAdapter = new DollState.EEAdapter(ee);
+                            var NewEEAdapter = new DollState.EEAdapter();
                             NewEEAdapter.m_Link = DollState.GetScarsList(state.Race.RaceId).FirstOrDefault((EquipmentEntityLink link2) => link2.Load(false) == ee);
                             state.Scar = NewEEAdapter;
                         }
@@ -230,16 +238,16 @@ namespace VisualAdjustments2.Infrastructure
                 if (unit?.View?.CharacterAvatar != null)
                 {
 
-                    if (state.Hair.m_Entity != null)
+                    if (state.Hair.m_Link?.Load() != null)
                     {
                         state.HairRampIndex = unit.View.CharacterAvatar.GetPrimaryRampIndex(state.Hair.Load());
                     }
                     DollState.EEAdapter eeadapter = state.GetSkinEntities().FirstOrDefault<DollState.EEAdapter>();
-                    if (eeadapter.m_Entity != null)
+                    if (eeadapter.m_Link?.Load() != null)
                     {
                         state.SkinRampIndex = unit.View.CharacterAvatar.GetPrimaryRampIndex(eeadapter.Load());
                     }
-                    if (state.Horn.m_Entity != null)
+                    if (state.Horn.m_Link?.Load() != null)
                     {
                         state.HornsRampIndex = unit.View.CharacterAvatar.GetPrimaryRampIndex(state.Horn.Load());
                     }
@@ -317,6 +325,74 @@ namespace VisualAdjustments2.Infrastructure
                 newtxt.text = ">>";
                 newtxt.fontSizeMin = 45;
                 newcomp.m_IconText = newtxt;
+                iconplace.gameObject.SetActive(false);
+
+                var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
+                Layout.spacing = 10;
+                /*newtxt.font = acronymTMP.font;
+                newtxt.alignment = TextAlignmentOptions.CenterGeoAligned;
+                newtxt.horizontalAlignment = HorizontalAlignmentOptions.Geometry;
+                newtxt.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                newtxt.fontSizeMax = 46;
+                newtxt.material = acronymTMP.material;
+                newtxt.fontStyle = FontStyles.Bold;
+                newtxt.color = acronymTMP.color;
+                newcomp.m_IconText = newtxt;*/
+
+                return newcomp;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw e;
+            }
+        }
+        public static ListViewItemPCView ConvertToEquipmentPCView(this CharGenFeatureSelectorItemPCView oldview)
+        {
+            try
+            {
+                var newcomp = oldview.gameObject.AddComponent<ListViewItemPCView>();
+                newcomp.m_Button = oldview.m_Button;
+                newcomp.m_DisplayName = oldview.m_FeatureNameText;
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("CollapseButton"));
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("RecommendationPlace"));
+                /*foreach(var comp in oldview.transform.Find("IconPlace").GetComponents<Component>().Concat(oldview.transform.Find("IconPlace").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+                foreach (var comp in oldview.transform.Find("TextContainer/Description").GetComponents<Component>().Concat(oldview.transform.Find("TextContainer/Description").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("IconPlace"), true);
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("TextContainer/Description"), true);*/
+                var iconplace = oldview.transform.Find("IconPlace");
+
+                //iconplace.localScale = new Vector3((float)0.75, (float)0.75, (float)0.75);
+                var bg = iconplace.Find("BG");
+                bg.Find("Icon").gameObject.SetActive(false);
+                var acronym = bg.Find("Acronym");
+                acronym.gameObject.SetActive(true);
+                var acronymTMP = acronym.GetComponent<TextMeshProUGUI>();
+                acronymTMP.fontSizeMax = 46;
+                acronymTMP.fontSize = 46;
+                acronymTMP.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                acronymTMP.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                //  newcomp.m_IconText = acronymTMP;
+                oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
+                UnityEngine.Component.Destroy(oldview);
+
+
+                //var InstantiatedButton = UnityEngine.GameObject.Instantiate(StaticCanvas.Instance.transform.Find("ServiceWindowsPCView/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                //var icon = InstantiatedButton.Find("Icon");
+               // icon.gameObject.SetActive(true);
+                //newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
+                //UnityEngine.Component.DestroyImmediate(icon.gameObject.GetComponent<Image>(), true);
+                //var newtxt = icon.gameObject.AddComponent<TextMeshProUGUI>(acronymTMP);
+               // newtxt.text = ">>";
+              //  newtxt.fontSizeMin = 45;
+                //newcomp.m_IconText = newtxt;
                 iconplace.gameObject.SetActive(false);
 
                 var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
@@ -503,6 +579,14 @@ namespace VisualAdjustments2.Infrastructure
             __instance.SetupAnimationManager(character2.AnimationManager);
             character2.AnimationManager.Tick();
             character2.AnimationManager.LocoMotionHandle.Action.OnUpdate(character2.AnimationManager.LocoMotionHandle, 0.1f);
+        }
+        public static void DestroyFx(GameObject FxObject)
+        {
+            if (FxObject)
+            {
+                FxHelper.Destroy(FxObject);
+                FxObject = null;
+            }
         }
     }
 }

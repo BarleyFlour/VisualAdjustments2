@@ -39,7 +39,7 @@ namespace VisualAdjustments2.UI
             ""
         };
         public ListViewItemPCView m_Template;
-        public void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp,bool LeftOrRight, string LabelText)
+        public virtual void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp,bool LeftOrRight, string LabelText)
         {
             var newpcview = oldcomp.gameObject.AddComponent<ListSearchPCView>();
             newpcview.SetupFromChargenFeatureSearchPCView(oldcomp.m_CharGenFeatureSearchView);
@@ -122,7 +122,7 @@ namespace VisualAdjustments2.UI
         }
         public ListSearchPCView m_CharGenFeatureSearchView;
         public TextMeshProUGUI m_SearchRequestEntitiesNotFound;
-        private TextMeshProUGUI m_SelectorHeader;
+        public TextMeshProUGUI m_SelectorHeader;
         public BoolReactiveProperty HasVisibleElements = new BoolReactiveProperty(true);
         public override bool HasSorter
         {

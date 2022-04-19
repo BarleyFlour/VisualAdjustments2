@@ -16,6 +16,7 @@ using Kingmaker.BundlesLoading;
 using System.Diagnostics;
 using Kingmaker.Blueprints;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
+using Kingmaker.Blueprints.Root;
 #if DEBUG
 using UnityModManagerNet;
 #endif
@@ -23,6 +24,18 @@ using Kingmaker.Visual.Particles;
 
 namespace VisualAdjustments2
 {
+    [HarmonyPatch(typeof(MainMenu),nameof(MainMenu.Awake))]
+    public static class GameStarter_Patch
+    {
+        [HarmonyPostfix]
+        public static void Patch()
+        {
+#if DEBUG
+            Main.Logger.Log("Started Loading VA2 Resources");
+#endif
+            LoaderGameObject.CreateLoaderAndLoad();
+        }
+    }
     public class serializestuff
     {
         [Newtonsoft.Json.JsonProperty] public Dictionary<string, HandEquipmentOverrides.HandEquipmentOverrideInfo> SomeDict = new Dictionary<string, HandEquipmentOverrides.HandEquipmentOverrideInfo>();
@@ -46,6 +59,7 @@ namespace VisualAdjustments2
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 modEntry.OnGUI = OnGUI;
                 modEntry.OnUnload = Unload;
+                //LoaderGameObject.CreateLoaderAndLoad();
                 //ResourceLoader.GetEEs();
                 //ResourceLoader.StartEEGetting();
             }
@@ -69,11 +83,11 @@ namespace VisualAdjustments2
 			var harmony = new Harmony(modification.Manifest.UniqueName);
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-			modification.OnDrawGUI += OnGUI;
+			modification.OnDrawGUI += OnGUI; //Make this tell you to go to the ingame menu
 			modification.IsEnabled += () => IsEnabled;
 			modification.OnSetEnabled += enabled => IsEnabled = enabled;
-			modification.OnShowGUI += () => Logger.Log("OnShowGUI");
-			modification.OnHideGUI += () => Logger.Log("OnHideGUI");
+			//modification.OnShowGUI += () => Logger.Log("OnShowGUI");
+			//modification.OnHideGUI += () => Logger.Log("OnHideGUI");
 		}
 #endif
 #if DEBUG
@@ -88,6 +102,11 @@ namespace VisualAdjustments2
         private static void OnGUI()
 #endif
         {
+#if DEBUG
+            if(GUILayout.Button("Loady Stuff"))
+            {
+                LoaderGameObject.CreateLoaderAndLoad();
+            }
             if (GUILayout.Button("EEGetOld"))
             {
                 ResourceLoader.StartEEGetting();
@@ -99,7 +118,7 @@ namespace VisualAdjustments2
             }
             if(GUILayout.Button(""))
             {
-
+                  
             }
             if(GUILayout.Button("EEGuidCompare"))
             {
@@ -162,6 +181,7 @@ namespace VisualAdjustments2
 
 
             GUILayout.Button("Some Button");
+#endif
         }
     }
 }

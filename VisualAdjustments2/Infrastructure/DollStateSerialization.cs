@@ -232,6 +232,10 @@ namespace VisualAdjustments2
                 throw e;
             }
         }
+        public static void RebuildCharacter(this UnitEntityData data)
+        {
+            data.AttachToViewOnLoad(null);
+        }
         public static void SaveDollState(this UnitEntityData data, DollState doll, bool Apply = true)
         {
             try
@@ -254,7 +258,12 @@ namespace VisualAdjustments2
                     var unitPartDollData = data.Ensure<UnitPartDollData>();
                     if (data.Get<UnitPartDollData>().Default != null)
                     {
-                        data.View?.CharacterAvatar?.RemoveEquipmentEntities(unitPartDollData?.Default?.EquipmentEntityIds?.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
+                        if (doll.RacePreset != null)
+                        {
+                            data.View.CharacterAvatar.Skeleton = ((doll.Gender == Gender.Male) ? doll.RacePreset.MaleSkeleton : doll.RacePreset.FemaleSkeleton);
+                            data.View.CharacterAvatar.UpdateSkeleton();
+                            data.View.CharacterAvatar.AddEquipmentEntities(doll.RacePreset.Skin.GetLinks(doll.Gender, doll.RacePreset.RaceId));
+                        }
                         var newDoll = doll.CreateData();
                         unitPartDollData.SetDefault(newDoll);
                         data.View.CharacterAvatar.AddEquipmentEntities(newDoll.EquipmentEntityIds.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
@@ -262,9 +271,16 @@ namespace VisualAdjustments2
                     }
                     else
                     {
+                        if (doll.RacePreset != null)
+                        {
+                            data.View.CharacterAvatar.Skeleton = ((doll.Gender == Gender.Male) ? doll.RacePreset.MaleSkeleton : doll.RacePreset.FemaleSkeleton);
+                            data.View.CharacterAvatar.UpdateSkeleton();
+                            data.View.CharacterAvatar.AddEquipmentEntities(doll.RacePreset.Skin.GetLinks(doll.Gender, doll.RacePreset.RaceId));
+                        }
                         // data.View?.CharacterAvatar?.RemoveEquipmentEntities(unitPartDollData?.Default?.EquipmentEntityIds?.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
                         var newDoll = doll.CreateData();
                         unitPartDollData.SetDefault(newDoll);
+                        
                         data.View.CharacterAvatar.AddEquipmentEntities(newDoll.EquipmentEntityIds.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
                         newDoll.ApplyRampIndices(data.View.CharacterAvatar);
                     }

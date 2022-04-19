@@ -14,6 +14,7 @@ using UnityEngine.UI;
 using Owlcat.Runtime.UI.SelectionGroup;
 using Owlcat.Runtime.UI.SelectionGroup.View;
 using Owlcat.Runtime.UI.Controls.Button;
+using Kingmaker.Utility;
 
 namespace VisualAdjustments2.UI
 {
@@ -23,15 +24,15 @@ namespace VisualAdjustments2.UI
         {
             base.gameObject.SetActive(true);
             base.BindViewImplementation();
-            m_AddButton.OnLeftClick.AddListener(OnClickAddRemove);
-            this.m_DisplayName.text = base.ViewModel.DisplayName;
-            this.m_IconText.text = base.ViewModel.AddOrRemove ? ListViewItemVM.Add : ListViewItemVM.Remove;
+            m_AddButton?.OnLeftClick?.AddListener(OnClickAddRemove);
+            this.m_DisplayName.text = base.ViewModel.DisplayName.IsNullOrEmpty() ? base.ViewModel.InternalName : base.ViewModel.DisplayName;
+            if(this.m_IconText != null) this.m_IconText.text = base.ViewModel.AddOrRemove ? ListViewItemVM.Add : ListViewItemVM.Remove;
         }
         public override void DestroyViewImplementation()
         {
             base.DestroyViewImplementation();
-            m_AddButton.OnLeftClick.RemoveListener(OnClickAddRemove);
-          //  base.gameObject.SetActive(false);
+            m_AddButton?.OnLeftClick?.RemoveListener(OnClickAddRemove);
+            //  base.gameObject.SetActive(false);
         }
         public void OnClickAddRemove()
         {

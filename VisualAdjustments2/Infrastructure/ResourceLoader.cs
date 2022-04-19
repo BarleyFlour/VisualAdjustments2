@@ -26,6 +26,10 @@ using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.Mechanics.Actions;
 using VisualAdjustments2.Infrastructure;
 using Kingmaker.Designers.EventConditionActionSystem.Actions;
+using Kingmaker.View.Animation;
+using Kingmaker.Blueprints.Items.Equipment;
+using Kingmaker.Blueprints.Items.Shields;
+using Kingmaker.Blueprints.Items.Weapons;
 
 namespace VisualAdjustments2
 {
@@ -52,6 +56,24 @@ namespace VisualAdjustments2
         }
         [JsonProperty] public ResourceInfo[] allFXs;
         [JsonProperty] public Dictionary<string, ResourceLoader.FXBlocker> AbilityGuidToFXBlocker = new Dictionary<string, ResourceLoader.FXBlocker>();
+    }
+    public class SerializedEnchantmentList : SerializedResourceList
+    {
+        public SerializedEnchantmentList(ResourceInfo[] enchantmentsList, string version)
+        {
+            EnchantmentsList = enchantmentsList;
+            Version = version;
+        }
+        [JsonProperty] public ResourceInfo[] EnchantmentsList;
+    }
+    public class SerializedWeaponList : SerializedResourceList
+    {
+        public SerializedWeaponList(Dictionary<WeaponAnimationStyle, List<ResourceInfo>> weaponsDictionary, string version)
+        {
+            WeaponsDictionary = weaponsDictionary;
+            Version = version;
+        }
+        [JsonProperty] public Dictionary<WeaponAnimationStyle, List<ResourceInfo>> WeaponsDictionary;
     }
     public struct ResourceInfo
     {
@@ -144,8 +166,30 @@ namespace VisualAdjustments2
         };
         public static void SaveCachedResources<T>(ResourceInfo[] array) where T : SerializedResourceList
         {
-
-            var filepath = typeof(T) == typeof(SerializedEEList) ? Path.Combine(Main.ModEntry.Path, "CachedEEs.json") : Path.Combine(Main.ModEntry.Path, "CachedFXs.json");
+            string filepath;
+            if (typeof(T) == typeof(SerializedEEList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedEEs.json");
+            }
+            else if (typeof(T) == typeof(SerializedFXList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedFXs.json");
+            }
+            else if (typeof(T) == typeof(SerializedWeaponList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedWeapons.json");
+            }
+            else if (typeof(T) == typeof(SerializedEnchantmentList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedEnchants.json");
+            }
+            else filepath = "";
+            var cachepath = Path.Combine(Main.ModEntry.Path,"Cache");
+            if (!System.IO.Directory.Exists(Path.Combine(Main.ModEntry.Path, "Cache")))
+            {
+                System.IO.Directory.CreateDirectory(Path.Combine(Main.ModEntry.Path,"Cache"));
+            }
+            //var filepath = typeof(T) == typeof(SerializedEEList) ? Path.Combine(Main.ModEntry.Path, "CachedEEs.json") : Path.Combine(Main.ModEntry.Path, "CachedFXs.json");
             try
             {
                 JsonSerializer serializer = new JsonSerializer();
@@ -159,9 +203,17 @@ namespace VisualAdjustments2
                     {
                         serializer.Serialize(writer, new SerializedEEList(array, GameVersion.GetVersion()));
                     }
-                    else
+                    else if(typeof(T) == typeof(SerializedFXList))
                     {
                         serializer.Serialize(writer, new SerializedFXList(array, AbilityGuidToFXBlocker, GameVersion.GetVersion()));
+                    }
+                    /*else if(typeof(T) == typeof(SerializedWeaponList))
+                    {
+                        serializer.Serialize(writer, new SerializedWeaponList(array, AbilityGuidToFXBlocker, GameVersion.GetVersion()));
+                    }*/
+                    else if (typeof(T) == typeof(SerializedEnchantmentList))
+                    {
+                        serializer.Serialize(writer, new SerializedEnchantmentList(array, GameVersion.GetVersion()));
                     }
                 }
             }
@@ -181,13 +233,78 @@ namespace VisualAdjustments2
             BarleyHandleAssets(request.assetBundle);
             yield return null;
         }*/
+        public static void SaveCachedResources<T>(Dictionary<WeaponAnimationStyle,List<ResourceInfo>> array) where T : SerializedResourceList
+        {
+            string filepath;
+            if (typeof(T) == typeof(SerializedEEList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedEEs.json");
+            }
+            else if (typeof(T) == typeof(SerializedFXList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedFXs.json");
+            }
+            else if (typeof(T) == typeof(SerializedWeaponList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedWeapons.json");
+            }
+            else filepath = "";
+            var cachepath = Path.Combine(Main.ModEntry.Path, "Cache");
+            if (!System.IO.Directory.Exists(Path.Combine(Main.ModEntry.Path, "Cache")))
+            {
+                System.IO.Directory.CreateDirectory(Path.Combine(Main.ModEntry.Path, "Cache"));
+            }
+            //var filepath = typeof(T) == typeof(SerializedEEList) ? Path.Combine(Main.ModEntry.Path, "CachedEEs.json") : Path.Combine(Main.ModEntry.Path, "CachedFXs.json");
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer();
+#if (DEBUG)
+                serializer.Formatting = Formatting.Indented;
+#endif
+                using (StreamWriter sw = new StreamWriter(filepath))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    if (typeof(T) == typeof(SerializedWeaponList))
+                    {
+                        serializer.Serialize(writer, new SerializedWeaponList(array, GameVersion.GetVersion()));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Main.Logger.Error($"Can't save {filepath}.");
+                Main.Logger.Error(ex.ToString());
+            }
+        }
         public static bool GetCachedResources<T>(out T info) where T : SerializedResourceList
         {
 #if DEBUG
             // info = null;
             //  return false;
 #endif
-            var filepath = typeof(T) == typeof(SerializedEEList) ? Path.Combine(Main.ModEntry.Path, "CachedEEs.json") : Path.Combine(Main.ModEntry.Path, "CachedFXs.json");
+            string filepath;
+            var cachepath = Path.Combine(Main.ModEntry.Path, "Cache");
+            if (!System.IO.Directory.Exists(Path.Combine(Main.ModEntry.Path, "Cache")))
+            {
+                System.IO.Directory.CreateDirectory(Path.Combine(Main.ModEntry.Path, "Cache"));
+            }
+            if (typeof(T) == typeof(SerializedEEList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedEEs.json");
+            }
+            else if (typeof(T) == typeof(SerializedFXList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedFXs.json");
+            }
+            else if (typeof(T) == typeof(SerializedWeaponList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedWeapons.json");
+            }
+            else if (typeof(T) == typeof(SerializedEnchantmentList))
+            {
+                filepath = Path.Combine(Main.ModEntry.Path, "Cache/CachedEnchants.json");
+            }
+            else filepath = "";
             if (File.Exists(filepath))
             {
                 try
@@ -231,7 +348,7 @@ namespace VisualAdjustments2
 
 
 
-        private struct LoadInfo
+        /*private struct LoadInfo
         {
             public LoadInfo(string guid, int index)
             {
@@ -240,7 +357,7 @@ namespace VisualAdjustments2
             }
             private readonly string GUID;
             private readonly int Index;
-        }
+        }*/
         //use load all but associate guids w/ index beforehand then link them using index
         /// <summary>
         /// 
@@ -473,7 +590,7 @@ namespace VisualAdjustments2
 
                 void Merge(BlueprintBuff a)
                 {
-                   // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
+                    // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
                     this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
                     if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnRemove.AssetId);
                     if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnStart.AssetId);
@@ -494,7 +611,7 @@ namespace VisualAdjustments2
                             var z = ((ContextActionApplyBuff)b.IfTrue.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
                             if (z != null)
                             {
-                            //    Main.Logger.Log($"MergedConditionalIfTrue {ability.NameForAcronym}");
+                                //    Main.Logger.Log($"MergedConditionalIfTrue {ability.NameForAcronym}");
                                 Merge(z);
                             }
                         }
@@ -503,7 +620,7 @@ namespace VisualAdjustments2
                             var z = ((ContextActionApplyBuff)b.IfFalse.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
                             if (z != null)
                             {
-                              //  Main.Logger.Log($"MergedConditionalIfFalse {ability.NameForAcronym}");
+                                //  Main.Logger.Log($"MergedConditionalIfFalse {ability.NameForAcronym}");
                                 Merge(z);
                             }
                         }
@@ -518,7 +635,7 @@ namespace VisualAdjustments2
 
                 void Merge(BlueprintBuff a)
                 {
-                   // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
+                    // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
                     this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
                     if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnRemove.AssetId);
                     if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnStart.AssetId);
@@ -562,7 +679,7 @@ namespace VisualAdjustments2
                     {
                         //void Merge(BlueprintBuff a)
                         // {
-                       // Main.Logger.Log($"Merged: {bp.NameForAcronym}");
+                        // Main.Logger.Log($"Merged: {bp.NameForAcronym}");
                         firstMatch.AllAbilityGUIDs.Add(bp.AssetGuidThreadSafe);
                         if (bp.Buff.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(bp.Buff.FxOnRemove.AssetId);
                         if (bp.Buff.FxOnStart?.AssetId?.IsNullOrEmpty() == false) firstMatch.FXGuids.Add(bp.Buff.FxOnStart.AssetId);
@@ -572,7 +689,7 @@ namespace VisualAdjustments2
                     else if (bp.m_Buff.guid != null && bp.m_Buff.guid != "" && bp.GetBeneficialBuffs())
                     {
 
-                       // Main.Logger.Log(bp.NameForAcronym + " Activatable");
+                        // Main.Logger.Log(bp.NameForAcronym + " Activatable");
                         resourceInfList.Add(new ResourceInfo(bp.m_DisplayName, bp.NameForAcronym, bp.AssetGuidThreadSafe, bp.GetType()));
                         var blocker = new FXBlocker(bp);
                         AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
@@ -616,7 +733,7 @@ namespace VisualAdjustments2
                                         var ifTrueAction = ((ContextActionApplyBuff)conditionalAction.IfTrue.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
                                         if (ifTrueAction != null)
                                         {
-                                         //   Main.Logger.Log($"MergedConditionalIfTrue {bp.NameForAcronym}");
+                                            //   Main.Logger.Log($"MergedConditionalIfTrue {bp.NameForAcronym}");
                                             Merge(ifTrueAction);
                                         }
                                     }
@@ -625,7 +742,7 @@ namespace VisualAdjustments2
                                         var ifFalseAction = ((ContextActionApplyBuff)conditionalAction.IfFalse.Actions.FirstOrDefault(x => x?.GetType() == typeof(ContextActionApplyBuff)))?.Buff;
                                         if (ifFalseAction != null)
                                         {
-                                           // Main.Logger.Log($"MergedConditionalIfFalse {bp.NameForAcronym}");
+                                            // Main.Logger.Log($"MergedConditionalIfFalse {bp.NameForAcronym}");
                                             Merge(ifFalseAction);
                                         }
                                     }
@@ -814,6 +931,122 @@ namespace VisualAdjustments2
                 else throw (new Exception("GUID Map null, what? how?"));
             }
         }
+        public static Dictionary<WeaponAnimationStyle, List<ResourceInfo>> GetWeapons()
+        {
+            if (GetCachedResources<SerializedWeaponList>(out var deserialized) == true)
+            {
+                return deserialized.WeaponsDictionary;
+            }
+            else
+            {
+                var allBPs = Kingmaker.Cheats.Utilities.GetAllBlueprints();
+                var weapons = (IEnumerable<BlueprintItemEquipmentHand>)allBPs.Entries.Where(a => a.Type == typeof(BlueprintItemWeapon)).Select(b => ResourcesLibrary.TryGetBlueprint<BlueprintItemWeapon>(b.Guid)).OrderBy((bp) => bp.name);
+                weapons = allBPs.Entries.Where(a => a.Type == typeof(BlueprintItemShield)).Select(b => ResourcesLibrary.TryGetBlueprint<BlueprintItemShield>(b.Guid)).OrderBy((bp) => bp.name).Concat(weapons);
+                var UniqueVisualWeapons = new List<BlueprintItemEquipmentHand>();
+                foreach (var item in weapons)
+                {
+                    var weapon = ResourcesLibrary.TryGetBlueprint<BlueprintItemEquipmentHand>(item.AssetGuid);
+                    if (weapon.VisualParameters?.Model != null && !UniqueVisualWeapons.Any(a => a.VisualParameters.m_WeaponModel.AssetId == weapon.VisualParameters.m_WeaponModel.AssetId))
+                    {
+                        UniqueVisualWeapons.Add(weapon);
+                    }
+                }
+                var DictionaryToReturn = new Dictionary<WeaponAnimationStyle, List<ResourceInfo>>();
+                foreach (var type in Enum.GetValues(typeof(WeaponAnimationStyle)))
+                {
+                    DictionaryToReturn[(WeaponAnimationStyle)type] = new List<ResourceInfo>();
+                }
+                foreach (var weapon in UniqueVisualWeapons)
+                {
+                    // if(weapon.GetType() == typeof(BlueprintItemWeapon))
+                    {
+                        var wpn = weapon;
+                        var inf = new ResourceInfo(weapon.m_DisplayNameText,weapon.NameForAcronym,weapon.AssetGuidThreadSafe,weapon.GetType());
+                        DictionaryToReturn[wpn.VisualParameters.AnimStyle].Add(inf);
+                    }
+                    // else
+                    {
+
+                    }
+                }
+                SaveCachedResources<SerializedWeaponList>(DictionaryToReturn);
+                return DictionaryToReturn;
+//#if DEBUG
+                /*  var sw = new Stopwatch();
+                  sw.Start();
+  #endif
+                  if (GetResourceGuidMap() != null)
+                  {
+  #if DEBUG
+                      var sw4 = new Stopwatch();
+                      sw4.Start();
+  #endif
+                      var templist = new List<KeyValuePair<string, string>>();
+                      async Task<List<KeyValuePair<string, string>>> GetEEGuids(Dictionary<string, string> list)
+                      {
+                          var toload = new List<KeyValuePair<string, string>>();
+                          foreach (var value in list.Where(b => (b.Value[0] == 'e' && b.Value[1] == 'e' && b.Value[2] == '_')))
+                          {
+                              await Task.Run(() => { toload.Add(value); }).ConfigureAwait(false);
+                          }
+                          return toload;
+                      }
+                      var task = GetEEGuids(GetResourceGuidMap());
+                      task.Wait();
+  #if DEBUG
+                      sw4.Stop();
+                      Main.Logger.Log($"Processed KVs in {sw4.ElapsedMilliseconds}ms");
+  #endif
+                      var sw2 = new Stopwatch();
+                      sw2.Start();
+                      foreach (var guid in task.Result)
+                      {
+                          var obj = LoadEE(guid.Key, guid.Value);
+                          if (obj != null)
+                          {
+                              if (obj.Resource != null)
+                                  templist.Add(new KeyValuePair<string, string>(guid.Key, obj.Resource.name));
+                          }
+                      }
+  #if DEBUG
+                      sw2.Stop();
+                      Main.Logger.Log($"Loaded EEs in {sw2.ElapsedMilliseconds}ms");
+                      var sw3 = new Stopwatch();
+                      sw3.Start();
+  #endif
+                      var eeinfolist = new List<ResourceInfo>();
+                      async Task<List<ResourceInfo>> Stuff()
+                      {
+                          foreach (var loaded in templist)
+                          {
+                              await Task.Run(() =>
+                              {
+                                  var eeinfo = new ResourceInfo(ProcessEEName(loaded.Value), loaded.Value, loaded.Key, typeof(EquipmentEntity));
+                                  eeinfolist.Add(eeinfo); NameToEEInfo.Add(loaded.Value, eeinfo);
+                              }).ConfigureAwait(false);
+                          }
+                          return eeinfolist;
+                      }
+                      var task2 = Stuff();
+                      task2.Wait();
+  #if DEBUG
+                      sw3.Stop();
+                      Main.Logger.Log($"Strings processed in {sw3.Elapsed}ms");
+  #endif
+                      ResourcesLibrary.CleanupLoadedCache();
+  #if DEBUG
+                      sw.Stop();
+                      Main.Logger.Log($"Got all EE's in {sw.ElapsedMilliseconds}ms");
+                      Main.Logger.Log($"String processing took {sw.ElapsedMilliseconds - sw2.ElapsedMilliseconds - sw3.ElapsedMilliseconds}");
+  #endif
+                      task2.Result.Sort((x, y) => string.Compare(x.Name, y.Name));
+                      var ResultToArray = task2.Result.ToArray();
+                      SaveCachedResources<SerializedEEList>(ResultToArray);
+                      return task2.Result;
+                  }
+                  else throw (new Exception("GUID Map null, what? how?"));*/
+            }
+        }
         /* private static EEInfo[] m_AllEEs;
          public static EEInfo[] AllEEs
          {
@@ -842,6 +1075,24 @@ namespace VisualAdjustments2
             {
                 if (m_AllFXs == null) m_AllFXs = GetFXs();
                 return m_AllFXs;
+            }
+        }
+        public static Dictionary<WeaponAnimationStyle, List<ResourceInfo>> m_AllWeapons;
+        public static Dictionary<WeaponAnimationStyle, List<ResourceInfo>> AllWeapons
+        {
+            get
+            {
+                if (m_AllWeapons == null) m_AllWeapons = GetWeapons();
+                return m_AllWeapons;
+            }
+        }
+        public static List<ResourceInfo> m_AllEnchants;
+        public static List<ResourceInfo> AllEnchants
+        {
+            get
+            {
+                if (m_AllEnchants == null) throw new Exception("Main Menu Load failed");
+                return m_AllEnchants;
             }
         }
         public static string ProcessEEName(string ee)

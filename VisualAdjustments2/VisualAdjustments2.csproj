@@ -73,19 +73,23 @@
     <Compile Include="Infrastructure\EeInfraStructure.cs" />
     <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\Extension_Methods.cs" />
+    <Compile Include="Infrastructure\LoaderGameObject.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
+    <Compile Include="Infrastructure\WeaponInfrastucture.cs" />
     <Compile Include="UI\Misc\ToggleWithTextHandler.cs" />
     <Compile Include="UI\PCViews\Modified\BarleySlideSelectorPCView.cs" />
     <Compile Include="UI\PCViews\Modified\DollControllerVA.cs" />
     <Compile Include="UI\PCViews\Modified\EEColorPickerPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\BuffButtonPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\BuffListPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\ListView\EquipmentListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListSearchPCView.cs" />
     <Compile Include="UI\PCViews\New\ColorPreviewView.cs" />
     <Compile Include="UI\PCViews\New\CreateDollPCView.cs" />
     <Compile Include="UI\PCViews\New\DollPCView.cs" />
     <Compile Include="UI\Misc\ToggleGroup.cs" />
     <Compile Include="UI\PCViews\Modified\CharGenAppearancePhaseDetailedPCViewModified.cs" />
+    <Compile Include="UI\PCViews\New\WeaponOverridePCView.cs" />
     <Compile Include="UI\VMs\Modified\ColorSelectorSliderVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\BuffButtonVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\BuffListViewVM.cs" />
@@ -101,12 +105,14 @@
     <Compile Include="Infrastructure\Utilities.cs" />
     <Compile Include="UI\PCViews\New\VisualAdjustments2ServiceWindowVM.cs" />
     <Compile Include="UI\VMs\Modified\CharGenAppearancePhaseVMModified.cs" />
-    <Compile Include="DollStateSerialization.cs" />
+    <Compile Include="Infrastructure\DollStateSerialization.cs" />
     <Compile Include="UI\VMs\Modified\ListView\CurrentEEsVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\EquipmentListVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListSearchVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewItemVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\ListViewVM.cs" />
+    <Compile Include="UI\VMs\New\ListViewItemEquipmentVM.cs" />
+    <Compile Include="UI\VMs\New\WeaponOverrideVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />
     <Compile Include="UI\VMs\New\CreateDollVM.cs" />
     <Compile Include="UI\VMs\New\DollVM.cs" />
@@ -131,6 +137,9 @@
     </Reference>
     <Reference Include="Assembly-CSharp_public">
       <HintPath>..\lib\Assembly-CSharp_public.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang">
+      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Boo.Lang.dll</HintPath>
     </Reference>
     <Reference Include="DXTCompressor">
       <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\DXTCompressor.dll</HintPath>

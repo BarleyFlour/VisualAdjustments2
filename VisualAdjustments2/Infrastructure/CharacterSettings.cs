@@ -1,8 +1,11 @@
 ﻿using Kingmaker.Blueprints;
 using Kingmaker.EntitySystem;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.Items;
 using Kingmaker.UI.Common;
+using Kingmaker.View.Animation;
 using Kingmaker.Visual.CharacterSystem;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +15,47 @@ using UnityEngine;
 
 namespace VisualAdjustments2.Infrastructure
 {
+    public class WeaponOverride
+    {
+        [JsonConstructor] public WeaponOverride(bool mainoroffhand,int slot,string guid,string animstyle)
+        {
+            this.MainOrOffHand = mainoroffhand;
+            this.Slot = slot;
+            this.GUID = guid;
+            this.AnimStyle = animstyle;
+        }
+        public WeaponOverride(bool mainoroffhand, int slot, string guid, int animstyle)
+        {
+            this.MainOrOffHand = mainoroffhand;
+            this.Slot = slot;
+            this.GUID = guid;
+            this.AnimStyle = ((WeaponAnimationStyle)animstyle).ToString();
+        }
+        public bool MainOrOffHand;
+        public int Slot;
+        public string AnimStyle;
+        public string GUID;
+    }
+    public class EnchantOverride
+    {
+        [JsonConstructor]
+        public EnchantOverride(bool mainoroffhand, int slot, string guid)
+        {
+            this.MainOrOffHand = mainoroffhand;
+            this.Slot = slot;
+            this.GUID = guid;
+        }
+        public bool MainOrOffHand;
+        public int Slot;
+        public string AnimStyle;
+        public string GUID;
+    }
     public class CharacterSettings
     {
+        public List<WeaponOverride> WeaponOverrides = new List<WeaponOverride>();
+        public List<EnchantOverride> EnchantOverrides = new List<EnchantOverride>();
+        [JsonIgnore] public Dictionary<ItemEntity, List<GameObject>> CurrentFXs = new Dictionary<ItemEntity, List<GameObject>>();
+
         public EESettings EeSettings = new EESettings();
         public Buff_Settings Fx_Settings = new Buff_Settings();
         public string ClassGUID;
@@ -26,7 +68,15 @@ namespace VisualAdjustments2.Infrastructure
             public bool WhiteOrBlackList = false;
             public ResourceLoader.FXBlockerHolder fXBlockerHolder = new ResourceLoader.FXBlockerHolder();
         }
-        public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict = SetupDict();
+        public Dictionary<ItemsFilter.ItemType, bool> m_HideEquipmentDict;
+        [JsonIgnore] public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict
+        {
+            get
+            {
+                if (m_HideEquipmentDict == null) m_HideEquipmentDict = SetupDict();
+                return m_HideEquipmentDict;
+            }
+        }
         public SerializedDollState doll;
         public static Dictionary<ItemsFilter.ItemType, bool> SetupDict()
         {

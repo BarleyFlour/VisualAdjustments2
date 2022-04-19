@@ -13,14 +13,17 @@ namespace VisualAdjustments2.UI
         public EquipmentVM()
         {
             base.AddDisposable(this);
+            base.AddDisposable(m_weaponOverride = new WeaponOverrideVM());
         }
         public override void DisposeImplementation()
         {
+
         }
         public void OnCharacterChanged()
         {
 
         }
+        public WeaponOverrideVM m_weaponOverride;
         public EquipmentListVM m_EquipmentListVM;
     }
 }

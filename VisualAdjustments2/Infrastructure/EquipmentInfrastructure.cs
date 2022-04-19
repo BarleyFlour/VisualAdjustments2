@@ -1,10 +1,17 @@
-﻿using Kingmaker.Items;
+﻿using HarmonyLib;
+using Kingmaker.Items;
 using Kingmaker.View;
+using Kingmaker.View.Equipment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.Blueprints.Items.Ecnchantments;
+using Kingmaker.Blueprints;
+using UnityEngine;
+using Kingmaker.Items.Slots;
+using Kingmaker.Visual.Particles;
 
 namespace VisualAdjustments2.Infrastructure
 {
