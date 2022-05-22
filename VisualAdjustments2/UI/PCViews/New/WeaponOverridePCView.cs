@@ -18,16 +18,22 @@ namespace VisualAdjustments2.UI
         {
             m_DropDown.onValueChanged = new TMPro.TMP_Dropdown.DropdownEvent();
             m_DropDown.onValueChanged.AddListener((int i) => { this?.ViewModel?.OnWeaponTypeChanged(i); });
-            m_ToggleGroup.PrimOrSec.Subscribe((bool b) => {if(this.ViewModel != null) this.ViewModel.hand.Value = b; });
             m_ToggleGroup.PrimOrSec.Subscribe((bool b) => { if (this.ViewModel != null) this.ViewModel.hand.Value = b; });
+            //m_ToggleGroup.PrimOrSec.Subscribe((bool b) => { if (this.ViewModel != null) this.ViewModel.hand.Value = b; });
         }
+
+        public void OnUnitChanged()
+        {
+            
+        }
+
         public override void BindViewImplementation()
         {
             base.BindViewImplementation();
             base.AddDisposable(this.ViewModel.slot.Subscribe((int i) =>
             {
                 var animstyle = Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemBlueprint?.VisualParameters?.AnimStyle;
-                if(animstyle != null )this.m_DropDown.value = WeaponOverrideVM.m_AnimToInt[(WeaponAnimationStyle)animstyle];
+                if (animstyle != null) this.m_DropDown.value = WeaponOverrideVM.m_AnimToInt[(WeaponAnimationStyle)animstyle];
                 var viewVM = this.ViewModel.SelectFromSettings();
                 if (viewVM != null)
                 {
@@ -42,19 +48,22 @@ namespace VisualAdjustments2.UI
             {
                 var viewVM = this.ViewModel.SelectFromSettings();
                 if (viewVM != null)
+                {
                     this.ViewModel.m_ListViewVM?.Value?.TrySelectEntity(viewVM);
+                    //Main.Logger.Log($"Selected {viewVM.DisplayName}");
+                }
                 else this.ViewModel.m_ListViewVM?.Value?.TryUnselectEntity(this.ViewModel.m_ListViewVM.Value.SelectedEntity.Value);
             }));
             m_DropDown.value = 0;
             m_SlotButtons.OnClickPage(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Body.CurrentHandEquipmentSetIndex);
-           // this.ViewModel.slot.Value = ;
+            // this.ViewModel.slot.Value = ;
             m_ToggleGroup.PrimOrSec.Value = true;
             m_ListPCView.Bind(ViewModel.m_ListViewVM.Value);
             this.AddDisposable(ViewModel.m_ListViewVM.Subscribe(this.m_ListPCView.Bind));
-            Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-            Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
-            Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-            Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+            if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+            if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+            if (Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+            if(Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
             //  this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
             // this.m_VisualSettings.Dispose();
         }
@@ -64,7 +73,7 @@ namespace VisualAdjustments2.UI
             base.DestroyViewImplementation();
             //  this.m_dollCharacterController.Unbind();
         }
-       // public Dictionary<int, WeaponAnimationStyle> m_IntToAnim;
+        // public Dictionary<int, WeaponAnimationStyle> m_IntToAnim;
         // public OwlcatButton m_ApplyButton;
         public ClickablePageNavigation m_SlotButtons;
         public ListPCView m_ListPCView;

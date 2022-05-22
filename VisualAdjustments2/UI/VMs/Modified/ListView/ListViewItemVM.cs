@@ -18,8 +18,9 @@ namespace VisualAdjustments2.UI
     {
 		public const string Add = "<";
 		public const string Remove = ">";
-		public ListViewItemVM(ResourceInfo ee,bool addorremove,Action<ListViewItemVM> OnSelectAction) : base(false)
+		public ListViewItemVM(ResourceInfo ee,bool addorremove,Action<ListViewItemVM> OnSelectAction, bool hasRadioButton) : base(false)
 		{
+			this.HasRadioButton = hasRadioButton;
 			this.Guid = ee.GUID;
 			this.DisplayName = ee.Name;
 			this.InternalName = ee.Name_Internal;
@@ -27,11 +28,22 @@ namespace VisualAdjustments2.UI
 			this.action = OnSelectAction;
 			base.AddDisposable(this);
 		}
-		public ListViewItemVM(ListViewItemVM ToClone, bool addorremove, Action<ListViewItemVM> OnSelectAction) : base(false)
+		public ListViewItemVM(ListViewItemVM ToClone, bool addorremove, Action<ListViewItemVM> OnSelectAction, bool hasRadioButton) : base(false)
 		{
+			this.HasRadioButton = hasRadioButton;
 			this.Guid = ToClone.Guid;
 			this.DisplayName = ToClone.DisplayName;
 			this.InternalName = ToClone.InternalName;
+			this.AddOrRemove = addorremove;
+			this.action = OnSelectAction;
+			base.AddDisposable(this);
+		}
+		public ListViewItemVM(string name, bool addorremove, Action<ListViewItemVM> OnSelectAction, bool hasRadioButton) : base(false)
+		{
+			this.HasRadioButton = hasRadioButton;
+			this.Guid = "";
+			this.DisplayName = name;
+			this.InternalName = name;
 			this.AddOrRemove = addorremove;
 			this.action = OnSelectAction;
 			base.AddDisposable(this);
@@ -42,12 +54,14 @@ namespace VisualAdjustments2.UI
 		}
 		public override void DoSelectMe()
 		{
+			if(!HasRadioButton)
 			action(this);
 		}
 		public override void DisposeImplementation()
 		{
 			base.DisposeImplementation();
 		}
+		public bool HasRadioButton;
 		public ReactiveProperty<TooltipBaseTemplate> m_TooltipTemplate;
 		public readonly string DisplayName;
 		public readonly string InternalName;

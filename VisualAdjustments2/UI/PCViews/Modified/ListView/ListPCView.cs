@@ -118,6 +118,8 @@ namespace VisualAdjustments2.UI
         }
         public override int EntityComparer(ListViewItemVM a, ListViewItemVM b)
         {
+            if (a.Guid.IsNullOrEmpty()) return 0;
+            if (b.Guid.IsNullOrEmpty()) return 0;
             return string.Compare(a.DisplayName, b.DisplayName, StringComparison.CurrentCultureIgnoreCase);
         }
         public ListSearchPCView m_CharGenFeatureSearchView;

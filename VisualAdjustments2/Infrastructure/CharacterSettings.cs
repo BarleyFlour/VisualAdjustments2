@@ -142,8 +142,8 @@ namespace VisualAdjustments2.Infrastructure
         {
             var loadedEE = this.Load();
             if (!character.EquipmentEntities.Contains(loadedEE)) character.EquipmentEntities.Add(loadedEE);
-            Primary.Apply(loadedEE, character);
-            Secondary.Apply(loadedEE, character);
+            Primary?.Apply(loadedEE, character);
+            Secondary?.Apply(loadedEE, character);
 
         }
         public EE_Applier(string guid,ActionType actiontype)

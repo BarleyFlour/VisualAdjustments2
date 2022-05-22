@@ -55,13 +55,13 @@ namespace VisualAdjustments2.Infrastructure
 
         public override void Apply(UnitEntityData unitData, CharacterSettings settings)
         {
-            var character = unitData.View.CharacterAvatar;
+            var character = unitData.View?.CharacterAvatar;
             var loadedEE = ResourcesLibrary.TryGetResource<EquipmentEntity>(GUID);
-            if (!character.EquipmentEntities.Any(a => a.name == loadedEE.name)) character.AddEquipmentEntity(loadedEE);
+            if (!character.EquipmentEntities.Any(a => a.name == loadedEE?.name)) character.AddEquipmentEntity(loadedEE);
             var applier = new EE_Applier(this.GUID, EE_Applier.ActionType.Add);
             applier.Primary = this.PrimaryCol;
             applier.Secondary = this.SecondaryCol;
-            if (!settings.EeSettings.EEs.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add)) settings.EeSettings.EEs.Add(applier);
+            if (settings.EeSettings?.EEs?.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add) == false) settings.EeSettings.EEs.Add(applier);
             this.PrimaryCol?.Apply(loadedEE,character);
             this.SecondaryCol?.Apply(loadedEE, character);
         }

@@ -14,6 +14,7 @@ namespace VisualAdjustments2.UI
         {
             base.AddDisposable(this);
             base.AddDisposable(m_weaponOverride = new WeaponOverrideVM());
+            base.AddDisposable(m_classOutfitSelectorVM = new ClassOutfitSelectorVM());
         }
         public override void DisposeImplementation()
         {
@@ -25,5 +26,6 @@ namespace VisualAdjustments2.UI
         }
         public WeaponOverrideVM m_weaponOverride;
         public EquipmentListVM m_EquipmentListVM;
+        public ClassOutfitSelectorVM m_classOutfitSelectorVM;
     }
 }

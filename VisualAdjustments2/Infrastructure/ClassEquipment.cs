@@ -11,13 +11,16 @@ using Kingmaker.View;
 
 namespace VisualAdjustments2.Infrastructure
 {
+    [HarmonyPatch(typeof(UnitProgressionData), nameof(UnitProgressionData.GetEquipmentClass))]
     public static class ClassEquipment
     {
-        [HarmonyPatch(typeof(UnitProgressionData),nameof(UnitProgressionData.GetEquipmentClass)),HarmonyPostfix]
-        public static void ReturnSetClassOutfit(UnitProgressionData __instance,ref BlueprintCharacterClass __result)
+        
+        public static void Postfix(UnitProgressionData __instance,ref BlueprintCharacterClass __result)
         {
+            Main.Logger.Log("dfgsdfgsgdfs");
             if (!__instance.Owner.IsPlayerFaction) return;
             var settings = __instance.Owner.Unit.GetSettings();
+            Main.Logger.Log("cvdfbdf");
             if (settings.ClassGUID == "") return;
             __result = ResourcesLibrary.TryGetBlueprint<BlueprintCharacterClass>(settings.ClassGUID);
         }

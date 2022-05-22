@@ -22,7 +22,7 @@ namespace VisualAdjustments2.UI
         }
         public override void SetupSelectedState()
         {
-            foreach (ListViewItemVM tviewModel in this.EntitiesCollection)
+            foreach (ListViewItemVM tviewModel in this.EntitiesCollection.ToList())
             {
                 tviewModel.SetSelected(this.SelectedEntity.Value == tviewModel);
             }

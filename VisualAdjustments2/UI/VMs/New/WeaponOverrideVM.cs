@@ -1,5 +1,6 @@
 ﻿using Kingmaker;
 using Kingmaker.Items;
+using Kingmaker.Utility;
 using Kingmaker.View.Animation;
 using Kingmaker.View.Equipment;
 using Owlcat.Runtime.UI.MVVM;
@@ -27,15 +28,24 @@ namespace VisualAdjustments2.UI
         {
             try
             {
+
                 var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
                 var first = settings.EnchantOverrides.FirstOrDefault(b => b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
                 if (first == null)
                 {
-                    settings.EnchantOverrides.Add(new EnchantOverride(hand.Value, slot.Value, guid));
+
+                    if (!guid.IsNullOrEmpty())
+                    {
+                        settings.EnchantOverrides.Add(new EnchantOverride(hand.Value, slot.Value, guid));
+                    }
                     Refresh();
                 }
                 else
                 {
+                    if (guid.IsNullOrEmpty())
+                    {
+                        settings.EnchantOverrides.Remove(first);
+                    }
                     first.GUID = guid;
                     Refresh();
                 }
@@ -44,10 +54,10 @@ namespace VisualAdjustments2.UI
                 {
                     Game.Instance.UI.Common.DollRoom.m_AvatarHands.UpdateAll();
                     Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.UpdateAll();
-                    Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
-                    Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet.MainHand.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet.OffHand.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                 }
             }
             catch (Exception e)
@@ -63,12 +73,21 @@ namespace VisualAdjustments2.UI
                 var first = settings.WeaponOverrides.FirstOrDefault(b => b.AnimStyle == style.ToString() && b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
                 if (first == null)
                 {
-                    settings.WeaponOverrides.Add(new WeaponOverride(hand.Value, slot.Value, guid, style.ToString()));
+
+                    if (!guid.IsNullOrEmpty())
+                    {
+                        settings.WeaponOverrides.Add(new WeaponOverride(hand.Value, slot.Value, guid, style.ToString()));
+                    }
                     Refresh();
                 }
                 else
                 {
-                    first.GUID = guid;
+                    if (guid.IsNullOrEmpty())
+                    {
+                        settings.WeaponOverrides.Remove(first);
+                    }
+                    else
+                        first.GUID = guid;
                     Refresh();
                 }
                 //Refresh magic
@@ -76,10 +95,10 @@ namespace VisualAdjustments2.UI
                 {
                     Game.Instance.UI.Common.DollRoom.m_AvatarHands.UpdateAll();
                     Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.UpdateAll();
-                    Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
-                    Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                 }
             }
             catch (Exception e)
@@ -89,15 +108,25 @@ namespace VisualAdjustments2.UI
         }
         public ListViewItemVM SelectFromSettings()
         {
-            var animstyleasstring = this.animStyle.ToString();
-            var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animstyleasstring);
-            if (s != null)
+            if (((int)this.animStyle.Value) == 14)
             {
-                return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == s.GUID);
+                var enchant = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
+                if (enchant != null)
+                {
+                    return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == enchant.GUID);
+                }
+                else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "");
             }
             else
             {
-                return null;
+                var animstyleasstring = this.animStyle.Value.ToString();
+                //Main.Logger.Log(animstyleasstring);
+                var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animstyleasstring);
+                if (s != null)
+                {
+                    return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == s.GUID);
+                }
+                else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "");
             }
             // var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
             // var first = settings.WeaponOverrides.FirstOrDefault(b => b.AnimStyle == style.ToString() && b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
@@ -126,29 +155,31 @@ namespace VisualAdjustments2.UI
         }
         public void OnWeaponTypeChanged(int i)
         {
-            this.animStyle.Value = (WeaponAnimationStyle)i;
             var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
             if (i == 14)
             {
+                CurrentReactive.Add(new ListViewItemVM("None", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
                 foreach (var ee in ResourceLoader.AllEnchants)
                 {
                     //Main.Logger.Log(ee.name);
                     // var inf = ee.ToEEInfo();
                     if (!CurrentReactive.Any(a => a.Guid == ee.GUID))
                     {
-                        CurrentReactive.Add(new ListViewItemVM(ee, false, (ListViewItemVM v) => { AddOverride(v.Guid); }));
+                        CurrentReactive.Add(new ListViewItemVM(ee, false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
                     }
                 }
             }
             else
             {
+                this.animStyle.Value = m_IntToAnim[i];
+                CurrentReactive.Add(new ListViewItemVM("None", false, (ListViewItemVM v) => { AddOverride(v.Guid, m_IntToAnim[i]); }, false));
                 foreach (var ee in ResourceLoader.AllWeapons[m_IntToAnim[i]])
                 {
                     //Main.Logger.Log(ee.name);
                     // var inf = ee.ToEEInfo();
                     if (!CurrentReactive.Any(a => a.Guid == ee.GUID))
                     {
-                        CurrentReactive.Add(new ListViewItemVM(ee, false, (ListViewItemVM v) => { AddOverride(v.Guid, m_IntToAnim[i]); }));
+                        CurrentReactive.Add(new ListViewItemVM(ee, false, (ListViewItemVM v) => { AddOverride(v.Guid, m_IntToAnim[i]); }, false));
                     }
                 }
             }

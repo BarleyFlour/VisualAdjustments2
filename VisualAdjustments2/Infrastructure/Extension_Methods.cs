@@ -36,6 +36,8 @@ using Owlcat.Runtime.Core.Utils;
 using Kingmaker.Visual.Particles;
 using Kingmaker.Items.Slots;
 using Kingmaker.Items;
+using Owlcat.Runtime;
+using Kingmaker.Blueprints.Root;
 
 namespace VisualAdjustments2.Infrastructure
 {
@@ -153,6 +155,8 @@ namespace VisualAdjustments2.Infrastructure
                 state.SetRace(state.Race);
                 state.SetRacePreset(dollData2.RacePreset);
                 state.Scars = DollState.GetScarsList(state.Race.RaceId);
+                state.CreateTattos(state?.m_DefaultSettings);
+                state.CreateWarpaints(state?.m_DefaultSettings, state.Race.RaceId);
                 //state.RacePreset = dollData2.RacePreset;
                 ClassData classData = unit.Progression.Classes.FirstOrDefault<ClassData>();
                 state.CharacterClass = ((classData != null) ? classData.CharacterClass : null);
@@ -168,6 +172,8 @@ namespace VisualAdjustments2.Infrastructure
                 var j = unit?.View?.CharacterAvatar?.EquipmentEntities;
                 if (j != null)
                 {
+                    int i = 0;
+                    int y = 0;
                     foreach (var ee in unit?.View?.CharacterAvatar?.EquipmentEntities)
                     {
                         //EquipmentEntity ee = enumerator2.Current;
@@ -203,6 +209,38 @@ namespace VisualAdjustments2.Infrastructure
                             NewEEAdapter.m_Link = DollState.GetScarsList(state.Race.RaceId).FirstOrDefault((EquipmentEntityLink link2) => link2.Load(false) == ee);
                             state.Scar = NewEEAdapter;
                         }
+
+                        //if (state.Warprints.Contains((DollState.DollPrint link) => link.PaintEE.Load() == ee))
+                        {
+                            //Main.Logger.Log("joe biden");
+                           // state.Horn = new DollState.EEAdapter(customizationOptions.Horns.FirstOrDefault(a => a.Load() == ee));
+                            // state.Horn = new DollState.EEAdapter(ee);
+                        }
+                       // if (state.Warprints.Contains((DollState.DollPrint link) => link.PaintEE.Load() == ee))
+                        {
+                            
+                            //var NewEEAdapter = new DollState.EEAdapter();
+                            var link = DollState.GetWarpaintsList(state.Race.RaceId).FirstOrDefault((EquipmentEntityLink link2) => link2.Load(false) == ee);
+                            if (i < 5 && link != null)
+                            {
+                                //state.Warprints[i].PaintEE = new DollState.EEAdapter(link);
+                                state.SetWarpaint(link, i);
+                                i++;
+                                //Main.Logger.Log(link.Load().name);
+                            }
+                        }
+                        //state.CreateTattos(null);
+                        //if (state.Tattoos.Contains((DollState.DollPrint link) => link.PaintEE.Load() == ee))
+                        {
+                           // var NewEEAdapter = new DollState.EEAdapter();
+                            var link = BlueprintRoot.Instance.CharGen.TattoosForCustomization.FirstOrDefault((EquipmentEntityLink link2) => link2.Load(false) == ee);
+                            if (y <= 5 && link != null)
+                            {
+                                state.SetTattoo(link, y);
+                                y++;
+                               // Main.Logger.Log(link.Load().name);
+                            }
+                        }
                     }
                 }
                 /*using (List<EquipmentEntity>.Enumerator enumerator2 = unit.View.CharacterAvatar.EquipmentEntities.GetEnumerator())
@@ -235,6 +273,7 @@ namespace VisualAdjustments2.Infrastructure
                 // state.Warpaints = BlueprintRoot.Instance.CharGen.WarpaintsForCustomization.ToList<EquipmentEntityLink>();
                 BlueprintRace race2 = state.Race;
                 state.Scars = DollState.GetScarsList((race2 != null) ? race2.RaceId : Kingmaker.Blueprints.Race.Human);
+                
                 if (unit?.View?.CharacterAvatar != null)
                 {
 
@@ -251,6 +290,20 @@ namespace VisualAdjustments2.Infrastructure
                     {
                         state.HornsRampIndex = unit.View.CharacterAvatar.GetPrimaryRampIndex(state.Horn.Load());
                     }
+                    for (int i = 0; i <= 5; i++)
+                    {
+                        if (state.Warprints.Count >= i && state.Warprints.ElementAtOrDefault(i) != null)
+                        {
+                            state.Warprints.ElementAt(i).PaintRampIndex = unit.View.CharacterAvatar.GetPrimaryRampIndex(state.Warprints.ElementAt(i).PaintEE.Load());
+                        }
+                    }
+                    for (int i = 0; i <= 5; i++)
+                    {
+                        if (state.Tattoos.Count >= i && state.Tattoos.ElementAtOrDefault(i) != null)
+                        {
+                            state.Tattoos.ElementAt(i).PaintRampIndex = unit.View.CharacterAvatar.GetPrimaryRampIndex(state.Tattoos.ElementAt(i).PaintEE.Load());
+                        }
+                    }
                 }
                 /* if (state.Warprints != null)
                  {
@@ -263,8 +316,6 @@ namespace VisualAdjustments2.Infrastructure
                 state.EquipmentRampIndex = dollData2.ClothesPrimaryIndex;
                 state.EquipmentRampIndexSecondary = dollData2.ClothesSecondaryIndex;
                 //state.Updated();
-                state.CreateTattos(state?.m_DefaultSettings);
-                state.CreateWarpaints(state?.m_DefaultSettings, state.Race.RaceId);
             }
             catch (Exception ex)
             {
@@ -347,6 +398,74 @@ namespace VisualAdjustments2.Infrastructure
                 throw e;
             }
         }
+        public static ClassOutfitSelectorButtonPCView ConvertToClassButtonPCView(this CharGenFeatureSelectorItemPCView oldview)
+        {
+            try
+            {
+                var newcomp = oldview.gameObject.AddComponent<ClassOutfitSelectorButtonPCView>();
+                newcomp.Button = oldview.m_Button;
+                //newcomp.m_DisplayName = oldview.m_FeatureNameText;
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("CollapseButton"));
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("RecommendationPlace"));
+                /*foreach(var comp in oldview.transform.Find("IconPlace").GetComponents<Component>().Concat(oldview.transform.Find("IconPlace").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+                foreach (var comp in oldview.transform.Find("TextContainer/Description").GetComponents<Component>().Concat(oldview.transform.Find("TextContainer/Description").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("IconPlace"), true);
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("TextContainer/Description"), true);*/
+                var iconplace = oldview.transform.Find("IconPlace");
+                iconplace.gameObject.SetActive(false);
+
+
+                //iconplace.localScale = new Vector3((float)0.75, (float)0.75, (float)0.75);
+                /*var bg = iconplace.Find("BG");
+                bg.Find("Icon").gameObject.SetActive(false);
+                var acronym = bg.Find("Acronym");
+                acronym.gameObject.SetActive(true);
+                var acronymTMP = acronym.GetComponent<TextMeshProUGUI>();
+                
+                acronymTMP.fontSizeMax = 46;
+                acronymTMP.fontSize = 46;
+                acronymTMP.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                acronymTMP.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                acronym.gameObject.SetActive(false);*/
+
+
+                //  newcomp.m_IconText = acronymTMP;
+                var txtContainer = oldview.transform.Find("TextContainer");
+                txtContainer.Find("Description").gameObject.SetActive(false);
+                txtContainer.GetComponent<LayoutElement>().minHeight = 45;
+
+                newcomp.Label = txtContainer.Find("Name").GetComponent<TextMeshProUGUI>();
+                newcomp.Label.fontSizeMax = 24;
+                newcomp.Label.text = "";
+                UnityEngine.Component.Destroy(oldview);
+
+                var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
+                Layout.spacing = 10;
+                /*newtxt.font = acronymTMP.font;
+                newtxt.alignment = TextAlignmentOptions.CenterGeoAligned;
+                newtxt.horizontalAlignment = HorizontalAlignmentOptions.Geometry;
+                newtxt.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                newtxt.fontSizeMax = 46;
+                newtxt.material = acronymTMP.material;
+                newtxt.fontStyle = FontStyles.Bold;
+                newtxt.color = acronymTMP.color;
+                newcomp.m_IconText = newtxt;*/
+
+                return newcomp;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw e;
+            }
+        }
         public static ListViewItemPCView ConvertToEquipmentPCView(this CharGenFeatureSelectorItemPCView oldview)
         {
             try
@@ -386,12 +505,12 @@ namespace VisualAdjustments2.Infrastructure
 
                 //var InstantiatedButton = UnityEngine.GameObject.Instantiate(StaticCanvas.Instance.transform.Find("ServiceWindowsPCView/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
                 //var icon = InstantiatedButton.Find("Icon");
-               // icon.gameObject.SetActive(true);
+                // icon.gameObject.SetActive(true);
                 //newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
                 //UnityEngine.Component.DestroyImmediate(icon.gameObject.GetComponent<Image>(), true);
                 //var newtxt = icon.gameObject.AddComponent<TextMeshProUGUI>(acronymTMP);
-               // newtxt.text = ">>";
-              //  newtxt.fontSizeMin = 45;
+                // newtxt.text = ">>";
+                //  newtxt.fontSizeMin = 45;
                 //newcomp.m_IconText = newtxt;
                 iconplace.gameObject.SetActive(false);
 
@@ -467,7 +586,7 @@ namespace VisualAdjustments2.Infrastructure
                 newtxt.text = "";
                 newtxt.fontSizeMin = 45;
                 newcomp.m_IconText = newtxt;
-               // iconplace.gameObject.SetActive(false);
+                // iconplace.gameObject.SetActive(false);
 
                 var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
                 Layout.spacing = 10;

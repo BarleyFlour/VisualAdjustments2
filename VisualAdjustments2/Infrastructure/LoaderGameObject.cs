@@ -146,9 +146,12 @@ namespace VisualAdjustments2.Infrastructure
                 foreach (var enchant in UniqueEnchants)
                 {
                     if (enchant.name.IsNullOrEmpty() && enchant.m_EnchantName.ToString().IsNullOrEmpty()) continue;
-                    var inf = new ResourceInfo(enchant.Name, enchant.m_EnchantName, enchant.AssetGuidThreadSafe, enchant.GetType());
+                    var name = ProcessEEName(enchant.NameSafe());
+                    var inf = new ResourceInfo(name, enchant.m_EnchantName, enchant.AssetGuidThreadSafe, enchant.GetType());
                     ListToReturn.Add(inf);
-                    Main.Logger.Log(inf.Name + " : " + enchant.m_EnchantName + " : " + enchant.name);
+#if DEBUG
+                    Main.Logger.Log(inf.Name + " : " + enchant.m_EnchantName + " : " + enchant.name + " : " + enchant.NameSafe() + " : " + enchant.Prefix + " : " + enchant.Suffix + " : " + enchant.Comment);
+#endif
                 }
                 SaveCachedResources<SerializedEnchantmentList>(ListToReturn.ToArray());
                 ResourceLoader.m_AllEnchants = ListToReturn;

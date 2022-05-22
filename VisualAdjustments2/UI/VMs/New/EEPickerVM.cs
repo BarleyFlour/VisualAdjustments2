@@ -22,7 +22,7 @@ namespace VisualAdjustments2.UI
     {
         public static bool Prefix(Character __instance)
         {
-            if (ServiceWindowsVM_ShowWindow_Patch.swPCView.m_EEPickerPCView.ViewModel != null && __instance.EquipmentEntities.Count != 0)
+            if (ServiceWindowsVM_ShowWindow_Patch.swPCView?.m_EEPickerPCView?.ViewModel != null && __instance.EquipmentEntities?.Count != 0)
             {
                 return false;
             }
@@ -43,7 +43,7 @@ namespace VisualAdjustments2.UI
                 var inf = ee.ToEEInfo();
                 if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
                 {
-                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem,true));
                 }
             }
             CurrentEEs.Value?.Dispose();
@@ -61,7 +61,7 @@ namespace VisualAdjustments2.UI
             ReactiveCollection<ListViewItemVM> reactive = new ReactiveCollection<ListViewItemVM>();
             foreach (var kv in ResourceLoader.AllEEs)
             {
-                reactive.Add(new ListViewItemVM(kv, true, AddListItem));
+                reactive.Add(new ListViewItemVM(kv, true, AddListItem,true));
             }
             var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
             foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
@@ -70,7 +70,7 @@ namespace VisualAdjustments2.UI
                 var inf = ee.ToEEInfo();
                 if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
                 {
-                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem,true));
                 }
             }
             this.UnitDescriptor = Game.Instance.SelectionCharacter.SelectedUnit;
@@ -95,7 +95,7 @@ namespace VisualAdjustments2.UI
                 var inf = ee.ToEEInfo();
                 if (inf != null && !CurrentReactive.Any(a => a.Guid == inf.Value.GUID))
                 {
-                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem));
+                    CurrentReactive.Add(new ListViewItemVM(inf.Value, false, RemoveListItem,true));
                 }
             }
             CurrentEEs.Value?.Dispose();
@@ -108,8 +108,8 @@ namespace VisualAdjustments2.UI
                 if (this.CurrentEEs?.Value?.EntitiesCollection?.Contains(item) == true)
                 {
 
-                    this.CurrentEEs?.Value?.EntitiesCollection.Remove(item);
-                    Game.Instance.UI.Common.DollRoom.m_Avatar.RemoveEquipmentEntity(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid));
+                    this.CurrentEEs?.Value?.EntitiesCollection?.Remove(item);
+                    if(Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName)) Game.Instance.UI.Common.DollRoom.m_Avatar.RemoveEquipmentEntity(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid));
                     if (!this.applyActions.ContainsKey(item.Guid)) this.applyActions.Add(item.Guid, new RemoveEE(item.Guid));
                 }
             }
@@ -123,15 +123,14 @@ namespace VisualAdjustments2.UI
         {
             try
             {
-                if (!this.CurrentEEs?.Value?.EntitiesCollection.Any(a => a.Guid == item.Guid) == true) this.CurrentEEs?.Value.EntitiesCollection.Add(new ListViewItemVM(item, false, RemoveListItem));
-                Main.Logger.Log(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid).ToString());
-                /*if(Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName))*/
+                if (!this.CurrentEEs?.Value?.EntitiesCollection.Any(a => a.Guid == item.Guid) == true) this.CurrentEEs?.Value.EntitiesCollection.Add(new ListViewItemVM(item, false, RemoveListItem,true));
+               // Main.Logger.Log(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid).ToString());
+                if(!Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName))
                 Game.Instance.UI.Common.DollRoom.m_Avatar.AddEquipmentEntity(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid));
                 if (!this.applyActions.ContainsKey(item.Guid)) this.applyActions.Add(item.Guid, new AddEE(item.Guid));
             }
             catch (Exception e)
             {
-
                 Main.Logger.Error(e.ToString());
             }
         }
@@ -144,35 +143,37 @@ namespace VisualAdjustments2.UI
             {
                 if (this.applyActions.TryGetValue(this.CurrentEEs.Value.SelectedEntity.Value.Guid, out EEApplyAction val) && val.GetType() == typeof(AddEE))
                 {
+                    var loaded = ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid);
                     var addee = (AddEE)val;
-                    if (PrimOrSec)
+                    if (PrimOrSec && loaded.PrimaryColorsProfile?.Ramps?.Count > 0)
                     {
                         //Main.Logger.Log("Prim");
                         var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                         ColInf.CustomColor = true;
                         ColInf.CustomColorRGB = new SerializableColor(col);
                         addee.PrimaryCol = ColInf;
-                        ColInf.Apply(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid), Game.Instance.UI.Common.DollRoom.m_Avatar);
+                        ColInf.Apply(loaded, Game.Instance.UI.Common.DollRoom.m_Avatar);
                         //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
                     }
-                    else
+                    else if(loaded.SecondaryColorsProfile?.Ramps?.Count > 0)
                     {
                         //Main.Logger.Log("Sec");
                         var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                         ColInf.CustomColor = true;
                         ColInf.CustomColorRGB = new SerializableColor(col);
                         addee.SecondaryCol = ColInf;
-                        ColInf.Apply(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid), Game.Instance.UI.Common.DollRoom.m_Avatar);
+                        ColInf.Apply(loaded, Game.Instance.UI.Common.DollRoom.m_Avatar);
                         //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
                     }
                 }
                 else
                 {
                     var ee = this.UnitDescriptor.Value.Unit.GetSettings().EeSettings.EEs.FirstOrDefault(a => a.GUID == this.CurrentEEs.Value.SelectedEntity.Value.Guid);
+                    var loaded = ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid);
                     if (ee != null)
                     {
                         var addee = ee;
-                        if (PrimOrSec)
+                        if (PrimOrSec && loaded.PrimaryColorsProfile?.Ramps?.Count > 0)
                         {
                             var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                             ColInf.CustomColor = true;
@@ -186,7 +187,7 @@ namespace VisualAdjustments2.UI
                             addaction.SecondaryCol = addee.Secondary;
                             this.applyActions.Add(addaction.GUID, addaction);
                         }
-                        else
+                        else if(loaded.SecondaryColorsProfile?.Ramps?.Count > 0)
                         {
                             var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                             ColInf.CustomColor = true;
@@ -204,7 +205,7 @@ namespace VisualAdjustments2.UI
                     else
                     {
                         var addee = new EE_Applier(this.CurrentEEs.Value.SelectedEntity.Value.Guid, EE_Applier.ActionType.Add);
-                        if (PrimOrSec)
+                        if (PrimOrSec && loaded.PrimaryColorsProfile?.Ramps?.Count > 0)
                         {
                             var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                             ColInf.CustomColor = true;
@@ -218,7 +219,7 @@ namespace VisualAdjustments2.UI
                             addaction.SecondaryCol = addee.Secondary;
                             this.applyActions.Add(addaction.GUID, addaction);
                         }
-                        else
+                        else if(loaded.SecondaryColorsProfile?.Ramps?.Count > 0)
                         {
                             var ColInf = new EE_Applier.ColorInfo(PrimOrSec);
                             ColInf.CustomColor = true;

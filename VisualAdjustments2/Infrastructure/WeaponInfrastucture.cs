@@ -52,10 +52,12 @@ namespace VisualAdjustments2.Infrastructure
     {
         public static GameObject RespawnFx(GameObject prefab, ItemEntity item)
         {
-            WeaponSlot weaponSlot = item.HoldingSlot as WeaponSlot;
+            WeaponSlot weaponSlot = item?.HoldingSlot as WeaponSlot;
             var weaponSnap = weaponSlot?.FxSnapMap;
-            var unit = item.Wielder.Unit?.View;
-            return FxHelper.SpawnFxOnWeapon(prefab, unit, weaponSnap);
+            var unit = item?.Wielder?.Unit?.View;
+            if (prefab != null && weaponSnap != null)
+                return FxHelper.SpawnFxOnWeapon(prefab, unit, weaponSnap);
+            else return null;
         }
        
         public static void Postfix(UnitViewHandSlotData __instance, bool isVisible)

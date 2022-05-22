@@ -78,6 +78,8 @@ namespace VisualAdjustments2.UI
                         //Main.Logger.Log("NullRace");
                         var newvm = new CreateDollVM();
                         base.AddDisposable(this.createDollVM.Value = newvm);
+                        this.m_DollAppearanceVM.Value.Dispose();
+                       // this.m_DollAppearanceVM = null;
                         //  newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor dat) => { if (dat.CharacterName != newvm.charname) { newvm.Dispose(); this.m_DollAppearanceVM.Value?.Dispose(); this.ShowWindow(VisualWindowType.Doll); } }));
                     }
                     this.createDollVM.Value?.Dispose();
@@ -89,6 +91,8 @@ namespace VisualAdjustments2.UI
                     //Main.Logger.Log("notDollData");
                     var newvm = new CreateDollVM();
                     base.AddDisposable(this.createDollVM.Value = newvm);
+                    this.m_DollAppearanceVM.Value.Dispose();
+                   // this.m_DollAppearanceVM = null;
                     // newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { newvm.Dispose(); this.m_DollAppearanceVM.Value?.Dispose(); this.ShowWindow(VisualWindowType.Doll); }));
                     // newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { newvm.Dispose(); this.ShowWindow(VisualWindowType.Doll); }));
                 }
