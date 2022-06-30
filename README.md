@@ -14,9 +14,9 @@ A successor mod to Visual Adjustments featuring:
 2. Download the [Mod](https://github.com/BarleyFlour/VisualAdjustments2/releases/latest/download/VisualAdjustments2.zip)
 3. Do either 3B or 3C.
 
-3B Extract the archive and put the mod folder into 'Mods' folder of the Game (\Steam\steamapps\common\Pathfinder Second Adventure\Mods)
+* 3B Extract the archive and put the mod folder into 'Mods' folder of the Game (\Steam\steamapps\common\Pathfinder Second Adventure\Mods)
 
-3C Drag the Downloaded Zip into Unity Mod Manager.
+* 3C Drag the Downloaded Zip into Unity Mod Manager.
 
 5. Run the game and load your save
 6. Open the interface by opening your inventory and clicking on "Visual" in the top right corner.
