@@ -24,6 +24,13 @@ A successor mod to Visual Adjustments featuring:
 ## Features
 
 
+## FAQ
+**Q:** What does the "EE" in "EE Picker" mean? 
+
+**A:** It means "EquipmentEntity", they are individual pieces of equipment e.g. a Helmet, Hair, Gloves, Etc.
+##
+
+
 ## Features in Visual Adjustments that are not in Visual Adjustments 2
 * Overrides.¹
 * View Overrides (This is planned though)
