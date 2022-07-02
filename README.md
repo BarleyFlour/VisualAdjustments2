@@ -2,11 +2,16 @@
 
 
 A successor mod to Visual Adjustments featuring:
-*Better performance
-*Less bugs
-*A more intuitive and exlusively ingame UI
-*Reduced rate of incidence for the "Grey Character" bug (It's a vanilla bug but i took measures to reduce how often it happens)
-*The ability to block the visual effects of Buffs of your choosing
+
+* Better performance
+
+* Less bugs
+
+* A more intuitive and exlusively ingame UI
+
+* Reduced rate of incidence for the "Grey Character" bug (It's a vanilla bug but i took measures to reduce how often it happens)
+
+* The ability to block the visual effects of Buffs of your choosing
 
 
 ## Install
