@@ -37,6 +37,16 @@ namespace VisualAdjustments2.UI
             this.m_VisualSettings.Dispose();
             this.m_weaponOverridePCView.Bind(this.ViewModel.m_weaponOverride);
             this.m_classOutfitSelectorPCView.Bind(this.ViewModel.m_classOutfitSelectorVM);
+            this.m_ColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+            this.m_ColorPicker.m_ConfirmButton.OnLeftClick.RemoveAllListeners();
+            this.m_ColorPicker.m_ConfirmButton.OnLeftClick.AddListener(() =>
+            {
+                if (m_ColorPicker.CustomColor)
+                    this.ViewModel?.ApplyColor(m_ColorPicker.m_Color.m_ToColor.color, m_ColorPicker.PrimaryOrSecondary);
+                else
+                    this.ViewModel?.ApplyColor(m_ColorPicker.Index.Value, m_ColorPicker.PrimaryOrSecondary);
+
+            });
         }
 
         public override void DestroyViewImplementation()
@@ -51,5 +61,6 @@ namespace VisualAdjustments2.UI
         public CharacterVisualSettingsView m_VisualSettings;
         public DollCharacterController m_dollCharacterController;
         public ClassOutfitSelectorPCView m_classOutfitSelectorPCView;
+        public EEColorPickerView m_ColorPicker;
     }
 }

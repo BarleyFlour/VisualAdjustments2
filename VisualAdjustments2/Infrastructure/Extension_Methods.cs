@@ -609,7 +609,7 @@ namespace VisualAdjustments2.Infrastructure
                 throw e;
             }
         }
-        public static void SetupFromVisualSettings(this EEColorPickerPCView newcomp, CharacterVisualSettingsView oldcomp)
+        public static void SetupFromVisualSettings(this EEColorPickerView newcomp, CharacterVisualSettingsView oldcomp)
         {
             newcomp.m_SettingsBtn = oldcomp.m_SettingsBtn;
             newcomp.m_Title = oldcomp.m_Title;

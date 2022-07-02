@@ -30,14 +30,14 @@ namespace VisualAdjustments2.UI
         public void OnUnitChanged(UnitDescriptor unit)
         {
             var settings = unit.Unit.GetSettings();
-            if(settings.ClassGUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
-            else Selected.Value = Buttons.FirstOrDefault(a => a.Key == settings.ClassGUID).Value;
+            if(settings.ClassOverride.GUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
+            else Selected.Value = Buttons.FirstOrDefault(a => a.Key == settings.ClassOverride.GUID).Value;
         }
         public void SetClass(string guid)
         {
             var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
             var settings = unit.GetSettings();
-            var needsreset = (guid == "" && unit.IsStoryCompanion() && settings.ClassGUID != "");
+            var needsreset = (guid == "" && unit.IsStoryCompanion() && settings.ClassOverride.GUID != "");
             if (needsreset)
             {
                 unit.View.CharacterAvatar.RemoveAllEquipmentEntities(false);
@@ -49,7 +49,7 @@ namespace VisualAdjustments2.UI
                //     if(unit.View.CharacterAvatar.EquipmentEntities.Contains(ee) && unit.View.CharacterAvatar.SavedEquipmentEntities.Any(A => A.Load() == ee)) unit.View.CharacterAvatar.RemoveEquipmentEntity(ee);
                 }
             }
-            settings.ClassGUID = guid;
+            settings.ClassOverride.GUID = guid;
             Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = guid != "";
             Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
@@ -60,8 +60,8 @@ namespace VisualAdjustments2.UI
             try
             {
                 var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
-                if (settings.ClassGUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
-                else Selected.Value = Buttons.First(a => a.Key == settings.ClassGUID).Value;
+                if (settings.ClassOverride.GUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
+                else Selected.Value = Buttons.First(a => a.Key == settings.ClassOverride.GUID).Value;
 
                 base.AddDisposable(this.Selected.Subscribe((ClassOutfitSelectorButtonPCView _) =>
                 {

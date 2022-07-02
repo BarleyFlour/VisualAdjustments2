@@ -83,7 +83,7 @@
     <Compile Include="UI\Misc\ToggleWithTextHandler.cs" />
     <Compile Include="UI\PCViews\Modified\BarleySlideSelectorPCView.cs" />
     <Compile Include="UI\PCViews\Modified\DollControllerVA.cs" />
-    <Compile Include="UI\PCViews\Modified\EEColorPickerPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\EEColorPickerView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\BuffButtonPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\BuffListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\EquipmentListPCView.cs" />
@@ -127,7 +127,6 @@
     <Compile Include="UI\VMs\New\EEPickerVM.cs" />
     <Compile Include="UI\VMs\New\EquipmentVM.cs" />
     <Compile Include="UI\VMs\New\FXViewerVM.cs" />
-    <Compile Include="HandEquipmentOverrides.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="UI\PCViews\Modified\ServiceWindowMenuPCViewModified.cs" />
     <Compile Include="UI\VMs\Modified\ServiceWindowsMenuVMModified.cs" />
@@ -213,6 +212,9 @@
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>

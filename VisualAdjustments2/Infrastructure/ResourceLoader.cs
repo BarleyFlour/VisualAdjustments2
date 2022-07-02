@@ -580,6 +580,8 @@ namespace VisualAdjustments2
             [JsonProperty] public string AbilityGUID;
             [JsonProperty] public HashSet<string> AllAbilityGUIDs = new HashSet<string>();
             [JsonProperty] public HashSet<string> FXGuids = new HashSet<string>();
+            [JsonProperty] public string FullNameMerged;
+
             public FXBlocker()
             {
 
@@ -592,6 +594,16 @@ namespace VisualAdjustments2
                 {
                     // Main.Logger.Log($"Merged: {ability.NameForAcronym}");
                     this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
+                    if(this.FullNameMerged.IsNullOrEmpty())
+                    {
+                        this.FullNameMerged = a.m_DisplayName;
+                    }
+                    else
+                    {
+                        var newstring = ($"{FullNameMerged}, {a.m_DisplayName}");
+                        this.FullNameMerged = newstring;
+                        Main.Logger.Log(this.FullNameMerged + " " + a.NameSafe());
+                    }
                     if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnRemove.AssetId);
                     if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnStart.AssetId);
                 }
@@ -627,6 +639,7 @@ namespace VisualAdjustments2
                     }
                 }
                 this.AllAbilityGUIDs.Add(ability.AssetGuidThreadSafe);
+                //this.FullNameMerged = ability.m_DisplayName;
                 this.DisplayName = ability.m_DisplayName;
             }
             public FXBlocker(BlueprintActivatableAbility ability)

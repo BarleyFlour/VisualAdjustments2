@@ -15,6 +15,10 @@ using Kingmaker.Blueprints.Classes;
 using Kingmaker.EntitySystem;
 using Kingmaker.UnitLogic.Parts;
 using VisualAdjustments2.Infrastructure;
+using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker;
+using Owlcat.Runtime.Core.Utils;
+using Kingmaker.UnitLogic.Buffs;
 
 namespace VisualAdjustments2
 {
@@ -234,7 +238,36 @@ namespace VisualAdjustments2
         }
         public static void RebuildCharacter(this UnitEntityData data)
         {
-            data.AttachToViewOnLoad(null);
+            //From Polymorph.RestoreView (slightly modified)
+            {
+                UnitEntityView view = data.View;
+                data.AttachToViewOnLoad(null);
+                data.View.transform.SetParent(view.transform.parent, false);
+                data.View.transform.position = view.transform.position;
+                data.View.transform.rotation = view.transform.rotation;
+                SelectionManagerBase selectionManagerBase = Game.Instance.UI.SelectionManager.Or(null);
+                if (selectionManagerBase != null)
+                {
+                    selectionManagerBase.ForceCreateMarks();
+                }
+                // Polymorph.VisualTransitionSettings settings = this.HasExternalTransition ? this.m_TransitionExternal.ExitTransition : this.m_ExitTransition;
+                UnityEngine.Physics.SyncTransforms();
+                if (data.IsViewActive)
+                {
+                    var settings = new Polymorph.VisualTransitionSettings();
+                    settings.OldPrefabFX = new PrefabLink();
+                    settings.NewPrefabFX = new PrefabLink();
+                    data.View.StartCoroutine(Polymorph.Transition(settings, view, data.View));
+                }
+                else
+                {
+                    UnityEngine.Object.Destroy(view.gameObject);
+                }
+                data.Wake(/*settings.ScaleTime*/);
+                //data.ViewReplacement = null;
+            }
+            //data.View.CharacterAvatar.
+            //data.AttachToViewOnLoad(null);
         }
         public static void SaveDollState(this UnitEntityData data, DollState doll, bool Apply = true)
         {
@@ -280,7 +313,7 @@ namespace VisualAdjustments2
                         // data.View?.CharacterAvatar?.RemoveEquipmentEntities(unitPartDollData?.Default?.EquipmentEntityIds?.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
                         var newDoll = doll.CreateData();
                         unitPartDollData.SetDefault(newDoll);
-                        
+
                         data.View.CharacterAvatar.AddEquipmentEntities(newDoll.EquipmentEntityIds.Select(b => ResourcesLibrary.TryGetResource<EquipmentEntity>(b)));
                         newDoll.ApplyRampIndices(data.View.CharacterAvatar);
                     }

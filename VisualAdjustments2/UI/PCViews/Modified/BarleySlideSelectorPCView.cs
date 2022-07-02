@@ -38,6 +38,13 @@ namespace VisualAdjustments2.UI
             this.m_Slider.wholeNumbers = true;
             this.m_Slider.maxValue = 10f;
         }
+
+        public void LockControls(bool State)
+        {
+            this.m_ButtonNext.SetInteractable(State);
+            this.m_ButtonPrevious.SetInteractable(State);
+            this.m_Slider.handleRect.gameObject.SetActive(State);
+        }
         public void SetOnChangeCallback(Action callback)
         {
             this.m_Callback = callback;

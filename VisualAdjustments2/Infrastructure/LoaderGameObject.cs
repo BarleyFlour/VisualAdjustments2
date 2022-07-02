@@ -327,7 +327,9 @@ namespace VisualAdjustments2.Infrastructure
                         var blocker = new FXBlocker(bp);
                         AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
                         wack2.Add(blocker);
+#if DEBUG
                         Main.Logger.Log(bp.NameForAcronym);
+#endif
                         if (i == 15)
                         {
                             i = 0;

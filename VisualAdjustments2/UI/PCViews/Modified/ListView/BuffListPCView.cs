@@ -60,6 +60,7 @@ namespace VisualAdjustments2.UI
                     instantiated.transform.Find("NonUsable(Clone)").SetAsLastSibling();
                     instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.right = 18;
                 }
+                instantiated.transform.Find("TextContainer/Description").GetComponent<TextMeshProUGUI>().verticalAlignment = VerticalAlignmentOptions.Bottom;
                 m_Template = instantiated.GetComponent<BuffButtonPCView>();
             }
             this.m_SelectorHeader = this.transform.Find("HeaderH2/Label").GetComponent<TextMeshProUGUI>();

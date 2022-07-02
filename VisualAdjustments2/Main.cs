@@ -36,10 +36,6 @@ namespace VisualAdjustments2
             LoaderGameObject.CreateLoaderAndLoad();
         }
     }
-    public class serializestuff
-    {
-        [Newtonsoft.Json.JsonProperty] public Dictionary<string, HandEquipmentOverrides.HandEquipmentOverrideInfo> SomeDict = new Dictionary<string, HandEquipmentOverrides.HandEquipmentOverrideInfo>();
-    }
 #if DEBUG
     [EnableReloading]
 #endif
@@ -144,29 +140,6 @@ namespace VisualAdjustments2
                     Main.Logger.Error(e.ToString());
                 }
             }
-            GUILayout.Label("Hello world!");
-            if (GUILayout.Button("SerializationTest"))
-            {
-                var asd = new serializestuff();
-                asd.SomeDict.Add("someguid", new HandEquipmentOverrides.HandEquipmentOverrideInfo() { AnimationStyle = Kingmaker.View.Animation.WeaponAnimationStyle.Dagger, Mainhand = true, Slot = 3 });
-                asd.SomeDict.Add("someotherguid", new HandEquipmentOverrides.HandEquipmentOverrideInfo() { AnimationStyle = Kingmaker.View.Animation.WeaponAnimationStyle.Dagger, Mainhand = true, Slot = 3 });
-                asd.SomeDict.Add("someotherotherguid", new HandEquipmentOverrides.HandEquipmentOverrideInfo() { AnimationStyle = Kingmaker.View.Animation.WeaponAnimationStyle.Dagger, Mainhand = true, Slot = 3 });
-                /*var someoverride = new HandEquipmentOverrides.HandEquipmentOverrideInfo()
-                {
-                    AnimationStyle = Kingmaker.View.Animation.WeaponAnimationStyle.Fencing,
-                    Mainhand = true,
-                    Slot = 3
-                };
-                var deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<HandEquipmentOverrides.HandEquipmentOverrideInfo>(someoverride.ToString());
-                Main.Logger.Log("Deserialized: " + deserialized.ToString());*/
-                var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(asd);
-                Main.Logger.Log($"Serialized: {serialized}");
-                var deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<serializestuff>(serialized);
-                foreach (var thing in deserialized.SomeDict)
-                {
-                    Main.Logger.Log($"Deserialized: {thing}");
-                }
-            }
             if (GUILayout.Button("DollSaveTest"))
             {
                 var asd = Kingmaker.Game.Instance.Player.AllCharacters.First().GetDollState();
@@ -178,9 +151,6 @@ namespace VisualAdjustments2
                 Kingmaker.Game.Instance.Player.AllCharacters.First().SaveDollState(doll);
                 Main.Logger.Log(doll.ToString());
             }
-
-
-            GUILayout.Button("Some Button");
 #endif
         }
     }

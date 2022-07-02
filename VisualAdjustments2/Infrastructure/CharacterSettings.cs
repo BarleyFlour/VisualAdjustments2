@@ -15,6 +15,14 @@ using UnityEngine;
 
 namespace VisualAdjustments2.Infrastructure
 {
+    public class ClassOutfitOverride
+    {
+        public string GUID;
+        public int? PrimaryIndex = null;
+        public int? SecondaryIndex = null;
+        public SerializableColor? PrimaryCustomCol = null;
+        public SerializableColor? SecondaryCustomCol = null;
+    }
     public class WeaponOverride
     {
         [JsonConstructor] public WeaponOverride(bool mainoroffhand,int slot,string guid,string animstyle)
@@ -56,9 +64,9 @@ namespace VisualAdjustments2.Infrastructure
         public List<EnchantOverride> EnchantOverrides = new List<EnchantOverride>();
         [JsonIgnore] public Dictionary<ItemEntity, List<GameObject>> CurrentFXs = new Dictionary<ItemEntity, List<GameObject>>();
 
-        public EESettings EeSettings = new EESettings();
-        public Buff_Settings Fx_Settings = new Buff_Settings();
-        public string ClassGUID;
+        public EESettings EeSettings = new();
+        public Buff_Settings Fx_Settings = new();
+        public ClassOutfitOverride ClassOverride = new();
         public class EESettings
         {
             public List<EE_Applier> EEs = new List<EE_Applier>();
@@ -153,8 +161,8 @@ namespace VisualAdjustments2.Infrastructure
         }
         public ActionType actionType;
         public string GUID;
-        public ColorInfo Primary = new ColorInfo(true);
-        public ColorInfo Secondary = new ColorInfo(false);
+        public ColorInfo Primary;// = new ColorInfo(true);
+        public ColorInfo Secondary;// = new ColorInfo(false);
         public class ColorInfo
         {
             public bool PrimOrSec;
@@ -172,12 +180,55 @@ namespace VisualAdjustments2.Infrastructure
                 {
                     if (CustomColor)
                     {
-                        var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
+                        var col = CustomColorRGB.ToColor();
+                        if (PrimOrSec)
+                        {
+                            var firstpixel = ee.PrimaryColorsProfile.Ramps.Where(t => t.isReadable).FirstOrDefault(t => t.GetPixel(1, 1) == col);
+                            if (firstpixel == null)
+                            {
+                                var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
+                                {
+                                    filterMode = FilterMode.Bilinear
+                                };
+                                tex.SetPixel(1, 1, col);
+                                tex.Apply();
+                                ee.PrimaryColorsProfile.Ramps.Add(tex);
+                                var index = ee.PrimaryColorsProfile.Ramps.IndexOf(tex);
+                                character.SetPrimaryRampIndex(ee, index);
+                            }
+                            else
+                            {
+                                var index = ee.PrimaryColorsProfile.Ramps.IndexOf(firstpixel);
+                                character.SetPrimaryRampIndex(ee, index);
+                            }
+                        }
+                        else
+                        {
+                            var firstpixel = ee.SecondaryColorsProfile.Ramps.Where(t => t.isReadable).FirstOrDefault(t => t.GetPixel(1, 1) == col);
+                            if (firstpixel == null)
+                            {
+                                var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
+                                {
+                                    filterMode = FilterMode.Bilinear
+                                };
+                                tex.SetPixel(1, 1, col);
+                                tex.Apply();
+                                ee.SecondaryColorsProfile.Ramps.Add(tex);
+                                var index = ee.SecondaryColorsProfile.Ramps.IndexOf(tex);
+                                character.SetSecondaryRampIndex(ee, index);
+                            }
+                            else
+                            {
+                                var index = ee.SecondaryColorsProfile.Ramps.IndexOf(firstpixel);
+                                character.SetSecondaryRampIndex(ee, index);
+                            }
+                        }
+                        /*var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
                         {
                             filterMode = FilterMode.Bilinear
                         };
                         
-                        var col = CustomColorRGB.ToColor();
+                       // var col = CustomColorRGB.ToColor();
                         tex.SetPixel(1, 1, col);
                         tex.Apply();
                         if (PrimOrSec)
@@ -191,7 +242,7 @@ namespace VisualAdjustments2.Infrastructure
                             ee.SecondaryColorsProfile.Ramps.Add(tex);
                             var index = ee.SecondaryColorsProfile.Ramps.IndexOf(tex);
                             character.SetSecondaryRampIndex(ee, index);
-                        }
+                        }*/
                     }
                     else
                     {

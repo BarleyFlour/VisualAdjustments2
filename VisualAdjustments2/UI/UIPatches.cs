@@ -821,6 +821,184 @@ namespace VisualAdjustments2
                                 }                      
                                 EquipmentPCView.m_classOutfitSelectorPCView = ClassEquipmentSelectorPCView;
                             }
+                            //Class Outfit Color Picker
+                            {
+                                //Colour picker
+                                {
+                                    var ColPicker = UnityEngine.Object.Instantiate(newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"), EquipmentPCView.transform);
+                                    ColPicker.localPosition = new Vector3(398, -419, 0);
+                                    var window = ColPicker.Find("WindowContainer");
+                                    window.localPosition = new Vector3(-262, 205, 0);
+                                    var oldcomp2 = ColPicker.GetComponent<CharacterVisualSettingsView>();
+                                    var newcomp2 = ColPicker.gameObject.AddComponent<EEColorPickerView>();
+                                    newcomp2.SetupFromVisualSettings(oldcomp2);
+                                    Component.Destroy(oldcomp2);
+                                    //Apply and Secondary/Primary buttons
+                                    {
+                                        var topbar = new GameObject("TopBar");
+                                        var togglegroup = topbar.AddComponent<ToggleGroupHandler>();
+                                        topbar.transform.SetParent(window);
+                                        var le = topbar.AddComponent<LayoutElement>();
+                                        le.minHeight = 30;
+                                        topbar.transform.localScale = Vector3.one;
+                                        var HLG = topbar.AddComponent<HorizontalLayoutGroup>();
+                                        HLG.padding.left = 10;
+                                        HLG.padding.right = 10;
+
+                                        var windowVertLayout = window.GetComponent<VerticalLayoutGroup>();
+                                        windowVertLayout.padding.top = 5;
+
+                                        var TopLayout = new GameObject("TopLayout");
+                                        var TopLE = TopLayout.AddComponent<LayoutElement>();
+                                        TopLE.minHeight = 30;
+                                        TopLayout.transform.SetParent(window);
+                                        TopLayout.transform.SetAsFirstSibling();
+                                        TopLayout.transform.localScale = Vector3.one;
+                                        window.Find("Background").SetAsFirstSibling();
+                                        var TopHor = TopLayout.AddComponent<HorizontalLayoutGroup>();
+
+                                        TopHor.padding.top = -22;
+                                        TopHor.padding.left = 10;
+                                        TopHor.padding.right = 10;
+                                        var Image = window.Find("Title");
+                                        Image.SetParent(Image);
+                                        var ImgLE = Image.gameObject.AddComponent<LayoutElement>();
+                                        ImgLE.minHeight = 37;
+
+                                        /*{
+                                            var left = new GameObject("LeftColPreview");
+                                            var lImg = left.AddComponent<Image>();
+                                            left.transform.SetParent(TopLayout.transform);
+                                            var CPV = left.AddComponent<ColorPreviewView>();
+                                            CPV.m_ToColor = lImg;
+                                            var LE = CPV.gameObject.AddComponent<LayoutElement>();
+                                            LE.minHeight = 15;
+                                            newcomp.m_LeftColor = CPV;
+                                        }*/
+                                        {
+                                            //Parent for the outline
+                                            var colPreviewParent = new GameObject("colPreviewParent");
+                                            colPreviewParent.transform.SetParent(TopLayout.transform);
+                                            colPreviewParent.AddComponent(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button").GetComponent<Image>());
+
+                                            var CPP = colPreviewParent.AddComponent<HorizontalLayoutGroup>();
+
+                                            CPP.padding.top = 7;
+                                            CPP.padding.left = 7;
+                                            CPP.padding.right = 7;
+                                            CPP.padding.bottom = 7;
+
+                                            //
+                                            var colPreview = new GameObject("ColPreview");
+                                            var img = colPreview.AddComponent<Image>();
+                                            colPreview.transform.SetParent(colPreviewParent.transform);
+                                            colPreview.transform.localScale = Vector3.one;
+                                            colPreview.transform.SetAsFirstSibling();
+                                            var CPV = colPreview.AddComponent<ColorPreviewView>();
+                                            CPV.m_ToColor = img;
+                                            var LE = CPV.gameObject.AddComponent<LayoutElement>();
+                                            newcomp2.m_Color = CPV;
+                                        }
+
+                                        var SelectedTransform = newgameobject.transform.parent.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/All/Selected");
+
+                                        var PrimSec = new GameObject("PrimSec");
+                                        PrimSec.transform.SetParent(topbar.transform);
+                                        PrimSec.transform.localScale = Vector3.one;
+                                        PrimSec.AddComponent<LayoutElement>();
+                                        PrimSec.AddComponent<HorizontalLayoutGroup>();
+
+                                        var PrimButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
+                                        togglegroup.m_PrimarySelected = UnityEngine.Object.Instantiate(SelectedTransform, PrimButton.transform).gameObject;
+                                        UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<CanvasGroup>());
+                                        UnityEngine.Component.Destroy(togglegroup.m_PrimarySelected.transform.GetComponent<Image>());
+
+                                        PrimButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                        PrimButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Primary";
+                                        PrimButton.gameObject.AddComponent<LayoutElement>();
+
+                                        var SecButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), PrimSec.transform);
+                                        togglegroup.m_SecondarySelected = UnityEngine.Object.Instantiate(SelectedTransform, SecButton.transform).gameObject;
+                                        UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<CanvasGroup>());
+                                        UnityEngine.Component.Destroy(togglegroup.m_SecondarySelected.transform.GetComponent<Image>());
+
+
+                                        SecButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                        SecButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Secondary";
+                                        SecButton.gameObject.AddComponent<LayoutElement>();
+
+                                        togglegroup.Setup(PrimButton.GetComponent<OwlcatButton>(), SecButton.GetComponent<OwlcatButton>());
+                                        newcomp2.m_ToggleGroupHandler = togglegroup;
+                                    }
+                                    //RGB Sliders
+                                    {
+                                        var newsliderR = UnityEngine.Object.Instantiate(newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/Tatoo/SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)"), window);
+                                        var oldcomp_R = newsliderR.GetComponent<SlideSelectorPCView>();
+                                        var newcomp_R = newsliderR.gameObject.AddComponent<BarleySlideSelectorPCView>();
+                                        newcomp_R.SetupFromSlideSelector(oldcomp_R);
+                                        newcomp_R.m_Prefix = "R";
+                                        newcomp2.m_R_Slider = newcomp_R;
+
+                                        var newsliderG = UnityEngine.Object.Instantiate(newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/Tatoo/SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)"), window);
+                                        var oldcomp_G = newsliderG.GetComponent<SlideSelectorPCView>();
+                                        var newcomp_G = newsliderG.gameObject.AddComponent<BarleySlideSelectorPCView>();
+                                        newcomp_G.SetupFromSlideSelector(oldcomp_G);
+                                        newcomp_G.m_Prefix = "G";
+                                        newcomp2.m_G_Slider = newcomp_G;
+
+                                        var newsliderB = UnityEngine.Object.Instantiate(newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/Tatoo/SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)"), window);
+                                        var oldcomp_B = newsliderB.GetComponent<SlideSelectorPCView>();
+                                        var newcomp_B = newsliderB.gameObject.AddComponent<BarleySlideSelectorPCView>();
+                                        newcomp_B.SetupFromSlideSelector(oldcomp_B);
+                                        newcomp_B.m_Prefix = "B";
+                                        newcomp2.m_B_Slider = newcomp_B;
+                                    }
+                                    //Apply Button
+                                    {
+                                        var bottombar = new GameObject("BottomBar");
+                                        bottombar.transform.SetParent(window);
+                                        bottombar.transform.localScale = Vector3.one;
+                                        var le = bottombar.AddComponent<LayoutElement>();
+                                        le.minHeight = 60;
+                                        var HLG = bottombar.AddComponent<HorizontalLayoutGroup>();
+                                        HLG.padding.left = 10;
+                                        HLG.padding.right = 10;
+                                        HLG.padding.top = 15;
+                                        HLG.padding.bottom = 15;
+
+                                        var ApplyButton = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), bottombar.transform);
+                                        ApplyButton.Find("FinneanLabel").gameObject.SetActive(false);
+                                        ApplyButton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Apply";
+                                        ApplyButton.gameObject.AddComponent<LayoutElement>();
+
+                                        newcomp2.m_ConfirmButton = ApplyButton.GetComponent<OwlcatButton>();
+                                    }
+                                    EquipmentPCView.m_ColorPicker = newcomp2;
+                                    //Ramp Slider
+                                    {
+                                        //
+                                        {
+                                            // var Container = new GameObject("ColorRampSlider");
+                                            //Container.transform.SetParent(window);
+                                            //Container.transform.localScale = new Vector3(1, 1, 1);
+
+                                            var newslider = UnityEngine.Object.Instantiate(newgameobject.transform.Find("ChargenAppearanceDetailedPCView(Clone)/AppearanceBlock/RightBlock/Tatoo/SelectorsPlace/PC_Warpaint_SlideSequentionalSelector (1)"), window);
+                                            var oldcomp_ = newslider.GetComponent<SlideSelectorPCView>();
+                                            var newcomp_slider = newslider.gameObject.AddComponent<BarleySlideSelectorPCView>();
+                                            newcomp_slider.SetupFromSlideSelector(oldcomp_);
+                                            newcomp_slider.m_Prefix = "";
+                                            var lblplace = newslider.Find("LabelPlace");
+                                            lblplace.gameObject.SetActive(true);
+                                            lblplace.Find("Title-H4/Title-H4").GetComponent<TextMeshProUGUI>().text = "Index";
+                                            oldcomp_.gameObject.GetComponent<VerticalLayoutGroup>().padding.top = 25;
+                                            newslider.SetSiblingIndex(newslider.GetSiblingIndex() - 1);
+
+                                            EquipmentPCView.m_ColorPicker.m_Ramp_Slider = newcomp_slider;
+
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -887,7 +1065,7 @@ namespace VisualAdjustments2
                 newcompl.SetupFromChargenList(oldcomp, false, "Current EEs");
                 UnityEngine.Component.Destroy(oldcomp);
                 EEPickerPCView.m_CurrentEEs = newcompl;
-                //Reset button
+                //Reset Changes button
                 {
                     var ResetButtonGameObject = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), alleelistview.transform.Find("HeaderH2"));
                     // ResetButtonGameObject.localPosition = new Vector3(-195, -398, 0);
@@ -905,7 +1083,7 @@ namespace VisualAdjustments2
                     });
                     EEPickerPCView.m_ResetButton = owlbutt;
                 }
-                //Reset Changes
+                //Reset To Default
                 {
                     var ResetButtonGameObject = UnityEngine.GameObject.Instantiate(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), alleelistview.transform.Find("HeaderH2"));
                     // ResetButtonGameObject.localPosition = new Vector3(-195, -398, 0);
@@ -953,7 +1131,7 @@ namespace VisualAdjustments2
                 var window = ColPicker.Find("WindowContainer");
                 window.localPosition = new Vector3(-262, 205, 0);
                 var oldcomp = ColPicker.GetComponent<CharacterVisualSettingsView>();
-                var newcomp = ColPicker.gameObject.AddComponent<EEColorPickerPCView>();
+                var newcomp = ColPicker.gameObject.AddComponent<EEColorPickerView>();
                 newcomp.SetupFromVisualSettings(oldcomp);
                 Component.Destroy(oldcomp);
                 //Apply and Secondary/Primary buttons
@@ -972,7 +1150,7 @@ namespace VisualAdjustments2
 
                     var TopLayout = new GameObject("TopLayout");
                     var TopLE = TopLayout.AddComponent<LayoutElement>();
-                    TopLE.minHeight = 25;
+                    TopLE.minHeight = 30;
                     TopLayout.transform.SetParent(window);
                     TopLayout.transform.SetAsFirstSibling();
                     window.Find("Background").SetAsFirstSibling();
@@ -997,14 +1175,26 @@ namespace VisualAdjustments2
                         newcomp.m_LeftColor = CPV;
                     }*/
                     {
-                        var right = new GameObject("RightColPreview");
-                        var rImg = right.AddComponent<Image>();
-                        right.transform.SetParent(TopLayout.transform);
-                        right.transform.SetAsFirstSibling();
-                        var CPV = right.AddComponent<ColorPreviewView>();
-                        CPV.m_ToColor = rImg;
+                        //Parent for the outline
+                        var colPreviewParent = new GameObject("colPreviewParent");
+                        colPreviewParent.transform.SetParent(TopLayout.transform);
+                        colPreviewParent.AddComponent(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button").GetComponent<Image>());
+
+                        var CPP = colPreviewParent.AddComponent<HorizontalLayoutGroup>();
+
+                        CPP.padding.top = 7;
+                        CPP.padding.left = 7;
+                        CPP.padding.right = 7;
+                        CPP.padding.bottom = 7;
+
+                        //
+                        var colPreview = new GameObject("ColPreview");
+                        var img = colPreview.AddComponent<Image>();
+                        colPreview.transform.SetParent(colPreviewParent.transform);
+                        colPreview.transform.SetAsFirstSibling();
+                        var CPV = colPreview.AddComponent<ColorPreviewView>();
+                        CPV.m_ToColor = img;
                         var LE = CPV.gameObject.AddComponent<LayoutElement>();
-                        LE.minHeight = 15;
                         newcomp.m_Color = CPV;
                     }
 
@@ -1080,7 +1270,7 @@ namespace VisualAdjustments2
                     newcomp.m_ConfirmButton = ApplyButton.GetComponent<OwlcatButton>();
                 }
                 EEPickerPCView.m_EEColorPicker = newcomp;
-                //Ramp Sliders
+                //Ramp Slider
                 {
                     //
                     {
@@ -1098,10 +1288,10 @@ namespace VisualAdjustments2
                         lblplace.Find("Title-H4/Title-H4").GetComponent<TextMeshProUGUI>().text = "Index";
                         oldcomp_.gameObject.GetComponent<VerticalLayoutGroup>().padding.top = 25;
                         newslider.SetSiblingIndex(newslider.GetSiblingIndex() - 1);
-                        //Add to pcview here
-                    }
 
-                    //throw new Exception("brunrbughufdhdfhg");
+                        EEPickerPCView.m_EEColorPicker.m_Ramp_Slider = newcomp_slider;
+
+                    }
                 }
             }
             gameobject2.transform.localPosition = new Vector3(0, 0, 0);

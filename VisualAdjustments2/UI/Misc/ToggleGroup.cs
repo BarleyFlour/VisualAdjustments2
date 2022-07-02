@@ -15,14 +15,14 @@ namespace VisualAdjustments2.UI
     {
         public void EnsureButtonsSelected()
         {
-            m_PrimarySelected.SetActive(PrimOrSec.Value);
-            m_SecondarySelected.SetActive(!PrimOrSec.Value);
+            m_PrimarySelected.SetActive((PrimOrSec.Value && ShowSelected.Value));
+            m_SecondarySelected.SetActive((!PrimOrSec.Value && ShowSelected.Value));
         }
         public void Setup(OwlcatButton prim, OwlcatButton sec)
         {
 
             m_Primary_Button = prim;
-           // m_PrimarySelected = prim.transform.Find("Selected").gameObject;
+            // m_PrimarySelected = prim.transform.Find("Selected").gameObject;
 
             m_Secondary_Button = sec;
             //m_PrimarySelected = sec.transform.Find("Selected").gameObject;
@@ -30,10 +30,14 @@ namespace VisualAdjustments2.UI
             // return;
             PrimOrSec = new ReactiveProperty<bool>(true);
             PrimOrSec.Subscribe((bool state) => { EnsureButtonsSelected(); });
+
+            ShowSelected.Subscribe((bool state) => { EnsureButtonsSelected(); });
+
             m_Primary_Button.OnLeftClick.AddListener(() => { this.PrimOrSec.Value = true; });
             m_Secondary_Button.OnLeftClick.AddListener(() => { this.PrimOrSec.Value = false; });
-            
+
         }
+        public ReactiveProperty<bool> ShowSelected = new();
         public ReactiveProperty<bool> PrimOrSec;
         public OwlcatButton m_Primary_Button;
         public GameObject m_PrimarySelected;

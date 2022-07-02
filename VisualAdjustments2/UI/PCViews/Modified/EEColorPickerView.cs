@@ -18,10 +18,11 @@ using UnityEngine.UI;
 using Kingmaker.UI.Common;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases.Common;
 using VisualAdjustments2.Infrastructure;
+using Kingmaker.Visual.CharacterSystem;
 
 namespace VisualAdjustments2.UI
 {
-	public class EEColorPickerPCView : MonoBehaviour, IDisposable
+	public class EEColorPickerView : MonoBehaviour, IDisposable
 	{
 		public void Intialize()
 		{
@@ -43,6 +44,7 @@ namespace VisualAdjustments2.UI
 				{
 					if(this.m_R_Slider.ViewModel != null) this.m_R = this.m_R_Slider.ViewModel.CurrentIndex.Value;
 					this.UpdateColor();
+					this.CustomColor = true;
 				};
 				colorlistR.Add(SSE);
 
@@ -56,6 +58,7 @@ namespace VisualAdjustments2.UI
 				{
 					if (this.m_G_Slider.ViewModel != null) this.m_G = this.m_G_Slider.ViewModel.CurrentIndex.Value;
 					this.UpdateColor();
+					this.CustomColor = true;
 				};
 				colorlistG.Add(SSE);
 
@@ -69,14 +72,30 @@ namespace VisualAdjustments2.UI
 				{
 					if (this.m_B_Slider.ViewModel != null) this.m_B = this.m_B_Slider.ViewModel.CurrentIndex.Value;
 					this.UpdateColor();
+					this.CustomColor = true;
 				};
 				colorlistB.Add(SSE);
 
 			}
+			var seqlist = new List<StringSequentialEntity>();
+			for (int i = 0; i < 81; i++)
+			{
+				int x = i;
+				var entity = new StringSequentialEntity();
+				entity.Title = i.ToString();
+				entity.Setter = () => {
+					this.CustomColor = false; this.Index.Value = x; 
+				};
+				seqlist.Add(entity);
+			}
+			var StringSequentialVM = new StringSequentialSelectorVM(seqlist);
 			this.InitWindowAndControlls(unit != null);
+			this.m_Ramp_Slider.Bind(StringSequentialVM);
 			this.m_R_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistR));
 			this.m_G_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistG));
 			this.m_B_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistB));
+
+
 
 			/*if (unit != null)
 			{
@@ -104,11 +123,71 @@ namespace VisualAdjustments2.UI
 			this.m_EquipmentEntityView.Bind(string.Empty, null, null);*/
 		}
 
-        private void UpdateColor()
+		public void OnEEChanged(EquipmentEntity ee)
         {
-			this.m_Color.m_ToColor.color = new Color( ((float)this.m_R)/256, ((float)this.m_G)/256, ((float)this.m_B)/256);
+#if DEBUG
+			Main.Logger.Log($"EEChanged to {ee.name}");
+#endif
+			bool hasPrimRamp = ee.PrimaryColorsProfile?.Ramps?.Count is not null and > 0;
+			bool hasSecondaryRamp = ee.SecondaryColorsProfile?.Ramps?.Count is not null and > 0;
+			//this.m_R_Slider.LockControls(false);
+			//this.m_G_Slider.LockControls(false);
+			//this.m_B_Slider.LockControls(false);
+
+			if (!hasPrimRamp && !hasSecondaryRamp)
+			{
+				this.m_Ramp_Slider.LockControls(false);
+				this.m_ConfirmButton.SetInteractable(false);
+				this.m_ToggleGroupHandler.m_Primary_Button.SetInteractable(false);
+				this.m_ToggleGroupHandler.m_Secondary_Button.SetInteractable(false);
+				this.m_ToggleGroupHandler.PrimOrSec.Value = true;
+				this.m_ToggleGroupHandler.ShowSelected.Value = false;
+			}
+			else if(hasPrimRamp && hasSecondaryRamp)
+            {
+				this.m_Ramp_Slider.LockControls(true);
+				this.m_ConfirmButton.SetInteractable(true);
+				this.m_ToggleGroupHandler.m_Primary_Button.SetInteractable(true);
+				this.m_ToggleGroupHandler.m_Secondary_Button.SetInteractable(true);
+				this.m_ToggleGroupHandler.PrimOrSec.Value = true;
+				this.m_ToggleGroupHandler.ShowSelected.Value = true;
+			}
+			else if(hasPrimRamp && !hasSecondaryRamp)
+            {
+				this.m_Ramp_Slider.LockControls(true);
+				this.m_ConfirmButton.SetInteractable(true);
+				this.m_ToggleGroupHandler.m_Primary_Button.SetInteractable(true);
+				this.m_ToggleGroupHandler.m_Secondary_Button.SetInteractable(false);
+				this.m_ToggleGroupHandler.PrimOrSec.Value = true;
+				this.m_ToggleGroupHandler.ShowSelected.Value = true;
+			}
+			else if(!hasPrimRamp && hasSecondaryRamp)
+            {
+				this.m_Ramp_Slider.LockControls(true);
+				this.m_ConfirmButton.SetInteractable(true);
+				this.m_ToggleGroupHandler.m_Primary_Button.SetInteractable(false);
+				this.m_ToggleGroupHandler.m_Secondary_Button.SetInteractable(true);
+				this.m_ToggleGroupHandler.PrimOrSec.Value = false;
+				this.m_ToggleGroupHandler.ShowSelected.Value = true;
+			}
+			//Lock controls in relation to Prim/Sec ramps and select first available ramp in the Prim/Sec switcher
         }
 
+        private void UpdateColor()
+        {
+			this.m_Color.m_ToColor.sprite = null;
+			this.m_Color.m_ToColor.color = new Color( ((float)this.m_R)/256, ((float)this.m_G)/256, ((float)this.m_B)/256);
+        }
+		public void UpdateColorFromIndex(EquipmentEntity ee,int index)
+        {
+			{
+				this.m_Color.m_ToColor.color = new Color(1, 1, 1);
+				var texture = this.PrimaryOrSecondary ? ee.PrimaryColorsProfile.Ramps[index] : ee.SecondaryColorsProfile.Ramps[index];
+				//Ramps are a gradient for some reason, darker on the left brighter on the right, 75 seems to be about right so that the preview matches the applied colour.
+				Rect rect = new Rect(75f, 0f, 1f, 1f);
+				this.m_Color.m_ToColor.sprite = Sprite.Create(texture, rect, Vector2.zero);
+			}
+		}
         // Token: 0x06003C9C RID: 15516 RVA: 0x000ECDC4 File Offset: 0x000EAFC4
         private void InitWindowAndControlls(bool state)
 		{
@@ -186,9 +265,12 @@ namespace VisualAdjustments2.UI
 		public ToggleGroupHandler m_ToggleGroupHandler;
 		public ColorPreviewView m_Color;
 		public OwlcatButton m_ConfirmButton;
+		public BarleySlideSelectorPCView m_Ramp_Slider;
 
 		public int m_R = 0;
 		public int m_G = 0;
 		public int m_B = 0;
-	}
+        public bool CustomColor = false;
+        public ReactiveProperty<int> Index = new();
+    }
 }
