@@ -15,16 +15,16 @@ namespace VisualAdjustments2.Infrastructure
         {
             if (!__instance.Owner.IsPlayerFaction) return true;
             var settings = __instance.Owner.Unit.GetSettings();
-            if (settings.Fx_Settings.fXBlockerHolder.FXGuids.Contains(__instance.Blueprint.FxOnStart.AssetId)/* || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceAbility?.AssetGuidThreadSafe) || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceFact?.Blueprint?.AssetGuidThreadSafe)*/)
+            if (settings.BuffSettings.fXBlockerHolder.FXGuids.Contains(__instance.Blueprint.FxOnStart.AssetId)/* || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceAbility?.AssetGuidThreadSafe) || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceFact?.Blueprint?.AssetGuidThreadSafe)*/)
             {
                // Main.Logger.Log(__instance.NameForAcronym + " Blocked");
-                if (settings.Fx_Settings.WhiteOrBlackList) return true;
+                if (settings.BuffSettings.WhiteOrBlackList) return true;
                 else return false;
             }
             else
             {
                // Main.Logger.Log(__instance.NameForAcronym + " NotBlocked");
-                if (settings.Fx_Settings.WhiteOrBlackList) return false;
+                if (settings.BuffSettings.WhiteOrBlackList) return false;
                 else return true;
             }
             /*var sourceAbility = __instance?.Context?.SourceAbility?.AssetGuidThreadSafe;

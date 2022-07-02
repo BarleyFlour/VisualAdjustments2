@@ -34,7 +34,7 @@ namespace VisualAdjustments2.Infrastructure
                 if (__instance.VisibleItem == null) return;
                 {
                     var bp = ((BlueprintItemEquipmentHand)__instance.VisibleItem.Blueprint)?.VisualParameters?.AnimStyle.ToString();
-                    var WeaponOverride = characterSettings.WeaponOverrides.FirstOrDefault(b =>  b.Slot == __instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) && b?.AnimStyle == bp && __instance?.m_IsMainHand == b?.MainOrOffHand);
+                    var WeaponOverride = characterSettings.WeaponOverrides.FirstOrDefault(b => b.Slot == __instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) && b?.AnimStyle == bp && __instance?.m_IsMainHand == b?.MainOrOffHand);
                     if (WeaponOverride != null)
                     {
                         __result = ResourcesLibrary.TryGetBlueprint<BlueprintItemEquipmentHand>(WeaponOverride.GUID);
@@ -59,7 +59,7 @@ namespace VisualAdjustments2.Infrastructure
                 return FxHelper.SpawnFxOnWeapon(prefab, unit, weaponSnap);
             else return null;
         }
-       
+
         public static void Postfix(UnitViewHandSlotData __instance, bool isVisible)
         {
             try
@@ -84,10 +84,11 @@ namespace VisualAdjustments2.Infrastructure
                     {
                         if ((__instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) == enchantOverride.Slot) && __instance.Slot.IsPrimaryHand == enchantOverride.MainOrOffHand)
                         {
-                                var blueprint = ResourcesLibrary.TryGetBlueprint<BlueprintWeaponEnchantment>(enchantOverride.GUID);
-                                if (blueprint == null || blueprint.WeaponFxPrefab == null) continue;
-                                var fxObject = RespawnFx(blueprint.WeaponFxPrefab.Load(), __instance.Slot.MaybeItem);
-                                characterSettings.CurrentFXs[__instance.Slot.MaybeItem].Add(fxObject);
+                            if (enchantOverride.GUID == "Hide") continue;
+                            var blueprint = ResourcesLibrary.TryGetBlueprint<BlueprintWeaponEnchantment>(enchantOverride.GUID);
+                            if (blueprint == null || blueprint.WeaponFxPrefab == null) continue;
+                            var fxObject = RespawnFx(blueprint.WeaponFxPrefab.Load(), __instance.Slot.MaybeItem);
+                            characterSettings.CurrentFXs[__instance.Slot.MaybeItem].Add(fxObject);
                         }
                     }
                 }

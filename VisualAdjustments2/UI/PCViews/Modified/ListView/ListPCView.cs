@@ -120,6 +120,8 @@ namespace VisualAdjustments2.UI
         {
             if (a.Guid.IsNullOrEmpty()) return 0;
             if (b.Guid.IsNullOrEmpty()) return 0;
+            if (a.DisplayName == "Hide") return 0;
+            if (b.DisplayName == "Hide") return 0;
             return string.Compare(a.DisplayName, b.DisplayName, StringComparison.CurrentCultureIgnoreCase);
         }
         public ListSearchPCView m_CharGenFeatureSearchView;

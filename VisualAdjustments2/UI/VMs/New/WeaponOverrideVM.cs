@@ -93,12 +93,12 @@ namespace VisualAdjustments2.UI
                 //Refresh magic
                 void Refresh()
                 {
-                    Game.Instance.UI.Common.DollRoom.m_AvatarHands.UpdateAll();
-                    Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.UpdateAll();
-                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
-                    if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    Game.Instance?.UI?.Common?.DollRoom?.m_AvatarHands?.UpdateAll();
+                    Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.HandsEquipment?.UpdateAll();
+                    if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance?.UI?.Common?.DollRoom?.m_AvatarHands?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance?.UI?.Common?.DollRoom?.m_AvatarHands?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                 }
             }
             catch (Exception e)
@@ -113,9 +113,9 @@ namespace VisualAdjustments2.UI
                 var enchant = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
                 if (enchant != null)
                 {
-                    return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == enchant.GUID);
+                    return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == enchant.GUID);
                 }
-                else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "");
+                else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "None");
             }
             else
             {
@@ -159,6 +159,7 @@ namespace VisualAdjustments2.UI
             if (i == 14)
             {
                 CurrentReactive.Add(new ListViewItemVM("None", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
+                CurrentReactive.Add(new ListViewItemVM("Hide", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
                 foreach (var ee in ResourceLoader.AllEnchants)
                 {
                     //Main.Logger.Log(ee.name);
@@ -184,7 +185,9 @@ namespace VisualAdjustments2.UI
                 }
             }
             m_ListViewVM.Value?.Dispose();
-            base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => x.GUID == a.Guid && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value)))));
+            var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
+            selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
+            base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
         }
         public override void DisposeImplementation()
         {

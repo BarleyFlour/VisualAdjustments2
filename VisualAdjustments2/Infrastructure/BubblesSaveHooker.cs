@@ -103,6 +103,8 @@ namespace VisualAdjustments2.Infrastructure
         }
 
         public Dictionary<string, CharacterSettings> PerCharacter = new Dictionary<string, CharacterSettings>();
+        public CharacterSettings.Buff_Settings global_profile = new();
+        public bool useGlobalBuffProfile = false;
         public static GlobalCharacterSettings Instance = new GlobalCharacterSettings();
     }
 }

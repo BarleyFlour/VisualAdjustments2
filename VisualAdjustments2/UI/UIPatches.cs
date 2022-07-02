@@ -58,7 +58,7 @@ namespace VisualAdjustments2
         Wrist = 10,
         Usable = 11, //Belt items
         Weapon = 0,
-        Enchantments
+        Class_Equipment = 99
     };
     public enum Extended
     {
@@ -67,8 +67,8 @@ namespace VisualAdjustments2
     [HarmonyPatch(typeof(ServiceWindowsPCView), nameof(ServiceWindowsPCView.Initialize))]
     public static class ServiceWindowsPCView_Initialize_Patch
     {
-        public static List<(string,string)> m_Classes;
-        public static List<(string,string)> Classes
+        public static List<(string, string)> m_Classes;
+        public static List<(string, string)> Classes
         {
             get
             {
@@ -77,8 +77,8 @@ namespace VisualAdjustments2
 #endif
                 if (m_Classes == null)
                 {
-                    m_Classes = new List<(string,string)>();
-                    m_Classes.Add(("Default",""));
+                    m_Classes = new List<(string, string)>();
+                    m_Classes.Add(("Default", ""));
                     var bps = Kingmaker.Cheats.Utilities.GetAllBlueprints();
                     Main.Logger.Log(bps.Entries.Where(a => a.Type == typeof(BlueprintCharacterClass)).Count() + " asda");
                     foreach (BlueprintCharacterClass c in bps.Entries.Where(a => a.m_Type == typeof(BlueprintCharacterClass)).Select(b => ResourcesLibrary.TryGetBlueprint<BlueprintCharacterClass>(b.Guid)))
@@ -86,13 +86,13 @@ namespace VisualAdjustments2
                         Main.Logger.Log(c.NameForAcronym);
                         if (c.StartingItems.Any() && !c.PrestigeClass && !c.ToString().Contains("Scion"))
                         {
-                            m_Classes.Add((c.LocalizedName,c.AssetGuidThreadSafe));
+                            m_Classes.Add((c.LocalizedName, c.AssetGuidThreadSafe));
                         }
                     }
                 }
 #if DEBUG
                 sw.Stop();
-                if(sw.ElapsedMilliseconds > 0)Main.Logger.Log($"Classes gotten in {sw.ElapsedMilliseconds}ms");
+                if (sw.ElapsedMilliseconds > 0) Main.Logger.Log($"Classes gotten in {sw.ElapsedMilliseconds}ms");
 #endif
                 return m_Classes;
             }
@@ -126,8 +126,9 @@ namespace VisualAdjustments2
                 newgameobject.transform.localScale = new UnityEngine.Vector3(1, 1, 1);
                 newgameobject.transform.localPosition = new UnityEngine.Vector3(0, 0, 0);
 
-
-
+                newappearance.Find("AppearanceBlock").transform.localPosition += new Vector3(0, -30, 0);
+                newappearance.Find("AppearanceBlock/LeftBlock").GetComponent<VerticalLayoutGroupWorkaround>().padding.bottom = 54;
+                newappearance.Find("AppearanceBlock/LeftBlock/Body/SelectorsPlace/PC_Scar_SlideSequentionalSelector (2)/DecorDown").gameObject.SetActive(false);
 
                 newdollroom.SetParent(newgameobject.transform);
                 newappearance.SetParent(newgameobject.transform);
@@ -400,6 +401,14 @@ namespace VisualAdjustments2
                             UnityEngine.Component.Destroy(oldcomp);
                             FXViewerPCView.m_AllFX = newcompl;
                             newcompl.VirtualList.m_ScrollSettings.ScrollWheelSpeed = 333;
+                            //Global Buff Profile button malarkey
+                            {
+                                var buttontemplate = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView/WindowContainer/ShowClothContainer");
+                                var newButton = GameObject.Instantiate(buttontemplate,alleelistview.transform.Find("HeaderH2"));
+                                newButton.GetComponent<VerticalLayoutGroup>().padding.left = 7;
+                                var view = newButton.GetComponent<CharacterVisualSettingsEntityView>();
+                                view.Bind("Use Global Profile",() => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); },() => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
+                            }
                         }
                     }
 
@@ -679,7 +688,8 @@ namespace VisualAdjustments2
                                     HideButtonType.Shoulders,
                                     HideButtonType.Wrist,
                                     HideButtonType.Usable,
-                                    HideButtonType.Weapon
+                                    HideButtonType.Weapon,
+                                    HideButtonType.Class_Equipment
                                 };
                                 Dictionary<HideButtonType, string> enumValuesNames = new Dictionary<HideButtonType, string>()
                                 {
@@ -693,7 +703,7 @@ namespace VisualAdjustments2
                                     [HideButtonType.Wrist] = "Bracers",
                                     [HideButtonType.Usable] = "Belt items",
                                     [HideButtonType.Weapon] = "Sheaths",
-                                    [HideButtonType.Enchantments] = "Enchantments"
+                                    [HideButtonType.Class_Equipment] = "Class Gear"
                                 };
 
                                 Transform toAttachTo = null;
@@ -713,7 +723,8 @@ namespace VisualAdjustments2
                                     vlgP.spacing = 3;
                                     toAttachTo = parentV.transform;
                                     var å = 0;
-                                    for (int y = 0; y < ((enumValues.Length / vertRows) + OverFlow); y++)
+                                    var toaddasoverflow = OverFlow > 0 ? 1 : 0;
+                                    for (int y = 0; y < ((enumValues.Length / vertRows) + toaddasoverflow); y++)
                                     {
                                         if (y + Offset >= enumValues.Length) continue;
                                         var ab = enumValues.GetValue(y + Offset);
@@ -741,7 +752,7 @@ namespace VisualAdjustments2
 
                                 var superparent = new GameObject("superparent2");
                                 superparent.transform.SetParent(parent);
-                                
+
                                 superparent.transform.localScale = new Vector3(1, 1, 1);
                                 var superparentHLG = superparent.AddComponent<HorizontalLayoutGroup>();
                                 superparentHLG.padding.left = 12;
@@ -783,7 +794,7 @@ namespace VisualAdjustments2
                                         PCView.ClassName = ab.Item1;
                                         PCView.GUID = ab.Item2;
                                         PCView.Label.text = ab.Item1;
-                                        ClassEquipmentSelectorPCView.Buttons.Add(ab.Item2,PCView);
+                                        ClassEquipmentSelectorPCView.Buttons.Add(ab.Item2, PCView);
                                         // var newbuttonn = (i >= (enumValues.Length/2)) ? GameObject.Instantiate(buttontemplate,parent1.transform) : GameObject.Instantiate(buttontemplate, parent2.transform);
                                         // var pcview = newbuttonn.GetComponent<CharacterVisualSettingsEntityView>();
                                         //pcview.Bind(nameof(ab), () => { Kingmaker.Game.Instance.SelectionCharacter.CurrentSelectedCharacter.GetSettings().HideEquipmentDict[(ItemsFilter.ItemType)ab] = !Kingmaker.Game.Instance.SelectionCharacter.CurrentSelectedCharacter.GetSettings().HideEquipmentDict[(ItemsFilter.ItemType)ab]; Kingmaker.Game.Instance?.SelectionCharacter?.CurrentSelectedCharacter?.View?.UpdateBodyEquipmentVisibility(); }, () => { return false; });
@@ -815,10 +826,10 @@ namespace VisualAdjustments2
                                     ClassEquipmentSelectorPCView.Buttons.Add(ab.Item2, PCView);
                                 }
 #endif
-                                foreach(var button in ClassEquipmentSelectorPCView.Buttons)
+                                foreach (var button in ClassEquipmentSelectorPCView.Buttons)
                                 {
                                     button.Value.Button.OnLeftClick.AddListener(new UnityAction(() => { ClassEquipmentSelectorPCView.Selected.Value = button.Value; }));
-                                }                      
+                                }
                                 EquipmentPCView.m_classOutfitSelectorPCView = ClassEquipmentSelectorPCView;
                             }
                             //Class Outfit Color Picker
@@ -880,7 +891,8 @@ namespace VisualAdjustments2
                                             var colPreviewParent = new GameObject("colPreviewParent");
                                             colPreviewParent.transform.SetParent(TopLayout.transform);
                                             colPreviewParent.AddComponent(newgameobject.transform.parent.Find("InventoryPCView/Inventory/SmartItemButton/FrameImage/Button").GetComponent<Image>());
-
+                                            colPreviewParent.name = "colPreviewParent";
+                                            colPreviewParent.transform.localScale = Vector3.one;
                                             var CPP = colPreviewParent.AddComponent<HorizontalLayoutGroup>();
 
                                             CPP.padding.top = 7;
@@ -892,8 +904,8 @@ namespace VisualAdjustments2
                                             var colPreview = new GameObject("ColPreview");
                                             var img = colPreview.AddComponent<Image>();
                                             colPreview.transform.SetParent(colPreviewParent.transform);
-                                            colPreview.transform.localScale = Vector3.one;
                                             colPreview.transform.SetAsFirstSibling();
+                                            colPreview.transform.localScale = Vector3.one;
                                             var CPV = colPreview.AddComponent<ColorPreviewView>();
                                             CPV.m_ToColor = img;
                                             var LE = CPV.gameObject.AddComponent<LayoutElement>();

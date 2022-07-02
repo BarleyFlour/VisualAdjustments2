@@ -65,7 +65,15 @@ namespace VisualAdjustments2.Infrastructure
         [JsonIgnore] public Dictionary<ItemEntity, List<GameObject>> CurrentFXs = new Dictionary<ItemEntity, List<GameObject>>();
 
         public EESettings EeSettings = new();
-        public Buff_Settings Fx_Settings = new();
+        private Buff_Settings m_BuffSettings = new();
+        [JsonIgnore] public Buff_Settings BuffSettings
+        {
+            get
+            {
+                if (GlobalCharacterSettings.Instance.useGlobalBuffProfile) return GlobalCharacterSettings.Instance.global_profile;
+                else return m_BuffSettings;
+            }
+        }
         public ClassOutfitOverride ClassOverride = new();
         public class EESettings
         {
@@ -93,6 +101,7 @@ namespace VisualAdjustments2.Infrastructure
             {
                 newdict.Add((ItemsFilter.ItemType)type, false);
             }
+            newdict.Add((ItemsFilter.ItemType)99,false);
             return newdict;
         }
     }

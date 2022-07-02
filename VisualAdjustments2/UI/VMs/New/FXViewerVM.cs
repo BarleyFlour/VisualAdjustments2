@@ -30,7 +30,7 @@ namespace VisualAdjustments2.UI
                 allBuffs.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.GUID), true, this.AddListItem));
             }
             ReactiveCollection<BuffButtonVM> reactive = new ReactiveCollection<BuffButtonVM>();
-            foreach (var buff in data.GetSettings().Fx_Settings.fXBlockerHolder.FXBlockers)
+            foreach (var buff in data.GetSettings().BuffSettings.fXBlockerHolder.FXBlockers)
             {
                 reactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
             }
@@ -57,8 +57,8 @@ namespace VisualAdjustments2.UI
                     var settings = this.UnitDescriptor.Value.Unit.GetSettings();
                     // if (settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
                     {
-                        settings.Fx_Settings.fXBlockerHolder.FXBlockers.Remove(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
-                        settings.Fx_Settings.fXBlockerHolder.Recache();
+                        settings.BuffSettings.fXBlockerHolder.FXBlockers.Remove(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
+                        settings.BuffSettings.fXBlockerHolder.Recache();
                     }
 
                 }
@@ -77,8 +77,8 @@ namespace VisualAdjustments2.UI
                 var settings = this.UnitDescriptor.Value.Unit.GetSettings();
                 // if (!settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
                 {
-                    settings.Fx_Settings.fXBlockerHolder.FXBlockers.Add(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
-                    settings.Fx_Settings.fXBlockerHolder.Recache();
+                    settings.BuffSettings.fXBlockerHolder.FXBlockers.Add(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
+                    settings.BuffSettings.fXBlockerHolder.Recache();
                 }
                 //Main.Logger.Log(ResourcesLibrary.TryGetResource<EquipmentEntity>(item.Guid).ToString());
                 /*if(Game.Instance.UI.Common.DollRoom.m_Avatar.EquipmentEntities.Any(a => a.name == item.InternalName))*/
@@ -91,11 +91,11 @@ namespace VisualAdjustments2.UI
                 Main.Logger.Error(e.ToString());
             }
         }
-        private void OnUnitChanged()
+        public void OnUnitChanged()
         {
             {
                 var CurrentReactive = new ReactiveCollection<BuffButtonVM>();
-                foreach (var buff in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().Fx_Settings.fXBlockerHolder.FXBlockers)
+                foreach (var buff in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.fXBlockerHolder.FXBlockers)
                 {
                     CurrentReactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
                 }

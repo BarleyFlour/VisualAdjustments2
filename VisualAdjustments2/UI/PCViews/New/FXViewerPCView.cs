@@ -22,10 +22,10 @@ namespace VisualAdjustments2.UI
         public BuffListPCView m_AllFX;
         public void OnCharacterChanged()
         {
-            m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
-            var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
-            m_WhiteOrBlacklist.PrimOrSec.Value = settings.Fx_Settings.WhiteOrBlackList;
-            this.m_VisualSettings.Dispose();
+            m_dollCharacterController?.Bind(Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit);
+            var settings = Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.GetSettings();
+            if(m_WhiteOrBlacklist?.PrimOrSec?.Value != null && settings?.BuffSettings?.WhiteOrBlackList != null) m_WhiteOrBlacklist.PrimOrSec.Value = settings.BuffSettings.WhiteOrBlackList;
+            this.m_VisualSettings?.Dispose();
         }
         public void Initialize()
         {
@@ -37,8 +37,8 @@ namespace VisualAdjustments2.UI
             {
                 this.OnCharacterChanged();
             }));
-            m_WhiteOrBlacklist.PrimOrSec.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().Fx_Settings.WhiteOrBlackList;
-            base.AddDisposable(m_WhiteOrBlacklist.PrimOrSec.Subscribe((a) => { var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings(); settings.Fx_Settings.WhiteOrBlackList = a; }));
+            m_WhiteOrBlacklist.PrimOrSec.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.WhiteOrBlackList;
+            base.AddDisposable(m_WhiteOrBlacklist.PrimOrSec.Subscribe((a) => { var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings(); settings.BuffSettings.WhiteOrBlackList = a; }));
             base.BindViewImplementation();
             this.m_CurrentFX.Bind(this.ViewModel.m_CurrentFX.Value);
             this.m_AllFX.Bind(this.ViewModel.m_AllFX.Value);

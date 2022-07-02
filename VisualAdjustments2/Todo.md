@@ -1,10 +1,13 @@
 ﻿
 
-Overrides (if i even wanna do that)
+
+high prio:
 
 icon for color picker
 
 thing under service window buttons
+
+mid prio:
 
 Scale
 View override (in doll page)
@@ -15,7 +18,10 @@ Kitsune shit
 
 custom class outfit colors (prim & sec ramps)
 
+low prio:
+
 Buff Blocker Profiles
-Global profiles for Buff Blocker
+
 EEPicker Profiles
-Replace buff settings field w/ getter regarding global profiles
+
+Overrides (if i even wanna do that)

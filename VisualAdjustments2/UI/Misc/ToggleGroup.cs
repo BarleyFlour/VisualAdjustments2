@@ -37,7 +37,7 @@ namespace VisualAdjustments2.UI
             m_Secondary_Button.OnLeftClick.AddListener(() => { this.PrimOrSec.Value = false; });
 
         }
-        public ReactiveProperty<bool> ShowSelected = new();
+        public ReactiveProperty<bool> ShowSelected = new(true);
         public ReactiveProperty<bool> PrimOrSec;
         public OwlcatButton m_Primary_Button;
         public GameObject m_PrimarySelected;

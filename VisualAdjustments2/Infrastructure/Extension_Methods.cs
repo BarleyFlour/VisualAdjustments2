@@ -707,5 +707,10 @@ namespace VisualAdjustments2.Infrastructure
                 FxObject = null;
             }
         }
+        public static void VAUpdate(this UnitEntityView view)
+        {
+            view.UpdateAdditionalVisualSettings();
+            view.UpdateBodyEquipmentVisibility();
+        }
     }
 }
