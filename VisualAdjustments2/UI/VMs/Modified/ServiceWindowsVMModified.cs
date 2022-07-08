@@ -137,6 +137,13 @@ namespace VisualAdjustments2.UI
                             return;
                         }
                         return;
+                    case VisualWindowType.Portrait:
+                        if (this.PortraitVM.Value == null)
+                        {
+                            base.AddDisposable(this.PortraitVM.Value = new PortraitPickerVM());
+                            return;
+                        }
+                        return;
                     default:
                         return;
                 }
@@ -190,6 +197,16 @@ namespace VisualAdjustments2.UI
                         this.EEPickerVM.Value = null;
                         return;
                     }
+                case VisualWindowType.Portrait:
+                    {
+                        var PortraitVM = this.PortraitVM.Value;
+                        if (PortraitVM != null)
+                        {
+                            PortraitVM.Dispose();
+                        }
+                        this.PortraitVM.Value = null;
+                        return;
+                    }
                 default:
                     return;
             }
@@ -215,15 +232,17 @@ namespace VisualAdjustments2.UI
         {
             UISoundController.Instance.Play(UISoundType.InventoryClose);
         }
-        public ReactiveProperty<ServiceWindowsMenuVMModified> ServiceWindowsMenuVM = new ReactiveProperty<ServiceWindowsMenuVMModified>();
+        public ReactiveProperty<ServiceWindowsMenuVMModified> ServiceWindowsMenuVM = new();
 
-        public ReactiveProperty<EquipmentVM> EquipmentVM = new ReactiveProperty<EquipmentVM>();
+        public ReactiveProperty<EquipmentVM> EquipmentVM = new();
 
-        public ReactiveProperty<EEPickerVM> EEPickerVM = new ReactiveProperty<EEPickerVM>();
+        public ReactiveProperty<EEPickerVM> EEPickerVM = new();
 
-        public ReactiveProperty<FXViewerVM> FXViewerVM = new ReactiveProperty<FXViewerVM>();
+        public ReactiveProperty<FXViewerVM> FXViewerVM = new();
 
-        public ReactiveProperty<DollVM> DollVM = new ReactiveProperty<DollVM>();
+        public ReactiveProperty<DollVM> DollVM = new();
+
+        public ReactiveProperty<PortraitPickerVM> PortraitVM = new();
 
         public VisualWindowType CurrentWindow;
     }

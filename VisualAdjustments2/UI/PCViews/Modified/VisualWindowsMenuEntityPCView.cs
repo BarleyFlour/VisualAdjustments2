@@ -23,6 +23,8 @@ namespace VisualAdjustments2.UI
                     return "Equipment";
                 case VisualWindowType.FXViewer:
                     return "Buff FX's";
+                case VisualWindowType.Portrait:
+                    return "Portrait";
                 default:
                     return "";
             }

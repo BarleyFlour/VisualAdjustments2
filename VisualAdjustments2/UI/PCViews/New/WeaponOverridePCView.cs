@@ -34,7 +34,7 @@ namespace VisualAdjustments2.UI
             {
                 var animstyle = Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemBlueprint?.VisualParameters?.AnimStyle;
                 if (animstyle != null) this.m_DropDown.value = WeaponOverrideVM.m_AnimToInt[(WeaponAnimationStyle)animstyle];
-                var viewVM = this.ViewModel.SelectFromSettings();
+                var viewVM = this.ViewModel.SelectFromSettings(this.m_DropDown.value);
                 if (viewVM != null)
                 {
                     this.ViewModel.m_ListViewVM?.Value?.TrySelectEntity(viewVM);
@@ -46,11 +46,11 @@ namespace VisualAdjustments2.UI
             //base.AddDisposable(this.animStyle.Subscribe((WeaponAnimationStyle i) => { this.m_ListViewVM.Value.TrySelectEntity(SelectFromSettings()); }));
             base.AddDisposable(this.ViewModel.hand.Subscribe((bool i) =>
             {
-                var viewVM = this.ViewModel.SelectFromSettings();
+                var viewVM = this.ViewModel.SelectFromSettings(this.m_DropDown.value);
                 if (viewVM != null)
                 {
                     this.ViewModel.m_ListViewVM?.Value?.TrySelectEntity(viewVM);
-                    //Main.Logger.Log($"Selected {viewVM.DisplayName}");
+                    Main.Logger.Log($"Selected {viewVM.DisplayName}");
                 }
                 else this.ViewModel.m_ListViewVM?.Value?.TryUnselectEntity(this.ViewModel.m_ListViewVM.Value.SelectedEntity.Value);
             }));

@@ -77,8 +77,8 @@ namespace VisualAdjustments2.UI
 				colorlistB.Add(SSE);
 
 			}
-			var seqlist = new List<StringSequentialEntity>();
-			for (int i = 0; i < 81; i++)
+			/*var seqlist = new List<StringSequentialEntity>();
+			/*for (int i = 0; i < 81; i++)
 			{
 				int x = i;
 				var entity = new StringSequentialEntity();
@@ -89,8 +89,8 @@ namespace VisualAdjustments2.UI
 				seqlist.Add(entity);
 			}
 			var StringSequentialVM = new StringSequentialSelectorVM(seqlist);
+			this.m_Ramp_Slider.Bind(StringSequentialVM);*/
 			this.InitWindowAndControlls(unit != null);
-			this.m_Ramp_Slider.Bind(StringSequentialVM);
 			this.m_R_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistR));
 			this.m_G_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistG));
 			this.m_B_Slider.Bind(new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(colorlistB));
@@ -122,7 +122,45 @@ namespace VisualAdjustments2.UI
 			this.m_BackpackEntityView.Bind(string.Empty, null, null);
 			this.m_EquipmentEntityView.Bind(string.Empty, null, null);*/
 		}
+		public void UpdateRampSlider(EquipmentEntity ee)
+        {
+			bool hasPrimRamp = ee.PrimaryColorsProfile?.Ramps?.Count is not null and > 0;
+			bool hasSecondaryRamp = ee.SecondaryColorsProfile?.Ramps?.Count is not null and > 0;
 
+
+			if (hasPrimRamp && this.PrimaryOrSecondary == true)
+			{
+				var seqlist = new List<StringSequentialEntity>();
+				for (int i = 0; i < ee.PrimaryColorsProfile.Ramps.Where(t => !t.isReadable).Count(); i++)
+				{
+					int x = i;
+					var entity = new StringSequentialEntity();
+					entity.Title = i.ToString();
+					entity.Setter = () => {
+						this.CustomColor = false; this.Index.Value = x;
+					};
+					seqlist.Add(entity);
+				}
+				var StringSequentialVM = new StringSequentialSelectorVM(seqlist);
+				this.m_Ramp_Slider.Bind(StringSequentialVM);
+			}
+			if (hasSecondaryRamp && this.PrimaryOrSecondary == false)
+			{
+				var seqlist = new List<StringSequentialEntity>();
+				for (int i = 0; i < ee.SecondaryColorsProfile.Ramps.Where(t => !t.isReadable).Count(); i++)
+				{
+					int x = i;
+					var entity = new StringSequentialEntity();
+					entity.Title = i.ToString();
+					entity.Setter = () => {
+						this.CustomColor = false; this.Index.Value = x;
+					};
+					seqlist.Add(entity);
+				}
+				var StringSequentialVM = new StringSequentialSelectorVM(seqlist);
+				this.m_Ramp_Slider.Bind(StringSequentialVM);
+			}
+		}
 		public void OnEEChanged(EquipmentEntity ee)
         {
 #if DEBUG
@@ -130,6 +168,40 @@ namespace VisualAdjustments2.UI
 #endif
 			bool hasPrimRamp = ee.PrimaryColorsProfile?.Ramps?.Count is not null and > 0;
 			bool hasSecondaryRamp = ee.SecondaryColorsProfile?.Ramps?.Count is not null and > 0;
+
+
+			if(hasPrimRamp && this.PrimaryOrSecondary == true)
+            {
+				var seqlist = new List<StringSequentialEntity>();
+				for (int i = 0; i < ee.PrimaryColorsProfile.Ramps.Where(t => !t.isReadable).Count(); i++)
+				{
+					int x = i;
+					var entity = new StringSequentialEntity();
+					entity.Title = i.ToString();
+					entity.Setter = () => {
+						this.CustomColor = false; this.Index.Value = x;
+					};
+					seqlist.Add(entity);
+				}
+				var StringSequentialVM = new StringSequentialSelectorVM(seqlist);
+				this.m_Ramp_Slider.Bind(StringSequentialVM);
+			}
+			if(hasSecondaryRamp && this.PrimaryOrSecondary == false)
+            {
+				var seqlist = new List<StringSequentialEntity>();
+				for (int i = 0; i < ee.SecondaryColorsProfile.Ramps.Where(t => !t.isReadable).Count(); i++)
+				{
+					int x = i;
+					var entity = new StringSequentialEntity();
+					entity.Title = i.ToString();
+					entity.Setter = () => {
+						this.CustomColor = false; this.Index.Value = x;
+					};
+					seqlist.Add(entity);
+				}
+				var StringSequentialVM = new StringSequentialSelectorVM(seqlist);
+				this.m_Ramp_Slider.Bind(StringSequentialVM);
+			}
 			//this.m_R_Slider.LockControls(false);
 			//this.m_G_Slider.LockControls(false);
 			//this.m_B_Slider.LockControls(false);

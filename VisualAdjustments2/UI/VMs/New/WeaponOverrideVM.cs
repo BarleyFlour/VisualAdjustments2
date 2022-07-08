@@ -73,7 +73,6 @@ namespace VisualAdjustments2.UI
                 var first = settings.WeaponOverrides.FirstOrDefault(b => b.AnimStyle == style.ToString() && b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
                 if (first == null)
                 {
-
                     if (!guid.IsNullOrEmpty())
                     {
                         settings.WeaponOverrides.Add(new WeaponOverride(hand.Value, slot.Value, guid, style.ToString()));
@@ -106,31 +105,52 @@ namespace VisualAdjustments2.UI
                 Main.Logger.Error(e.ToString());
             }
         }
-        public ListViewItemVM SelectFromSettings()
+        public ListViewItemVM SelectFromSettings(int dropDownIndex = 0)
         {
-            if (((int)this.animStyle.Value) == 14)
+            try
             {
-                var enchant = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
-                if (enchant != null)
+                // if (((int)this.animStyle.Value) == 14)
+                Main.Logger.Log(((int)this.animStyle.Value).ToString());
+                if((dropDownIndex == 14))
+              //  if (m_AnimToInt[this.animStyle.Value] == 99)
                 {
-                    return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == enchant.GUID);
-                }
-                else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "None");
-            }
-            else
-            {
-                var animstyleasstring = this.animStyle.Value.ToString();
-                //Main.Logger.Log(animstyleasstring);
-                var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animstyleasstring);
-                if (s != null)
-                {
-                    return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == s.GUID);
-                }
-                else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "");
-            }
-            // var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
-            // var first = settings.WeaponOverrides.FirstOrDefault(b => b.AnimStyle == style.ToString() && b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
+                    // var selected = this.m_ListViewVM.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
+                    // selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
+                    //  Main.Logger.Log(selected.Guid + " " + selected.DisplayName);
+                    //  base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
 
+                    //var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
+                    // Main.Logger.Log(s.ToString());
+                    //return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(a => a.Guid == s.GUID);
+                    var selected = this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
+                    selected = (selected != null ? selected : this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault());
+                    return selected;
+                    /*var enchant = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
+                    if (enchant != null)
+                    {
+                        return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == enchant.GUID);
+                    }
+                    else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.DisplayName == "None");*/
+                }
+                else
+                {
+                    var animstyleasstring = this.animStyle.Value.ToString();
+                    //Main.Logger.Log(animstyleasstring);
+                    var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animstyleasstring);
+                    if (s != null)
+                    {
+                        return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == s.GUID);
+                    }
+                    else return this.m_ListViewVM?.Value?.EntitiesCollection?.FirstOrDefault(c => c.Guid == "");
+                }
+                // var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
+                // var first = settings.WeaponOverrides.FirstOrDefault(b => b.AnimStyle == style.ToString() && b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw new Exception(e.ToString());
+            }
         }
         public WeaponOverrideVM()
         {
@@ -159,7 +179,7 @@ namespace VisualAdjustments2.UI
             if (i == 14)
             {
                 CurrentReactive.Add(new ListViewItemVM("None", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
-                CurrentReactive.Add(new ListViewItemVM("Hide", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
+                CurrentReactive.Add(new ListViewItemVM("Hide", "", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
                 foreach (var ee in ResourceLoader.AllEnchants)
                 {
                     //Main.Logger.Log(ee.name);
@@ -185,9 +205,19 @@ namespace VisualAdjustments2.UI
                 }
             }
             m_ListViewVM.Value?.Dispose();
-            var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
-            selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
-            base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
+            if (i == 14)
+            {
+                var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
+                selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
+                Main.Logger.Log(selected.Guid + " " + selected.DisplayName);
+                base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
+            }
+            else
+            {
+                var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animStyle.Value.ToString()));
+                selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
+                base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
+            }
         }
         public override void DisposeImplementation()
         {

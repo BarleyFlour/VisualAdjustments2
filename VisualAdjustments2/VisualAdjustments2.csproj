@@ -88,6 +88,7 @@
     <Compile Include="UI\PCViews\Modified\ListView\BuffListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\EquipmentListPCView.cs" />
     <Compile Include="UI\PCViews\Modified\ListView\ListSearchPCView.cs" />
+    <Compile Include="UI\PCViews\Modified\PortraitPickerPCView.cs" />
     <Compile Include="UI\PCViews\New\ClassOutfitSelectorButtonPCView.cs" />
     <Compile Include="UI\PCViews\New\ClassOutfitSelectorPCView.cs" />
     <Compile Include="UI\PCViews\New\ColorPreviewView.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="UI\VMs\Modified\ListView\ListViewVM.cs" />
     <Compile Include="UI\VMs\New\ClassOutfitSelectorVM.cs" />
     <Compile Include="UI\VMs\New\ListViewItemEquipmentVM.cs" />
+    <Compile Include="UI\VMs\New\PortraitPickerVM.cs" />
     <Compile Include="UI\VMs\New\WeaponOverrideVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />
     <Compile Include="UI\VMs\New\CreateDollVM.cs" />

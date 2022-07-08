@@ -19,7 +19,7 @@ namespace VisualAdjustments2.UI
     {
 
         public ReactiveProperty<ClassOutfitSelectorButtonPCView> Selected = new();
-        public Dictionary<string /*GUID*/,ClassOutfitSelectorButtonPCView> Buttons = new();
+        public Dictionary<string /*GUID*/, ClassOutfitSelectorButtonPCView> Buttons = new();
         public void SetupSelectedState()
         {
             foreach (ClassOutfitSelectorButtonPCView button in this.Buttons.Values)
@@ -30,30 +30,32 @@ namespace VisualAdjustments2.UI
         public void OnUnitChanged(UnitDescriptor unit)
         {
             var settings = unit.Unit.GetSettings();
-            if(settings.ClassOverride.GUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
+            if (settings.ClassOverride.GUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
             else Selected.Value = Buttons.FirstOrDefault(a => a.Key == settings.ClassOverride.GUID).Value;
         }
         public void SetClass(string guid)
         {
             var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
             var settings = unit.GetSettings();
-            var needsreset = (guid == "" && unit.IsStoryCompanion() && settings.ClassOverride.GUID != "");
+            var needsreset = (guid.IsNullOrEmpty() && unit.IsStoryCompanion() && !settings.ClassOverride.GUID.IsNullOrEmpty());
             if (needsreset)
             {
                 unit.View.CharacterAvatar.RemoveAllEquipmentEntities(false);
+                //Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
                 unit.View.CharacterAvatar.RestoreSavedEquipment();
-                
-
-              //  foreach (var ee in ResourcesLibrary.TryGetBlueprint<BlueprintCharacterClass>(settings.ClassGUID).GetClothesLinks(unit.Gender,unit.Progression.Race.RaceId).Select(a => a.Load()))
+                //  foreach (var ee in ResourcesLibrary.TryGetBlueprint<BlueprintCharacterClass>(settings.ClassGUID).GetClothesLinks(unit.Gender,unit.Progression.Race.RaceId).Select(a => a.Load()))
                 {
-               //     if(unit.View.CharacterAvatar.EquipmentEntities.Contains(ee) && unit.View.CharacterAvatar.SavedEquipmentEntities.Any(A => A.Load() == ee)) unit.View.CharacterAvatar.RemoveEquipmentEntity(ee);
+                    //     if(unit.View.CharacterAvatar.EquipmentEntities.Contains(ee) && unit.View.CharacterAvatar.SavedEquipmentEntities.Any(A => A.Load() == ee)) unit.View.CharacterAvatar.RemoveEquipmentEntity(ee);
                 }
             }
             settings.ClassOverride.GUID = guid;
             Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = guid != "";
-            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
+            //Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
+            Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.RebuildOutfit();
+            Kingmaker.Game.Instance.UI.Common.DollRoom.Unit.View.UpdateClassEquipment();
             if (needsreset) unit.View.UpdateBodyEquipmentVisibility();
+            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
         }
         public override void BindViewImplementation()
         {
@@ -70,7 +72,7 @@ namespace VisualAdjustments2.UI
                 }));
                 this.AddDisposable(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(OnUnitChanged));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Main.Logger.Log(e.ToString());
             }

@@ -16,6 +16,8 @@ using Kingmaker.UI.MVVM;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Appearance;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Common;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.FeatureSelector;
+using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Portrait;
+using Kingmaker.UI.MVVM._PCView.CharGen.Portrait;
 using Kingmaker.UI.MVVM._PCView.ServiceWindows;
 using Kingmaker.UI.MVVM._PCView.ServiceWindows.Menu;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases.Appearance;
@@ -99,13 +101,21 @@ namespace VisualAdjustments2
         }
         public static VisualWindowsMenuEntityPCView CreateButton(GameObject template, Transform parent, string label)
         {
-            var newgameobject = UnityEngine.GameObject.Instantiate(template, parent);
-            newgameobject.transform.name = label;
-            var newcomp = newgameobject.AddComponent<VisualWindowsMenuEntityPCView>();
-            var oldcomp = newgameobject.GetComponent<ServiceWindowsMenuEntityPCView>();
-            newcomp.SetupFromServicePCView(oldcomp);
-            UnityEngine.Component.Destroy(oldcomp);
-            return newcomp;
+            try
+            {
+                var newgameobject = UnityEngine.GameObject.Instantiate(template, parent);
+                newgameobject.transform.name = label;
+                var newcomp = newgameobject.AddComponent<VisualWindowsMenuEntityPCView>();
+                var oldcomp = newgameobject.GetComponent<ServiceWindowsMenuEntityPCView>();
+                newcomp.SetupFromServicePCView(oldcomp);
+                UnityEngine.Component.Destroy(oldcomp);
+                return newcomp;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw e;
+            }
         }
         public static void Prefix(ServiceWindowsPCView __instance)
         {
@@ -263,11 +273,14 @@ namespace VisualAdjustments2
                     UnityEngine.Object.Destroy(top.Find("Character").gameObject);
                     var inventory = top.Find("Inventory").gameObject;
 
+                    var imgTop = top.gameObject.EnsureComponent<Image>();
+                    imgTop.sprite = ResourceLoader.LoadInternal("", "TopBarThing.png", new(2559, 80));
+
                     var FXViewerButton = CreateButton(inventory, top, "Buff Viewer");
                     var DollButton = CreateButton(inventory, top, "Doll");
                     var EquipmentButton = CreateButton(inventory, top, "Equipment");
                     var EEPickerButton = CreateButton(inventory, top, "EE Picker");
-
+                    var PortraitButton = CreateButton(inventory, top, "Portrait");
 
                     UnityEngine.Object.Destroy(inventory);
 
@@ -313,9 +326,11 @@ namespace VisualAdjustments2
                     comp.m_MenuSelector.m_MenuEntities.Add(EEPickerButton);
                     comp.m_MenuSelector.m_MenuEntities.Add(EquipmentButton);
                     comp.m_MenuSelector.m_MenuEntities.Add(DollButton);
+                    comp.m_MenuSelector.m_MenuEntities.Add(PortraitButton);
                     ServiceWindowsVM_ShowWindow_Patch.pcview = comp;
 
-
+                    oldbar.SetAsLastSibling();
+                    newselectionbar.SetAsLastSibling();
                     newselectionbar.transform.localPosition = (oldbar.transform.localPosition) + (new Vector3(0, -50, 0));
 
                     var gameobject = new GameObject("FXViewer");
@@ -404,10 +419,10 @@ namespace VisualAdjustments2
                             //Global Buff Profile button malarkey
                             {
                                 var buttontemplate = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView/WindowContainer/ShowClothContainer");
-                                var newButton = GameObject.Instantiate(buttontemplate,alleelistview.transform.Find("HeaderH2"));
+                                var newButton = GameObject.Instantiate(buttontemplate, alleelistview.transform.Find("HeaderH2"));
                                 newButton.GetComponent<VerticalLayoutGroup>().padding.left = 7;
                                 var view = newButton.GetComponent<CharacterVisualSettingsEntityView>();
-                                view.Bind("Use Global Profile",() => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); },() => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
+                                view.Bind("Use Global Profile", () => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); }, () => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
                             }
                         }
                     }
@@ -474,7 +489,8 @@ namespace VisualAdjustments2
                             [WeaponAnimationStyle.ThrownArc] = "Throwing Axes",
                             [WeaponAnimationStyle.AxeTwoHanded] = "Two Handed Axes",
                             [WeaponAnimationStyle.PiercingTwoHanded] = "Two-Handed Polearms",
-                            [WeaponAnimationStyle.SlashingTwoHanded] = "Two-Handed Slashing/Blunt Weapons"
+                            [WeaponAnimationStyle.SlashingTwoHanded] = "Two-Handed Slashing/Blunt Weapons",
+                            //[(WeaponAnimationStyle)14] = "Enchant"
                         };
                         for (int i = 0; i < enumList.Count(); i++)
                         {
@@ -483,6 +499,8 @@ namespace VisualAdjustments2
                             m_AnimToInt[anim.Key] = i;
                             dropdown.options.Add(new TMP_Dropdown.OptionData(anim.Value));
                         }
+                        m_AnimToInt[(WeaponAnimationStyle)99] = 99;
+                        m_IntToAnim[99] = (WeaponAnimationStyle)99;
                         dropdown.options.Add(new TMP_Dropdown.OptionData("FX"));
                         /*foreach (var animstyle in enumList)
                         {
@@ -837,6 +855,14 @@ namespace VisualAdjustments2
                                 //Colour picker
                                 {
                                     var ColPicker = UnityEngine.Object.Instantiate(newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"), EquipmentPCView.transform);
+
+                                    //New icon fuckery
+                                    {
+                                        var newSprite = ResourceLoader.LoadInternal("", "UI_overtips_hpfdgbar2.png", new(156, 156));
+                                        var iconGM = ColPicker.Find("SettingsBtn/Icon");
+                                        iconGM.GetComponent<Image>().sprite = newSprite;
+                                    }
+
                                     ColPicker.localPosition = new Vector3(398, -419, 0);
                                     var window = ColPicker.Find("WindowContainer");
                                     window.localPosition = new Vector3(-262, 205, 0);
@@ -1013,6 +1039,26 @@ namespace VisualAdjustments2
                             }
                         }
                     }
+                    //Portrait
+
+                    var newGM = new GameObject("PortraitPicker");
+                    newGM.transform.SetParent(newgameobject.transform);
+                    newGM.transform.localScale = Vector3.one;
+                    newGM.transform.localPosition = new(0,-35,0);
+                    var portraitpcview = newGM.AddComponent<PortraitPickerPCView>();
+
+                    var PortraitListView = GameObject.Instantiate(newgameobject.transform.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/PhasePortraitsDetaildViewPC"), newGM.transform);
+                    PortraitListView.localPosition = Vector3.zero;
+
+                    var PortraitView = GameObject.Instantiate(newgameobject.transform.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenPortraitView"), newGM.transform);
+                    PortraitView.localPosition = new(281,0,0);
+                    
+                    portraitpcview.m_PortraitPicker = PortraitListView.GetComponent<CharGenPortraitPhaseDetailedPCView>();
+                    portraitpcview.m_PortraitPreview = PortraitView.GetComponent<CharGenPortraitPCView>();
+
+                    PortraitListView.transform.Find("ContentWrapper/PortraitSelector/CustomPortraitGroup/ChangePortraitButton").localPosition = new(-330,-460,0);
+                    portraitpcview.Initialize();
+                    //
 
 
                     newselectionbar.transform.localScale = oldbar.transform.localScale;
@@ -1037,6 +1083,7 @@ namespace VisualAdjustments2
                         compPCView.m_EquipmentPCView = EquipmentPCView;
                         compPCView.m_FXViewerPCView = FXViewerPCView;
                         compPCView.m_DollRoom = dollroomcomp;
+                        compPCView.m_portraitPickerPCView = portraitpcview;
 
                         newcomp.m_DeleteDollButton.OnLeftClick.AddListener(() => { DollPCView.DeleteDoll(); });
                         ServiceWindowsVM_ShowWindow_Patch.swPCView = compPCView;
@@ -1139,6 +1186,12 @@ namespace VisualAdjustments2
             //Colour picker
             {
                 var ColPicker = UnityEngine.Object.Instantiate(newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"), EEPickerPCView.transform);
+                //New icon fuckery
+                {
+                    var newSprite = ResourceLoader.LoadInternal("", "UI_overtips_hpfdgbar2.png", new(156, 156));
+                    var iconGM = ColPicker.Find("SettingsBtn/Icon");
+                    iconGM.GetComponent<Image>().sprite = newSprite;
+                }
                 ColPicker.localPosition = new Vector3(398, -419, 0);
                 var window = ColPicker.Find("WindowContainer");
                 window.localPosition = new Vector3(-262, 205, 0);

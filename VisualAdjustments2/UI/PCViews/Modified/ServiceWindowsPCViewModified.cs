@@ -39,6 +39,7 @@ namespace VisualAdjustments2.UI
             base.AddDisposable(base.ViewModel.FXViewerVM.Subscribe(new Action<FXViewerVM>(this.m_FXViewerPCView.Bind)));
             base.AddDisposable(base.ViewModel.EquipmentVM.Subscribe(new Action<EquipmentVM>(this.m_EquipmentPCView.Bind)));
             base.AddDisposable(base.ViewModel.DollVM.Subscribe(new Action<DollVM>(this.m_DollPCView.Bind)));
+            base.AddDisposable(base.ViewModel.PortraitVM.Subscribe(new Action<PortraitPickerVM>(this.m_portraitPickerPCView.Bind)));
             base.AddDisposable(base.ViewModel.ServiceWindowsMenuVM.Subscribe(delegate (ServiceWindowsMenuVMModified vm)
             {
                 if (vm != null)
@@ -53,6 +54,7 @@ namespace VisualAdjustments2.UI
         {
             
         }
+        public PortraitPickerPCView m_portraitPickerPCView;
         public EEPickerPCView m_EEPickerPCView;
         public FXViewerPCView m_FXViewerPCView;
         public EquipmentPCView m_EquipmentPCView;

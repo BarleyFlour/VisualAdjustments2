@@ -48,6 +48,16 @@ namespace VisualAdjustments2.UI
 			this.action = OnSelectAction;
 			base.AddDisposable(this);
 		}
+		public ListViewItemVM(string name,string guid, bool addorremove, Action<ListViewItemVM> OnSelectAction, bool hasRadioButton) : base(false)
+		{
+			this.HasRadioButton = hasRadioButton;
+			this.Guid = guid;
+			this.DisplayName = name;
+			this.InternalName = name;
+			this.AddOrRemove = addorremove;
+			this.action = OnSelectAction;
+			base.AddDisposable(this);
+		}
 		public bool HasText(string searchRequest)
 		{
 			return (this.InternalName != null && this.DisplayName != null) && (this.InternalName.IndexOf(searchRequest, StringComparison.InvariantCultureIgnoreCase) >= 0 || this.DisplayName.IndexOf(searchRequest, StringComparison.InvariantCultureIgnoreCase) >= 0);

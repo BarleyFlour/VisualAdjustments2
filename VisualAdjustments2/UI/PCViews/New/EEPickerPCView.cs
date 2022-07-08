@@ -69,6 +69,7 @@ namespace VisualAdjustments2.UI
 
                 });
                 this.AddDisposable(this.m_EEColorPicker.Index.Subscribe((int index) => { this.m_EEColorPicker.UpdateColorFromIndex(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.ViewModel.CurrentEEs.Value.SelectedEntity.Value.Guid), index); }));
+                this.AddDisposable(this.m_EEColorPicker.m_ToggleGroupHandler.PrimOrSec.Subscribe((bool _) => { this.m_EEColorPicker.UpdateRampSlider(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.ViewModel.CurrentEEs.Value.SelectedEntity.Value.Guid)); }));
                 m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
                 this.AddDisposable(base.ViewModel.AllEEs.Value);
                 this.m_AllEEs.Bind(base.ViewModel.AllEEs.Value);

@@ -1,4 +1,5 @@
-﻿using Kingmaker.Blueprints;
+﻿using Kingmaker;
+using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Items.Ecnchantments;
 using Kingmaker.Blueprints.Items.Equipment;
 using Kingmaker.Blueprints.Items.Shields;
@@ -54,7 +55,7 @@ namespace VisualAdjustments2.Infrastructure
         }
         IEnumerator LoadWeapons()
         {
-            if (GetCachedResources<SerializedWeaponList>(out var deserialized) == true)
+            if (GetCachedResources<SerializedWeaponList>(out var deserialized) == true && deserialized.Version == GameVersion.GetVersion())
             {
                 ResourceLoader.m_AllWeapons = deserialized.WeaponsDictionary;
                 //   return deserialized.WeaponsDictionary;
@@ -111,9 +112,9 @@ namespace VisualAdjustments2.Infrastructure
             }
 
         }
-        IEnumerator LoadEnchantments()
+        public static IEnumerator LoadEnchantments()
         {
-            if (GetCachedResources<SerializedEnchantmentList>(out var deserialized) == true)
+            if (GetCachedResources<SerializedEnchantmentList>(out var deserialized) == true && deserialized.Version == GameVersion.GetVersion())
             {
                 ResourceLoader.m_AllEnchants = deserialized.EnchantmentsList.ToList();
                 //   return deserialized.WeaponsDictionary;
@@ -165,7 +166,7 @@ namespace VisualAdjustments2.Infrastructure
         }
         IEnumerator LoadEEs()
         {
-            if (GetCachedResources<SerializedEEList>(out var deserialized) == true)
+            if (GetCachedResources<SerializedEEList>(out var deserialized) == true && deserialized.Version == GameVersion.GetVersion())
             {
                 foreach (var ee in deserialized.allEEs)
                 {
@@ -271,7 +272,7 @@ namespace VisualAdjustments2.Infrastructure
         }
         IEnumerator LoadFXs()
         {
-            if (ResourceLoader.GetCachedResources<SerializedFXList>(out var deserializedFX) == true)
+            if (ResourceLoader.GetCachedResources<SerializedFXList>(out var deserializedFX) == true && deserializedFX.Version == GameVersion.GetVersion())
             {
                 ResourceLoader.AbilityGuidToFXBlocker = deserializedFX.AbilityGuidToFXBlocker;
                 ResourceLoader.m_AllFXs = deserializedFX.allFXs.ToList();

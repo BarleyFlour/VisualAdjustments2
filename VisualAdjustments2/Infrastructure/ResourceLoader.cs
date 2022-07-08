@@ -91,6 +91,30 @@ namespace VisualAdjustments2
     }
     public static class ResourceLoader
     {
+        public static Sprite LoadInternal(string folder, string file, Vector2Int size)
+        {
+#if DEBUG
+            return Image2Sprite.Create($"{Main.ModEntry.Path}Assets{Path.DirectorySeparatorChar}{folder}{Path.DirectorySeparatorChar}{file}", size);
+#else
+            return Image2Sprite.Create($"{Main.modEntry.Path + @"\"}Assets{Path.DirectorySeparatorChar}{folder}{Path.DirectorySeparatorChar}{file}", size);
+#endif
+        }
+        // Loosely based on https://forum.unity.com/threads/generating-sprites-dynamically-from-png-or-jpeg-files-in-c.343735/
+        public static class Image2Sprite
+        {
+            public static string icons_folder = "";
+
+            public static Sprite Create(string filePath, Vector2Int size)
+            {
+#if DEBUG
+                Main.Logger.Log("Creating sprite");
+#endif
+                var bytes = File.ReadAllBytes(icons_folder + filePath);
+                var texture = new Texture2D(size.x, size.y, TextureFormat.RGBA32, false);
+                _ = texture.LoadImage(bytes);
+                return Sprite.Create(texture, new Rect(0, 0, size.x, size.y), new Vector2(0, 0));
+            }
+        }
         public static Dictionary<string, List<string>> AbilityGuidToFXGuids = new Dictionary<string, List<string>>();
         public static Dictionary<string, ResourceInfo> NameToEEInfo = new Dictionary<string, ResourceInfo>();
         public static ResourcesLibrary.LoadedResource LoadEE(string assetid, string assetBundleName)
@@ -1104,7 +1128,15 @@ namespace VisualAdjustments2
         {
             get
             {
-                if (m_AllEnchants == null) throw new Exception("Main Menu Load failed");
+
+                if (m_AllEnchants == null) 
+                {
+                    if (GetCachedResources<SerializedEnchantmentList>(out var deserialized) == true && deserialized.Version == GameVersion.GetVersion())
+                    {
+                        ResourceLoader.m_AllEnchants = deserialized.EnchantmentsList.ToList();
+                    }
+                    else throw new Exception("Main Menu Load failed");
+                }
                 return m_AllEnchants;
             }
         }

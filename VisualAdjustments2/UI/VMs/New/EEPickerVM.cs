@@ -275,6 +275,8 @@ namespace VisualAdjustments2.UI
                         ColInf.Apply(loaded, Game.Instance.UI.Common.DollRoom.m_Avatar);
                         //Game.Instance.UI.Common.DollRoom.m_Avatar.IsDirty = true;
                     }
+                  //  Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
+                  //  Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
                 }
                 else
                 {
@@ -345,6 +347,12 @@ namespace VisualAdjustments2.UI
                         }
                     }
                 }
+                Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
+                Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.UpdateCharacter();
+
+
+                Kingmaker.Game.Instance.UI.Common.DollRoom.Unit.View.UpdateClassEquipment();
+                Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
             }
             catch (Exception e)
             {

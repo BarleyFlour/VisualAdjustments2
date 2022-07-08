@@ -39,7 +39,7 @@ namespace VisualAdjustments2.UI
             ""
         };
         public ListViewItemPCView m_Template;
-        public virtual void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp,bool LeftOrRight, string LabelText)
+        public virtual void SetupFromChargenList(CharGenFeatureSelectorPCView oldcomp, bool LeftOrRight, string LabelText)
         {
             var newpcview = oldcomp.gameObject.AddComponent<ListSearchPCView>();
             newpcview.SetupFromChargenFeatureSearchPCView(oldcomp.m_CharGenFeatureSearchView);
@@ -47,7 +47,7 @@ namespace VisualAdjustments2.UI
             this.m_SearchRequestEntitiesNotFound = oldcomp.m_SearchRequestEntitiesNotFound;
             if (m_Template == null)
             {
-                var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First()); 
+                var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First());
                 instantiated.ConvertToListPCView();
                 if (LeftOrRight)
                 {
@@ -78,7 +78,7 @@ namespace VisualAdjustments2.UI
         {
             //base.BindViewImplementation();
             this.Initialize();
-            var searchVM = new EESearchVM(new string[] {"","","",""});
+            var searchVM = new EESearchVM(new string[] { "", "", "", "" });
             base.AddDisposable(searchVM);
             m_CharGenFeatureSearchView.Bind(searchVM);
             if (this.m_CharGenFeatureSearchView != null)
@@ -118,11 +118,14 @@ namespace VisualAdjustments2.UI
         }
         public override int EntityComparer(ListViewItemVM a, ListViewItemVM b)
         {
-            if (a.Guid.IsNullOrEmpty()) return 0;
-            if (b.Guid.IsNullOrEmpty()) return 0;
-            if (a.DisplayName == "Hide") return 0;
-            if (b.DisplayName == "Hide") return 0;
+            if (b.Guid.IsNullOrEmpty()/* || (a.Guid == "Hide" || a.InternalName == "Hide" || a.DisplayName == "Hide")*/) return 0;
+            if (a.Guid.IsNullOrEmpty()/* || (b.Guid == "Hide" || b.InternalName == "Hide" || b.DisplayName == "Hide")*/) return 0;
+            //if (a.Guid == "Hide" || a.InternalName == "Hide" || a.DisplayName == "Hide") return 0;
+            //if (b.Guid == "Hide" || b.InternalName == "Hide" || b.DisplayName == "Hide") return 0;
+
+           // Main.Logger.Log($"{string.Compare(a.DisplayName, b.DisplayName)} + {a.DisplayName} + {b.DisplayName}");
             return string.Compare(a.DisplayName, b.DisplayName, StringComparison.CurrentCultureIgnoreCase);
+            // return 0;
         }
         public ListSearchPCView m_CharGenFeatureSearchView;
         public TextMeshProUGUI m_SearchRequestEntitiesNotFound;

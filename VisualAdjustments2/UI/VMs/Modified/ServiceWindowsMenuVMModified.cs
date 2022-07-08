@@ -22,6 +22,7 @@ namespace VisualAdjustments2
         Equipment,
         EEPicker,
         FXViewer,
+        Portrait,
         None
     }
     public class ServiceWindowsMenuVMModified : BaseDisposable, IDisposable, IViewModel, IBaseDisposable

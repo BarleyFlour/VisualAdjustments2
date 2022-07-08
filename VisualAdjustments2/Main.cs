@@ -99,6 +99,9 @@ namespace VisualAdjustments2
 #endif
         {
 #if DEBUG
+            if(GUILayout.Button("TestAddEEComp"))
+            {
+            }
             if(GUILayout.Button("Loady Stuff"))
             {
                 LoaderGameObject.CreateLoaderAndLoad();
