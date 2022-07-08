@@ -13,6 +13,8 @@ A successor mod to Visual Adjustments featuring:
 
 * The ability to block the visual effects of Buffs of your choosing
 
+* Far better portrait picker
+
 
 ## Install
 1. Download and install [Unity Mod Manager](https://www.nexusmods.com/site/mods/21)
@@ -36,7 +38,7 @@ A successor mod to Visual Adjustments featuring:
 ##
 
 
-## Features in Visual Adjustments that are not in Visual Adjustments 2
+## Features in Visual Adjustments that are not in Visual Adjustments 2 (List may not be complete)
 * Overrides.¹
 * View Overrides (This is planned though)
 * Individual custom colors for Hair, Skin, Etc.¹
