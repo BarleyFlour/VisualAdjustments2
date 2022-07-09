@@ -8,7 +8,7 @@ A successor mod to Visual Adjustments featuring:
 
 * Less bugs
 
-* A more intuitive and exlusively ingame UI
+* A more intuitive and exclusively ingame UI
 
 * Reduced rate of incidence for the "Grey Character" bug (It's a vanilla bug but i took measures to reduce how often it happens)
 
