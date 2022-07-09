@@ -3,6 +3,8 @@
 
 high prio:
 
+fucky companion doll shit
+
 mid prio:
 
 Scale

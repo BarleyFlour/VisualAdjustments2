@@ -24,12 +24,6 @@ using UniRx;
 using UnityEngine;
 using VisualAdjustments2.UI;
 
-
-
-//Add apply button
-//Add a list of actions to take when applying
-//Remove the automatic saving
-
 namespace VisualAdjustments2.UI
 {
     public class CharGenAppearancePhaseVMModified : BaseDisposable, IViewModel, IBaseDisposable, IDisposable

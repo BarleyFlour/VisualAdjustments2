@@ -82,10 +82,14 @@ namespace VisualAdjustments2
                     m_Classes = new List<(string, string)>();
                     m_Classes.Add(("Default", ""));
                     var bps = Kingmaker.Cheats.Utilities.GetAllBlueprints();
+#if DEBUG
                     Main.Logger.Log(bps.Entries.Where(a => a.Type == typeof(BlueprintCharacterClass)).Count() + " asda");
-                    foreach (BlueprintCharacterClass c in bps.Entries.Where(a => a.m_Type == typeof(BlueprintCharacterClass)).Select(b => ResourcesLibrary.TryGetBlueprint<BlueprintCharacterClass>(b.Guid)))
+#endif
+                    foreach (BlueprintCharacterClass c in bps.Entries.Where(a => a.Type == typeof(BlueprintCharacterClass)).Select(b => ResourcesLibrary.TryGetBlueprint<BlueprintCharacterClass>(b.Guid)))
                     {
+#if DEBUG
                         Main.Logger.Log(c.NameForAcronym);
+#endif
                         if (c.StartingItems.Any() && !c.PrestigeClass && !c.ToString().Contains("Scion"))
                         {
                             m_Classes.Add((c.LocalizedName, c.AssetGuidThreadSafe));
@@ -728,7 +732,9 @@ namespace VisualAdjustments2
                                 var vertRows = 3;
                                 int Offset = 0;
                                 int OverFlow = 0;
+#if DEBUG
                                 Main.Logger.Log((enumValues.Length % vertRows).ToString());
+#endif
                                 if ((enumValues.Length % vertRows) > 0) OverFlow = (enumValues.Length % vertRows);
                                 for (int i = 0; i < ((vertRows)); i++)
                                 {
@@ -785,7 +791,9 @@ namespace VisualAdjustments2
                                 var vertRows = 3;
                                 int Offset = 0;
                                 int OverFlow = 0;
+#if DEBUG
                                 Main.Logger.Log((Classes.Count % vertRows).ToString());
+#endif
                                 if ((Classes.Count % vertRows) > 0) OverFlow = (Classes.Count % vertRows);
                                 var classButtonTemplate = GameObject.Instantiate(oldcomp.SlotPrefabs.First());
                                 var newButtonPCView = classButtonTemplate.ConvertToClassButtonPCView();
@@ -806,7 +814,9 @@ namespace VisualAdjustments2
                                     {
                                         if (y + Offset >= Classes.Count) continue;
                                         var ab = Classes[y + Offset];
+#if DEBUG
                                         Main.Logger.Log(y.ToString() + ab.Item1);
+#endif
                                         var newbuttonn = GameObject.Instantiate(newButtonPCView.transform, toAttachTo);
                                         var PCView = newbuttonn.GetComponent<ClassOutfitSelectorButtonPCView>();
                                         PCView.ClassName = ab.Item1;

@@ -93,7 +93,7 @@ namespace VisualAdjustments2
     {
         public static Sprite LoadInternal(string folder, string file, Vector2Int size)
         {
-#if DEBUG
+#if true
             return Image2Sprite.Create($"{Main.ModEntry.Path}Assets{Path.DirectorySeparatorChar}{folder}{Path.DirectorySeparatorChar}{file}", size);
 #else
             return Image2Sprite.Create($"{Main.modEntry.Path + @"\"}Assets{Path.DirectorySeparatorChar}{folder}{Path.DirectorySeparatorChar}{file}", size);
@@ -469,8 +469,9 @@ namespace VisualAdjustments2
                 if (thing != null) HandleEEGotten(thing, x.Key);
             }
             sw.Stop();
+#if DEBUG
             Main.Logger.Log($"Got EEs in {sw.ElapsedMilliseconds}ms");
-
+#endif
 
 
             return;
@@ -485,10 +486,12 @@ namespace VisualAdjustments2
                 {
                     var EERequest = assetBundle.LoadAssetAsync<EquipmentEntity>(ToAsyncLoad.Key);
                     EERequest.priority = 1000;
+#if DEBUG
                     EERequest.completed += (AsyncOperation _) =>
                     {
                         Main.Logger.Log(EERequest.asset.name.ToString());
                     };
+#endif
                 }
                 else
                 {
@@ -498,10 +501,12 @@ namespace VisualAdjustments2
                     {
                         var a = LoadedBundle.assetBundle.LoadAssetAsync<EquipmentEntity>(ToAsyncLoad.Key);
                         a.priority = 1000;
+#if DEBUG
                         a.completed += (AsyncOperation __) =>
                         {
                             Main.Logger.Log(a.asset.name.ToString());
                         };
+#endif
                     };
                 }
                 //   d = BundlesLoadService.Instance.RequestBundleAsync(ToAsyncLoad.Value);
@@ -626,7 +631,9 @@ namespace VisualAdjustments2
                     {
                         var newstring = ($"{FullNameMerged}, {a.m_DisplayName}");
                         this.FullNameMerged = newstring;
+#if DEBUG
                         Main.Logger.Log(this.FullNameMerged + " " + a.NameSafe());
+#endif
                     }
                     if (a.FxOnRemove?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnRemove.AssetId);
                     if (a.FxOnStart?.AssetId?.IsNullOrEmpty() == false) this.FXGuids.Add(a.FxOnStart.AssetId);
@@ -731,7 +738,9 @@ namespace VisualAdjustments2
                         var blocker = new FXBlocker(bp);
                         AbilityGuidToFXBlocker[bp.AssetGuidThreadSafe] = blocker;
                         wack2.Add(blocker);
+#if DEBUG
                         Main.Logger.Log(bp.NameForAcronym);
+#endif
                     }
                 }
                 foreach (var ability in allbp.Entries.Where(b => b.Type == typeof(BlueprintAbility)))
@@ -1011,8 +1020,8 @@ namespace VisualAdjustments2
 //#if DEBUG
                 /*  var sw = new Stopwatch();
                   sw.Start();
-  #endif
-                  if (GetResourceGuidMap() != null)
+#endif
+                        if (GetResourceGuidMap() != null)
                   {
   #if DEBUG
                       var sw4 = new Stopwatch();

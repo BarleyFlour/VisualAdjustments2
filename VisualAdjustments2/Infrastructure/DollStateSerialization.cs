@@ -162,7 +162,15 @@ namespace VisualAdjustments2
                             doll.SetWarpaint(print.PaintEE.m_Link, x);
                             doll.SetWarpaintColor(print.PaintRampIndex, x);
                         }
+                        else
+                        {
+                            doll.Tattoos.Add(new DollState.DollPrint());
+                        }
                     }
+                }
+                else
+                {
+                    doll.CreateWarpaints(default,doll.Race.RaceId);
                 }
                 if (Tattoos != null)
                 {
@@ -176,8 +184,16 @@ namespace VisualAdjustments2
                             doll.SetTattoo(print.PaintEE.m_Link, x);
                             doll.SetTattooColor(print.PaintRampIndex, x);
                         }
+                        else
+                        {
+                            doll.Tattoos.Add(new DollState.DollPrint());
+                        }
                         x++;
                     }
+                }
+                else
+                {
+                    doll.CreateTattos(default);
                 }
                 if (HairRampIndex != null && HairRampIndex != -1)
                 {
@@ -319,7 +335,9 @@ namespace VisualAdjustments2
                     }
 
                 }
+#if DEBUG
                 Main.Logger.Log($"Saved Doll for {data.CharacterName}");
+#endif
             }
             catch (Exception e)
             {

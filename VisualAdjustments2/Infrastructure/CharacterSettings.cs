@@ -18,6 +18,7 @@ namespace VisualAdjustments2.Infrastructure
     public class ClassOutfitOverride
     {
         public string GUID;
+        public bool HasCustomOutfit = false;
         public int? PrimaryIndex = null;
         public int? SecondaryIndex = null;
         public SerializableColor? PrimaryCustomCol = null;

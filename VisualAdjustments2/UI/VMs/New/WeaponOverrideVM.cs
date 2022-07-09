@@ -110,7 +110,9 @@ namespace VisualAdjustments2.UI
             try
             {
                 // if (((int)this.animStyle.Value) == 14)
+#if DEBUG
                 Main.Logger.Log(((int)this.animStyle.Value).ToString());
+#endif
                 if((dropDownIndex == 14))
               //  if (m_AnimToInt[this.animStyle.Value] == 99)
                 {
@@ -209,7 +211,9 @@ namespace VisualAdjustments2.UI
             {
                 var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
                 selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
+#if DEBUG
                 Main.Logger.Log(selected.Guid + " " + selected.DisplayName);
+#endif
                 base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
             }
             else

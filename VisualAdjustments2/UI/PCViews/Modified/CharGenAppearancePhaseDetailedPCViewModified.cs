@@ -65,109 +65,117 @@ namespace VisualAdjustments2.UI
         // Token: 0x060062D0 RID: 25296 RVA: 0x001FC15C File Offset: 0x001FA35C
         public override void BindViewImplementation()
         {
-            if (base.ViewModel == null)
+            try
             {
-                this.DestroyViewImplementation();
-                return;
-            }
-            base.gameObject.SetActive(true);
-            //base.BindViewImplementation();
-            this?.VisualSettings?.Bind(base.ViewModel?.DollState);
-            this.m_CharacterController.Bind(base.ViewModel.DollState);
-            this.m_CharacterController.SetTransform(this.m_TargetSizeInfoDollTransform);
-            this.m_BodySelectorPcView.Bind(base.ViewModel.BodySelectorVM);
-            this.m_FaceSelectorPcView.Bind(base.ViewModel.HeadSelectorVM);
-            this.m_ScarSelectorPcView.Bind(base.ViewModel.ScarsSelectorVM);
-            this.m_BodyColorSelectorView.Bind(base.ViewModel.BodyColorSelectorVM);
-            this.m_EyesColorSelectorView.Bind(base.ViewModel.EyesColorSelectorVM);
-            this.m_HairSelectorPcView.Bind(base.ViewModel.HairSelectorVM);
-            this.m_BeardSelectorPcView.Bind(base.ViewModel.BeardSelectorVM);
-            this.m_HairColorSelectorView.Bind(base.ViewModel.HairColorSelectorVM);
-            bool flag = this.m_HairSelectorPcView.IsActive || this.m_BeardSelectorPcView.IsActive || this.m_HairColorSelectorView.IsActive;
-            this.m_HairBlock.SetActive(flag);
-            this.m_HairBlockPlaceholder.SetActive(!flag);
-            this.m_HornSelectorPcView.Bind(base.ViewModel.HornSelectorVM);
-            this.m_HornColorSelectorView.Bind(base.ViewModel.HornColorSelectorVM);
-            this.m_HornBlock.SetActive(base.ViewModel.HornSelectorVM.IsValid());
-            this.m_WarpaintPaginator.Initialize(base.ViewModel.WarpaintsNumber, new Action<int>(this.BindWarpaints));
-            this.m_TatooPaginator.Initialize(base.ViewModel.TattoosNumber, new Action<int>(this.BindTattoos));
-            this.m_TatooSelectorPcView.SetOnChangeCallback(delegate
-            {
-                this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
-            });
-            this.m_TatooColorSelectorView.SetOnChangeCallback(delegate
-            {
-                this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
-            });
-            this.m_PrimaryOutfitColorSelectorView.Bind(base.ViewModel.PrimaryOutfitColorVM);
-            this.m_PrimaryOutfitColorSelectorView.SetOnChangeCallback(delegate
-            {
-                this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
-            });
-            this.m_SecondaryOutfitColorSelectorView.Bind(base.ViewModel.SecondaryOutfitColorVM);
-            this.m_SecondaryOutfitColorSelectorView.SetOnChangeCallback(delegate
-            {
-                this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
-            });
-            //if (base.ViewModel.HornSelectorVM.IsValid())
-            {
+                if (base.ViewModel == null)
+                {
+                    this.DestroyViewImplementation();
+                    return;
+                }
+                base.gameObject.SetActive(true);
+                //base.BindViewImplementation();
+                this?.VisualSettings?.Bind(base.ViewModel?.DollState);
+                this.m_CharacterController.Bind(base.ViewModel.DollState);
+                this.m_CharacterController.SetTransform(this.m_TargetSizeInfoDollTransform);
+                this.m_BodySelectorPcView.Bind(base.ViewModel.BodySelectorVM);
+                this.m_FaceSelectorPcView.Bind(base.ViewModel.HeadSelectorVM);
+                this.m_ScarSelectorPcView.Bind(base.ViewModel.ScarsSelectorVM);
+                this.m_BodyColorSelectorView.Bind(base.ViewModel.BodyColorSelectorVM);
+                this.m_EyesColorSelectorView.Bind(base.ViewModel.EyesColorSelectorVM);
+                this.m_HairSelectorPcView.Bind(base.ViewModel.HairSelectorVM);
+                this.m_BeardSelectorPcView.Bind(base.ViewModel.BeardSelectorVM);
+                this.m_HairColorSelectorView.Bind(base.ViewModel.HairColorSelectorVM);
+                bool flag = this.m_HairSelectorPcView.IsActive || this.m_BeardSelectorPcView.IsActive || this.m_HairColorSelectorView.IsActive;
+                this.m_HairBlock.SetActive(flag);
+                this.m_HairBlockPlaceholder.SetActive(!flag);
+                this.m_HornSelectorPcView.Bind(base.ViewModel.HornSelectorVM);
+                this.m_HornColorSelectorView.Bind(base.ViewModel.HornColorSelectorVM);
+                this.m_HornBlock.SetActive(base.ViewModel.HornSelectorVM.IsValid());
+                this.m_WarpaintPaginator.Initialize(base.ViewModel.WarpaintsNumber, new Action<int>(this.BindWarpaints));
+                this.m_TatooPaginator.Initialize(base.ViewModel.TattoosNumber, new Action<int>(this.BindTattoos));
+                this.m_TatooSelectorPcView.SetOnChangeCallback(delegate
+                {
+                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
+                });
+                this.m_TatooColorSelectorView.SetOnChangeCallback(delegate
+                {
+                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
+                });
+                this.m_PrimaryOutfitColorSelectorView.Bind(base.ViewModel.PrimaryOutfitColorVM);
+                this.m_PrimaryOutfitColorSelectorView.SetOnChangeCallback(delegate
+                {
+                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
+                });
+                this.m_SecondaryOutfitColorSelectorView.Bind(base.ViewModel.SecondaryOutfitColorVM);
+                this.m_SecondaryOutfitColorSelectorView.SetOnChangeCallback(delegate
+                {
+                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
+                });
+                //if (base.ViewModel.HornSelectorVM.IsValid())
+                {
+                    this.m_PrimaryOutfitColorSelectorView.SetRowNumber(1);
+                    this.m_SecondaryOutfitColorSelectorView.SetRowNumber(1);
+                    //return;
+                }
                 this.m_PrimaryOutfitColorSelectorView.SetRowNumber(1);
                 this.m_SecondaryOutfitColorSelectorView.SetRowNumber(1);
-                //return;
-            }
-            this.m_PrimaryOutfitColorSelectorView.SetRowNumber(1);
-            this.m_SecondaryOutfitColorSelectorView.SetRowNumber(1);
 
-            {
-
-                //My stuff
                 {
-                    var comp = m_RaceSelectorPCView;
-                    var n = new List<StringSequentialEntity>();
-                    foreach (BlueprintRace race in Kingmaker.Game.Instance.BlueprintRoot.Progression.CharacterRaces)
-                    {
 
-                        var newseq = new StringSequentialEntity();
-                        newseq.Title = race.Name;
-                        newseq.Setter = () =>
+                    //My stuff
+                    {
+                        var comp = m_RaceSelectorPCView;
+                        var n = new List<StringSequentialEntity>();
+                        foreach (BlueprintRace race in Kingmaker.Game.Instance.BlueprintRoot.Progression.CharacterRaces)
                         {
-                            comp.SetTitleText(race.Name);
-                            if (race.Name != this.ViewModel.DollState.Race.Name)
+
+                            var newseq = new StringSequentialEntity();
+                            newseq.Title = race.Name;
+                            newseq.Setter = () =>
                             {
-                                this.ViewModel?.DollState?.SetRace(race);
-                                if (this.ViewModel != null)
+                                comp.SetTitleText(race.Name);
+                                if (race.Name != this.ViewModel.DollState.Race.Name)
                                 {
-                                    CharGenAppearancePhaseVMModified.pcview = this;
-                                    var vmnew = new CharGenAppearancePhaseVMModified(/*this.ViewModel.LevelUpController,*/ this.ViewModel.DollState, false);
-                                    this.Bind(vmnew);
+                                    this.ViewModel?.DollState?.SetRace(race);
+                                    if (this.ViewModel != null)
+                                    {
+                                        CharGenAppearancePhaseVMModified.pcview = this;
+                                        var vmnew = new CharGenAppearancePhaseVMModified(/*this.ViewModel.LevelUpController,*/ this.ViewModel.DollState, false);
+                                        this.Bind(vmnew);
+                                    }
                                 }
-                            }
-                        };
-                        n.Add(newseq);
+                            };
+                            n.Add(newseq);
+                        }
+                        var newvm = new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(n, n.FirstOrDefault(a => a.Title == this.ViewModel.DollState.Race.Name), false);
+                        comp.Bind(newvm);
+                        //comp.SetCurrentIndex(n.FindIndex(a => a.Title == this.ViewModel.DollState.Race.Name));
+
+
+
+                        var visualsettings = this.transform.parent.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
+                        visualsettings.Bind(this.ViewModel.DollState);
+
+                        var DollRoomComp = this.transform.parent.Find("DollRoom(Clone)").GetComponent<DollCharacterController>();
+                        DollRoomComp.Bind(this.ViewModel.DollState);
+
+                        if (Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.IsStoryCompanion())
+                        {
+                            m_DeleteDollButton.gameObject.transform.parent.gameObject.SetActive(true);
+                        }
+                        else
+                        {
+                            m_DeleteDollButton.gameObject.transform.parent.gameObject.SetActive(false);
+                        }
+                        //this.m_RaceSelectorPCView.SetCurrentIndex(this.m_RaceSelectorPCView.ViewModel.ValueList.FindIndex(a => a.Title == this.ViewModel.DollState.Race.Name));// ?? 1);
                     }
-                    var newvm = new Kingmaker.UI.MVVM._VM.CharGen.Phases.Common.StringSequentialSelectorVM(n, n.First(a => a.Title == this.ViewModel.DollState.Race.Name), false);
-                    comp.Bind(newvm);
-                    //comp.SetCurrentIndex(n.FindIndex(a => a.Title == this.ViewModel.DollState.Race.Name));
-
-
-
-                    var visualsettings = this.transform.parent.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
-                    visualsettings.Bind(this.ViewModel.DollState);
-
-                    var DollRoomComp = this.transform.parent.Find("DollRoom(Clone)").GetComponent<DollCharacterController>();
-                    DollRoomComp.Bind(this.ViewModel.DollState);
-
-                    if(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.IsStoryCompanion())
-                    {
-                        m_DeleteDollButton.gameObject.transform.parent.gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        m_DeleteDollButton.gameObject.transform.parent.gameObject.SetActive(false);
-                    }
-                    //this.m_RaceSelectorPCView.SetCurrentIndex(this.m_RaceSelectorPCView.ViewModel.ValueList.FindIndex(a => a.Title == this.ViewModel.DollState.Race.Name));// ?? 1);
                 }
             }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+            }
+
         }
 
         // Token: 0x060062D1 RID: 25297 RVA: 0x001FC3F8 File Offset: 0x001FA5F8

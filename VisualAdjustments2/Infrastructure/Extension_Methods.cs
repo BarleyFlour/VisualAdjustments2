@@ -57,6 +57,8 @@ namespace VisualAdjustments2.Infrastructure
                 state.SetRace(val.Owner.Progression.Race);
                 state.SetClass(val.Owner.Progression.GetEquipmentClass());
                 state.SetGender(val.Owner.Gender);
+                state.CreateWarpaints(default,state.Race.RaceId);
+                state.CreateTattos(default);
                 //state.Setup(val.Owner);
                 val.Owner.SaveDollState(state);
                 return state.CreateData();

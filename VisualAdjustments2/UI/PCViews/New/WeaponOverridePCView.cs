@@ -50,7 +50,9 @@ namespace VisualAdjustments2.UI
                 if (viewVM != null)
                 {
                     this.ViewModel.m_ListViewVM?.Value?.TrySelectEntity(viewVM);
+                    #if DEBUG
                     Main.Logger.Log($"Selected {viewVM.DisplayName}");
+#endif
                 }
                 else this.ViewModel.m_ListViewVM?.Value?.TryUnselectEntity(this.ViewModel.m_ListViewVM.Value.SelectedEntity.Value);
             }));

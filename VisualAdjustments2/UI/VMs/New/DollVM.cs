@@ -30,7 +30,8 @@ namespace VisualAdjustments2.UI
                 var data = dolldata.SetupForStoryCompanion();
                 //dolldata.Default = data;
                 dolldata.SetDefault(data);
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = true;
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit;
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.RebuildCharacter();
                 OnCharacterChanged(true);
             }
             catch(Exception e)
@@ -43,7 +44,7 @@ namespace VisualAdjustments2.UI
             try
             {
                 Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Parts.Remove<UnitPartDollData>();
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = false;
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit;
                 OnCharacterChanged(true);
             }
             catch (Exception e)
@@ -63,6 +64,8 @@ namespace VisualAdjustments2.UI
                     var doll = unit.GetDollState();
                     if (doll.Race != null)
                     {
+                        doll.CreateTattos(default);
+                        doll.CreateWarpaints(default,doll.Race.RaceId);
                        // Main.Logger.Log("NotNullRace");
                         //var lvlcontroller = new LevelUpController(unit, false, LevelUpState.CharBuildMode.SetName);
                         //Main.Logger.Log("AfterLvlCtor");
@@ -76,6 +79,9 @@ namespace VisualAdjustments2.UI
                     else
                     {
                         //Main.Logger.Log("NullRace");
+                        doll.SetRace(Game.Instance.BlueprintRoot.Progression.HumanRace);
+                        doll.CreateTattos(default);
+                        doll.CreateWarpaints(default, doll.Race.RaceId);
                         var newvm = new CreateDollVM();
                         base.AddDisposable(this.createDollVM.Value = newvm);
                         this.m_DollAppearanceVM.Value.Dispose();
@@ -91,7 +97,7 @@ namespace VisualAdjustments2.UI
                     //Main.Logger.Log("notDollData");
                     var newvm = new CreateDollVM();
                     base.AddDisposable(this.createDollVM.Value = newvm);
-                    this.m_DollAppearanceVM.Value.Dispose();
+                    this.m_DollAppearanceVM?.Value?.Dispose();
                    // this.m_DollAppearanceVM = null;
                     // newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { newvm.Dispose(); this.m_DollAppearanceVM.Value?.Dispose(); this.ShowWindow(VisualWindowType.Doll); }));
                     // newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { newvm.Dispose(); this.ShowWindow(VisualWindowType.Doll); }));

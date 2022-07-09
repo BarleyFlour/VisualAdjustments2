@@ -22,6 +22,7 @@ namespace VisualAdjustments2.UI
         public void DeleteDoll()
         {
             this.ViewModel.RemoveUnitPart();
+            Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.RebuildCharacter();
             this.m_CharGenAppearancePCView.Unbind();
         }
         public override void DestroyViewImplementation()

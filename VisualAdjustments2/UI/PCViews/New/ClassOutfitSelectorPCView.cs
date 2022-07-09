@@ -37,6 +37,7 @@ namespace VisualAdjustments2.UI
         {
             var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
             var settings = unit.GetSettings();
+            settings.ClassOverride.HasCustomOutfit = !(guid == "");
             var needsreset = (guid.IsNullOrEmpty() && unit.IsStoryCompanion() && !settings.ClassOverride.GUID.IsNullOrEmpty());
             if (needsreset)
             {

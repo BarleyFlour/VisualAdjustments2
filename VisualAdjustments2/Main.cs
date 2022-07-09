@@ -17,7 +17,7 @@ using System.Diagnostics;
 using Kingmaker.Blueprints;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.Blueprints.Root;
-#if DEBUG
+#if true
 using UnityModManagerNet;
 #endif
 using Kingmaker.Visual.Particles;
@@ -42,7 +42,7 @@ namespace VisualAdjustments2
     public static class Main
     {
         public static bool IsEnabled { get; private set; } = true;
-#if DEBUG
+#if true
         public static UnityModManager.ModEntry ModEntry;
         public static UnityModManager.ModEntry.ModLogger Logger;
         private static bool Load(UnityModManager.ModEntry modEntry)
@@ -53,8 +53,10 @@ namespace VisualAdjustments2
                 Logger = modEntry.Logger;
                 var harmony = new Harmony(modEntry.Info.Id);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
+#if DEBUG
                 modEntry.OnGUI = OnGUI;
                 modEntry.OnUnload = Unload;
+#endif
                 //LoaderGameObject.CreateLoaderAndLoad();
                 //ResourceLoader.GetEEs();
                 //ResourceLoader.StartEEGetting();
@@ -67,7 +69,7 @@ namespace VisualAdjustments2
             return true;
         }
 #else
-		public static Kingmaker.Modding.OwlcatModification Modification { get; private set; }
+        public static Kingmaker.Modding.OwlcatModification Modification { get; private set; }
 		public static LogChannel Logger
 			=> Modification.Logger;
 		// ReSharper disable once UnusedMember.Global
