@@ -3,11 +3,11 @@
 
 high prio:
 
-fucky companion doll shit
+Scale
 
 mid prio:
 
-Scale
+
 View override (in doll page)
 
 Handle animal companion (REPLACE ENTIRE MENU)

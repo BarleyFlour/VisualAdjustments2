@@ -54,33 +54,8 @@ namespace VisualAdjustments2.UI
         {
             try
             {
-                if (descriptor.Unit.UniqueId != unit_GUID)
-                {
-                    unit_GUID = descriptor.Unit.UniqueId;
-                    var unit = descriptor.Unit;
-                    var doll = unit.GetDollState();
-                    
-                    if (doll.Race == null)
-                    {
-                        //Main.Logger.Log($"{unit.CharacterName}'s doll was null");
-                        this.Dispose();
-                    }
-                    else
-                    {
-                       // var lvlcontroller = new LevelUpController(unit, false, LevelUpState.CharBuildMode.SetName);
-
-                       // lvlcontroller.Doll = doll;
-
-                       // this.Dispose();
-                        this.DisposeImplementation();
-
-                        var vmnew = new CharGenAppearancePhaseVMModified(doll, false);
-
-                        pcview.Bind(vmnew);
-                        //Main.Logger.Log("bound");
-                    }
-
-                }
+                this.Change();
+                
             }
             catch (Exception ex)
             {

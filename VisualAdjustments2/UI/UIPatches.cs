@@ -408,6 +408,15 @@ namespace VisualAdjustments2
                                 FXViewerPCView.m_WhiteOrBlacklist = togglegroup;
                                 togglegroup.transform.SetSiblingIndex(1);
                             }
+                            //Fix Scale
+                            {
+                                var buttontemplate = newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView/WindowContainer/ShowClothContainer");
+                                var newButton = GameObject.Instantiate(buttontemplate, alleelistview.transform.Find("HeaderH2"));
+                                newButton.GetComponent<VerticalLayoutGroup>().padding.left = 7;
+                                var view = newButton.GetComponent<CharacterVisualSettingsEntityView>();
+                                view.Bind("Fix Scale", () => { if(Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize = view.IsOnState.Value; }, () => { if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) return Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize; else return false; });
+                                FXViewerPCView.m_FixScaleButton = view;
+                            }
                             FXViewerPCView.m_CurrentFX = newcompl;
                         }
                         //All FXs list
@@ -426,7 +435,7 @@ namespace VisualAdjustments2
                                 var newButton = GameObject.Instantiate(buttontemplate, alleelistview.transform.Find("HeaderH2"));
                                 newButton.GetComponent<VerticalLayoutGroup>().padding.left = 7;
                                 var view = newButton.GetComponent<CharacterVisualSettingsEntityView>();
-                                view.Bind("Use Global Profile", () => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); }, () => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
+                                view.Bind("Use Global Profile", () => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); if(Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) FXViewerPCView.m_FixScaleButton.IsOnState.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize; }, () => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
                             }
                         }
                     }

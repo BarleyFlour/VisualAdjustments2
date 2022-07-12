@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UniRx;
 using VisualAdjustments2.Infrastructure;
+using Owlcat.Runtime.UniRx;
 
 namespace VisualAdjustments2.UI
 {
@@ -20,12 +21,14 @@ namespace VisualAdjustments2.UI
     {
         public BuffListPCView m_CurrentFX;
         public BuffListPCView m_AllFX;
+        public CharacterVisualSettingsEntityView m_FixScaleButton;
         public void OnCharacterChanged()
         {
             m_dollCharacterController?.Bind(Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit);
             var settings = Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.GetSettings();
-            if(m_WhiteOrBlacklist?.PrimOrSec?.Value != null && settings?.BuffSettings?.WhiteOrBlackList != null) m_WhiteOrBlacklist.PrimOrSec.Value = settings.BuffSettings.WhiteOrBlackList;
+            if (m_WhiteOrBlacklist?.PrimOrSec?.Value != null && settings?.BuffSettings?.WhiteOrBlackList != null) m_WhiteOrBlacklist.PrimOrSec.Value = settings.BuffSettings.WhiteOrBlackList;
             this.m_VisualSettings?.Dispose();
+            this.m_FixScaleButton.IsOnState.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize;
         }
         public void Initialize()
         {

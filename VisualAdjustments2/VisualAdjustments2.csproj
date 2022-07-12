@@ -72,6 +72,7 @@
     <Compile Include="Infrastructure\BubblesSaveHooker.cs" />
     <Compile Include="Infrastructure\Bubble_Extension_Methods.cs" />
     <Compile Include="Infrastructure\BuffHandler.cs" />
+    <Compile Include="Infrastructure\CharacterScale.cs" />
     <Compile Include="Infrastructure\CharacterSettings.cs" />
     <Compile Include="Infrastructure\ClassEquipment.cs" />
     <Compile Include="Infrastructure\EeInfraStructure.cs" />

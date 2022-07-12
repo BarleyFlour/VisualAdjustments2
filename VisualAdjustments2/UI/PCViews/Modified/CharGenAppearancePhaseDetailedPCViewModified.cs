@@ -17,6 +17,7 @@ using System.Linq;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using Owlcat.Runtime.UniRx;
 
 
 
@@ -140,8 +141,11 @@ namespace VisualAdjustments2.UI
                                     if (this.ViewModel != null)
                                     {
                                         CharGenAppearancePhaseVMModified.pcview = this;
-                                        var vmnew = new CharGenAppearancePhaseVMModified(/*this.ViewModel.LevelUpController,*/ this.ViewModel.DollState, false);
-                                        this.Bind(vmnew);
+                                        //this.ViewModel.OnUnitChanged(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value);
+                                        this.ViewModel.Change();
+                                        //var vmnew = new CharGenAppearancePhaseVMModified(/*this.ViewModel.LevelUpController,*/ this.ViewModel.DollState, false);
+                                       // this.ViewModel.AddDisposable(vmnew);
+                                        //this.Bind(vmnew);
                                     }
                                 }
                             };

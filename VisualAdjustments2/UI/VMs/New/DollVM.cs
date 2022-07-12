@@ -30,7 +30,7 @@ namespace VisualAdjustments2.UI
                 var data = dolldata.SetupForStoryCompanion();
                 //dolldata.Default = data;
                 dolldata.SetDefault(data);
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit;
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = true;//Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit; //They naked if we use HasCustomOutfit
                 Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.RebuildCharacter();
                 OnCharacterChanged(true);
             }
@@ -84,7 +84,7 @@ namespace VisualAdjustments2.UI
                         doll.CreateWarpaints(default, doll.Race.RaceId);
                         var newvm = new CreateDollVM();
                         base.AddDisposable(this.createDollVM.Value = newvm);
-                        this.m_DollAppearanceVM.Value.Dispose();
+                        this.m_DollAppearanceVM.Value?.Dispose();
                        // this.m_DollAppearanceVM = null;
                         //  newvm.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor dat) => { if (dat.CharacterName != newvm.charname) { newvm.Dispose(); this.m_DollAppearanceVM.Value?.Dispose(); this.ShowWindow(VisualWindowType.Doll); } }));
                     }

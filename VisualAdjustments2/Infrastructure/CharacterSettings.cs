@@ -82,6 +82,7 @@ namespace VisualAdjustments2.Infrastructure
         }
         public class Buff_Settings
         {
+            public bool FixSize = false;
             public bool WhiteOrBlackList = false;
             public ResourceLoader.FXBlockerHolder fXBlockerHolder = new ResourceLoader.FXBlockerHolder();
         }
