@@ -1,5 +1,6 @@
 # VisualAdjustments2
 
+## [![Download zip](https://custom-icon-badges.herokuapp.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Download zip")](https://github.com/BarleyFlour/VisualAdjustments2/releases/latest/download/VisualAdjustments2.zip) Latest Release 
 
 A successor mod to Visual Adjustments featuring:
 
@@ -7,7 +8,7 @@ A successor mod to Visual Adjustments featuring:
 
 * Less bugs
 
-* A more intuitive and exlusively ingame UI
+* A more intuitive and exclusively ingame UI
 
 * Reduced rate of incidence for the "Grey Character" bug (It's a vanilla bug but i took measures to reduce how often it happens)
 
