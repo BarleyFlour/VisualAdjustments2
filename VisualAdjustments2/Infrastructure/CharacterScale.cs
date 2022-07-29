@@ -21,7 +21,7 @@ namespace VisualAdjustments2.Infrastructure
                     if (__instance.EntityData == null) return;
                     if (!__instance.EntityData.IsPlayerFaction) return;
                     var characterSettings = __instance.EntityData.GetSettings();
-                    if (characterSettings.BuffSettings.FixSize) return;
+                    if (!characterSettings.BuffSettings.FixSize) return;
                     //Size originalSize = __instance.EntityData.Descriptor.OriginalSize;
                    // Size size = __instance.EntityData.Descriptor.State.Size;
                     __result = 1;

@@ -3,7 +3,9 @@
 
 high prio:
 
-Scale
+Scale w/ expanded content drake draconic drood
+
+Fix hide class gear
 
 mid prio:
 

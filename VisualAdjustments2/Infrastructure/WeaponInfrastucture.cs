@@ -8,6 +8,7 @@ using Kingmaker.Items.Slots;
 using Kingmaker.UI.ServiceWindow;
 using Kingmaker.View.Equipment;
 using Kingmaker.Visual.Particles;
+using Owlcat.Runtime.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,7 +85,16 @@ namespace VisualAdjustments2.Infrastructure
                     {
                         if ((__instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) == enchantOverride.Slot) && __instance.Slot.IsPrimaryHand == enchantOverride.MainOrOffHand)
                         {
-                            if (enchantOverride.GUID == "Hide") continue;
+                            foreach (var enchant in __instance.m_EnchantmentFxObjects.ToTempList())
+                            {
+                                GameObject.Destroy(enchant);
+                                __instance.m_EnchantmentFxObjects.Remove(enchant);
+                            }
+                            if (enchantOverride.GUID == "Hide")
+                            {
+
+                                continue;
+                            }
                             var blueprint = ResourcesLibrary.TryGetBlueprint<BlueprintWeaponEnchantment>(enchantOverride.GUID);
                             if (blueprint == null || blueprint.WeaponFxPrefab == null) continue;
                             var fxObject = RespawnFx(blueprint.WeaponFxPrefab.Load(), __instance.Slot.MaybeItem);

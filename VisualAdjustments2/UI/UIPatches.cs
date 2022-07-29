@@ -60,7 +60,8 @@ namespace VisualAdjustments2
         Wrist = 10,
         Usable = 11, //Belt items
         Weapon = 0,
-        Class_Equipment = 99
+        Class_Equipment = 99,
+        Mythic_Things = 100
     };
     public enum Extended
     {
@@ -278,7 +279,7 @@ namespace VisualAdjustments2
                     var inventory = top.Find("Inventory").gameObject;
 
                     var imgTop = top.gameObject.EnsureComponent<Image>();
-                    imgTop.sprite = ResourceLoader.LoadInternal("", "TopBarThing.png", new(2559, 80));
+                    imgTop.sprite = ResourceLoader.LoadImage("", "TopBarThing.png", new(2559, 80));
 
                     var FXViewerButton = CreateButton(inventory, top, "Buff Viewer");
                     var DollButton = CreateButton(inventory, top, "Doll");
@@ -414,7 +415,7 @@ namespace VisualAdjustments2
                                 var newButton = GameObject.Instantiate(buttontemplate, alleelistview.transform.Find("HeaderH2"));
                                 newButton.GetComponent<VerticalLayoutGroup>().padding.left = 7;
                                 var view = newButton.GetComponent<CharacterVisualSettingsEntityView>();
-                                view.Bind("Fix Scale", () => { if(Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize = view.IsOnState.Value; }, () => { if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) return Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize; else return false; });
+                                view.Bind("Fix Scale", () => { if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize = view.IsOnState.Value; }, () => { if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) return Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize; else return false; });
                                 FXViewerPCView.m_FixScaleButton = view;
                             }
                             FXViewerPCView.m_CurrentFX = newcompl;
@@ -435,7 +436,7 @@ namespace VisualAdjustments2
                                 var newButton = GameObject.Instantiate(buttontemplate, alleelistview.transform.Find("HeaderH2"));
                                 newButton.GetComponent<VerticalLayoutGroup>().padding.left = 7;
                                 var view = newButton.GetComponent<CharacterVisualSettingsEntityView>();
-                                view.Bind("Use Global Profile", () => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); if(Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) FXViewerPCView.m_FixScaleButton.IsOnState.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize; }, () => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
+                                view.Bind("Use Global Profile", () => { GlobalCharacterSettings.Instance.useGlobalBuffProfile = view.IsOnState.Value; FXViewerPCView?.ViewModel?.OnUnitChanged(); if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit != null) FXViewerPCView.m_FixScaleButton.IsOnState.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.FixSize; }, () => { return GlobalCharacterSettings.Instance.useGlobalBuffProfile; });
                             }
                         }
                     }
@@ -720,7 +721,8 @@ namespace VisualAdjustments2
                                     HideButtonType.Wrist,
                                     HideButtonType.Usable,
                                     HideButtonType.Weapon,
-                                    HideButtonType.Class_Equipment
+                                    HideButtonType.Class_Equipment,
+                                    HideButtonType.Mythic_Things
                                 };
                                 Dictionary<HideButtonType, string> enumValuesNames = new Dictionary<HideButtonType, string>()
                                 {
@@ -734,7 +736,8 @@ namespace VisualAdjustments2
                                     [HideButtonType.Wrist] = "Bracers",
                                     [HideButtonType.Usable] = "Belt items",
                                     [HideButtonType.Weapon] = "Sheaths",
-                                    [HideButtonType.Class_Equipment] = "Class Gear"
+                                    [HideButtonType.Class_Equipment] = "Class Gear",
+                                    [HideButtonType.Mythic_Things] = "Mythic"
                                 };
 
                                 Transform toAttachTo = null;
@@ -877,7 +880,7 @@ namespace VisualAdjustments2
 
                                     //New icon fuckery
                                     {
-                                        var newSprite = ResourceLoader.LoadInternal("", "UI_overtips_hpfdgbar2.png", new(156, 156));
+                                        var newSprite = ResourceLoader.LoadImage("", "UI_overtips_hpfdgbar2.png", new(156, 156));
                                         var iconGM = ColPicker.Find("SettingsBtn/Icon");
                                         iconGM.GetComponent<Image>().sprite = newSprite;
                                     }
@@ -1063,19 +1066,19 @@ namespace VisualAdjustments2
                     var newGM = new GameObject("PortraitPicker");
                     newGM.transform.SetParent(newgameobject.transform);
                     newGM.transform.localScale = Vector3.one;
-                    newGM.transform.localPosition = new(0,-35,0);
+                    newGM.transform.localPosition = new(0, -35, 0);
                     var portraitpcview = newGM.AddComponent<PortraitPickerPCView>();
 
                     var PortraitListView = GameObject.Instantiate(newgameobject.transform.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/PhasePortraitsDetaildViewPC"), newGM.transform);
                     PortraitListView.localPosition = Vector3.zero;
 
                     var PortraitView = GameObject.Instantiate(newgameobject.transform.parent.parent.Find("ChargenPCView/ContentWrapper/DetailedViewZone/ChargenPortraitView"), newGM.transform);
-                    PortraitView.localPosition = new(281,0,0);
-                    
+                    PortraitView.localPosition = new(281, 0, 0);
+
                     portraitpcview.m_PortraitPicker = PortraitListView.GetComponent<CharGenPortraitPhaseDetailedPCView>();
                     portraitpcview.m_PortraitPreview = PortraitView.GetComponent<CharGenPortraitPCView>();
 
-                    PortraitListView.transform.Find("ContentWrapper/PortraitSelector/CustomPortraitGroup/ChangePortraitButton").localPosition = new(-330,-460,0);
+                    PortraitListView.transform.Find("ContentWrapper/PortraitSelector/CustomPortraitGroup/ChangePortraitButton").localPosition = new(-330, -460, 0);
                     portraitpcview.Initialize();
                     //
 
@@ -1207,7 +1210,7 @@ namespace VisualAdjustments2
                 var ColPicker = UnityEngine.Object.Instantiate(newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"), EEPickerPCView.transform);
                 //New icon fuckery
                 {
-                    var newSprite = ResourceLoader.LoadInternal("", "UI_overtips_hpfdgbar2.png", new(156, 156));
+                    var newSprite = ResourceLoader.LoadImage("", "UI_overtips_hpfdgbar2.png", new(156, 156));
                     var iconGM = ColPicker.Find("SettingsBtn/Icon");
                     iconGM.GetComponent<Image>().sprite = newSprite;
                 }

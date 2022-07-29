@@ -181,7 +181,7 @@ namespace VisualAdjustments2.UI
             if (i == 14)
             {
                 CurrentReactive.Add(new ListViewItemVM("None", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
-                CurrentReactive.Add(new ListViewItemVM("Hide", "", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
+                CurrentReactive.Add(new ListViewItemVM("Hide", "Hide", false, (ListViewItemVM v) => { AddOverride(v.Guid); }, false));
                 foreach (var ee in ResourceLoader.AllEnchants)
                 {
                     //Main.Logger.Log(ee.name);

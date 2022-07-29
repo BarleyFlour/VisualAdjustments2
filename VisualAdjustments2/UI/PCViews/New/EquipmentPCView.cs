@@ -29,7 +29,7 @@ namespace VisualAdjustments2.UI
             }
             Gender gender = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Gender;
             var race = UnitEntityView.GetActualRace(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
-            this.m_ColorPicker.UpdateRampSlider(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Progression.GetEquipmentClass().GetClothesLinks(gender, race).FirstOrDefault(a => a.Load().PrimaryColorsProfile.Ramps.Count() > 0).Load());
+            if(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Progression.GetEquipmentClass() != null && Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Progression.GetEquipmentClass().GetClothesLinks(gender, race).Count > 0) this.m_ColorPicker.UpdateRampSlider(Game.Instance.SelectionCharacter.SelectedUnit?.Value?.Unit?.Progression?.GetEquipmentClass()?.GetClothesLinks(gender, race)?.FirstOrDefault(a => a.Load()?.PrimaryColorsProfile?.Ramps?.Count() > 0).Load());
         }
         public void Initialize()
         {

@@ -66,7 +66,7 @@ namespace VisualAdjustments2.Infrastructure
         [JsonIgnore] public Dictionary<ItemEntity, List<GameObject>> CurrentFXs = new Dictionary<ItemEntity, List<GameObject>>();
 
         public EESettings EeSettings = new();
-        private Buff_Settings m_BuffSettings = new();
+        public Buff_Settings m_BuffSettings = new();
         [JsonIgnore] public Buff_Settings BuffSettings
         {
             get
@@ -104,6 +104,7 @@ namespace VisualAdjustments2.Infrastructure
                 newdict.Add((ItemsFilter.ItemType)type, false);
             }
             newdict.Add((ItemsFilter.ItemType)99,false);
+            newdict.Add((ItemsFilter.ItemType)100, false);
             return newdict;
         }
     }

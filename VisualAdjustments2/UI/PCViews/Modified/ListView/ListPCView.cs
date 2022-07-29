@@ -118,8 +118,8 @@ namespace VisualAdjustments2.UI
         }
         public override int EntityComparer(ListViewItemVM a, ListViewItemVM b)
         {
-            if (b.Guid.IsNullOrEmpty()/* || (a.Guid == "Hide" || a.InternalName == "Hide" || a.DisplayName == "Hide")*/) return 0;
-            if (a.Guid.IsNullOrEmpty()/* || (b.Guid == "Hide" || b.InternalName == "Hide" || b.DisplayName == "Hide")*/) return 0;
+            if (b.Guid.IsNullOrEmpty() || a.Guid == "Hide"/* || (a.Guid == "Hide" || a.InternalName == "Hide" || a.DisplayName == "Hide")*/) return 0;
+            if (a.Guid.IsNullOrEmpty() || b.Guid == "Hide"/* || (b.Guid == "Hide" || b.InternalName == "Hide" || b.DisplayName == "Hide")*/) return 0;
             //if (a.Guid == "Hide" || a.InternalName == "Hide" || a.DisplayName == "Hide") return 0;
             //if (b.Guid == "Hide" || b.InternalName == "Hide" || b.DisplayName == "Hide") return 0;
 

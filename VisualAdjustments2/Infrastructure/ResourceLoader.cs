@@ -91,7 +91,7 @@ namespace VisualAdjustments2
     }
     public static class ResourceLoader
     {
-        public static Sprite LoadInternal(string folder, string file, Vector2Int size)
+        public static Sprite LoadImage(string folder, string file, Vector2Int size)
         {
 #if true
             return Image2Sprite.Create($"{Main.ModEntry.Path}Assets{Path.DirectorySeparatorChar}{folder}{Path.DirectorySeparatorChar}{file}", size);

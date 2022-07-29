@@ -28,6 +28,27 @@ namespace VisualAdjustments2.UI
                         Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.UpdateBackpackVisibility(state);
                         break;
                     }
+                case HideButtonType.Mythic_Things:
+                    {
+                        settings.HideEquipmentDict[(ItemsFilter.ItemType)type] = state;
+                        if(state == true)
+                        {
+                            Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar?.SetAdditionalVisualSettings(null);
+                            Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.SetAdditionalVisualSettings(null);
+                           // Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.ApplyAdditionalVisualSettings();
+                           // Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.ApplyAdditionalVisualSettings();
+                        }
+                        else
+                        {
+                            var charclass = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit.Progression?.GetVisualSettingsProvider()?.GetAdditionalVisualSettings();
+                            Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar?.SetAdditionalVisualSettings(charclass);
+                            Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.SetAdditionalVisualSettings(charclass);
+                           // Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.ApplyAdditionalVisualSettings();
+                           // Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.ApplyAdditionalVisualSettings();
+                        }
+
+                        break;
+                    }
                 default:
                     {
                         settings.HideEquipmentDict[(ItemsFilter.ItemType)type] = state;
@@ -46,7 +67,16 @@ namespace VisualAdjustments2.UI
         {
             var settings = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.GetSettings();
             if (settings == null) return false;
-            return settings.HideEquipmentDict[(ItemsFilter.ItemType)type];
+            if(settings.HideEquipmentDict.TryGetValue((ItemsFilter.ItemType)type,out var value))
+            {
+                return value;
+            }
+            else
+            {
+                settings.HideEquipmentDict.Add((ItemsFilter.ItemType)type, false);
+                return false;
+            }
+           // return settings.HideEquipmentDict[(ItemsFilter.ItemType)type];
         }
         public void Bind(string label, HideButtonType buttonType)
         {
