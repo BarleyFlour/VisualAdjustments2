@@ -54,7 +54,7 @@ namespace VisualAdjustments2
             foreach (object obj in Enum.GetValues(typeof(VisualWindowType)))
             {
                 VisualWindowType type = (VisualWindowType)obj;
-                if ((!RootUIContext.Instance.IsGlobalMap) && type != VisualWindowType.None)
+                if (/*(!RootUIContext.Instance.IsGlobalMap) && */type != VisualWindowType.None)
                 {
                     VisualWindowsMenuEntityVM windowsMenuEntityVm = new VisualWindowsMenuEntityVM(type);
                     base.AddDisposable(windowsMenuEntityVm);

@@ -133,7 +133,7 @@ namespace VisualAdjustments2
 
 
 
-                var detailedviewzone = Kingmaker.Game.Instance.UI.Canvas.transform.Find("ChargenPCView/ContentWrapper/DetailedViewZone");
+                var detailedviewzone = Kingmaker.Game.Instance.UI.Canvas != null ? Kingmaker.Game.Instance.UI.Canvas.transform.Find("ChargenPCView/ContentWrapper/DetailedViewZone") : Kingmaker.Game.Instance.UI.GlobalMapCanvas.transform.Find("ChargenPCView/ContentWrapper/DetailedViewZone");
                 var newdollroom = UnityEngine.Object.Instantiate(detailedviewzone.Find("DollRoom"));
                 var newappearance = UnityEngine.Object.Instantiate(detailedviewzone.Find("ChargenAppearanceDetailedPCView"));
                 var newgameobject = new UnityEngine.GameObject("ParentThing");
@@ -257,11 +257,11 @@ namespace VisualAdjustments2
 
                     }
                     var thing = __instance.transform.Find("ServiceWindowMenuPCView/Top").gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
-                    Traverse.Create(thing).Field<List<RectTransform>>("m_RectChildren").Value.Add(newbutton.GetComponent<RectTransform>());
-                    newbutton.gameObject.SetActive(true);
+                   // Traverse.Create(thing).Field<List<RectTransform>>("m_RectChildren").Value.Add(newbutton.GetComponent<RectTransform>());
+                   // newbutton.gameObject.SetActive(true);
                     a.GetComponent<LayoutElement>().minWidth = 125;
                     a.Find("Separator").gameObject.SetActive(true);
-                    newbutton.GetComponent<LayoutElement>().minWidth = 200;
+                   // newbutton.GetComponent<LayoutElement>().minWidth = 200;
                     //New selection bar thingie
                     //Main.Logger.Log((string)(__instance.transform.Find("ServiceWindowMenuPCView").ToString()));
                     var oldbar = __instance.transform.Find("ServiceWindowMenuPCView");
@@ -1412,7 +1412,8 @@ namespace VisualAdjustments2
     {
         public static void Postfix(ServiceWindowMenuSelectorPCView __instance)
         {
-            var newbutton = __instance.transform.Find("Map(Clone)");
+            var newbutton = __instance.m_MenuEntities.FirstOrDefault(b => b.ViewModel.ServiceWindowsType == ((ServiceWindowsType)50));
+            //var newbutton = __instance.transform.Find("Map(Clone)");
             newbutton.gameObject.SetActive(true);
             try
             {

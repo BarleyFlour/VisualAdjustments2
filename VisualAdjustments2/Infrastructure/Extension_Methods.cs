@@ -368,8 +368,8 @@ namespace VisualAdjustments2.Infrastructure
                 oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
                 UnityEngine.Component.Destroy(oldview);
 
-
-                var InstantiatedButton = UnityEngine.GameObject.Instantiate(StaticCanvas.Instance.transform.Find("ServiceWindowsPCView/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                var canvas = Kingmaker.Game.Instance.UI.Canvas != null ? Kingmaker.Game.Instance.UI.Canvas.transform.Find("ServiceWindowsPCView") : Kingmaker.Game.Instance.UI.GlobalMapCanvas.transform.Find("ServiceWindowsConfig");
+                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
                 var icon = InstantiatedButton.Find("Icon");
                 icon.gameObject.SetActive(true);
                 newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
@@ -578,8 +578,8 @@ namespace VisualAdjustments2.Infrastructure
                 //oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
                 UnityEngine.Component.Destroy(oldview);
 
-
-                var InstantiatedButton = UnityEngine.GameObject.Instantiate(StaticCanvas.Instance.transform.Find("ServiceWindowsPCView/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                var canvas = Kingmaker.Game.Instance.UI.Canvas != null ? Kingmaker.Game.Instance.UI.Canvas.transform.Find("ServiceWindowsPCView") : Kingmaker.Game.Instance.UI.GlobalMapCanvas.transform.Find("ServiceWindowsConfig");
+                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
                 var icon = InstantiatedButton.Find("Icon");
                 icon.gameObject.SetActive(true);
                 newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
