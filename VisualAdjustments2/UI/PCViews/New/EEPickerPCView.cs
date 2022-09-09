@@ -16,6 +16,8 @@ using Kingmaker.UI.ServiceWindow;
 using Kingmaker.Visual.CharacterSystem;
 using Owlcat.Runtime.UniRx;
 using Kingmaker.Blueprints;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.UI.MVVM._PCView.ServiceWindows.Inventory.VisualSettings;
 
 namespace VisualAdjustments2.UI
 {
@@ -33,32 +35,32 @@ namespace VisualAdjustments2.UI
 
             this.m_dollCharacterController.Unbind();
 
-            this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+            this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
 
-            m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
-            this.m_VisualSettings.Dispose();
+            m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
+            this.m_VisualSettings.gameObject.SetActive(false);
             
         }
         private void OnCharacterChanged()
         {
             m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
             this.AddDisposable(base.ViewModel.CurrentEEs.Value);
-            m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
-            m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
-            this.m_VisualSettings.Dispose();
+            m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
+            m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
+            this.m_VisualSettings.gameObject.SetActive(false);
         }
         public override void BindViewImplementation()
         {
             try
             {
-                base.ViewModel.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitDescriptor _)
+                base.ViewModel.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitReference _)
                 {
                     this.OnCharacterChanged();
                 }));
 
                 base.BindViewImplementation();
                 Initialize();
-                m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+                m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
                 this.m_EEColorPicker.m_ConfirmButton.OnLeftClick.RemoveAllListeners();
                 m_EEColorPicker.m_ConfirmButton.OnLeftClick.AddListener(() =>
                 {
@@ -70,12 +72,12 @@ namespace VisualAdjustments2.UI
                 });
                 this.AddDisposable(this.m_EEColorPicker.Index.Subscribe((int index) => { this.m_EEColorPicker.UpdateColorFromIndex(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.ViewModel.CurrentEEs.Value.SelectedEntity.Value.Guid), index); }));
                 this.AddDisposable(this.m_EEColorPicker.m_ToggleGroupHandler.PrimOrSec.Subscribe((bool _) => { this.m_EEColorPicker.UpdateRampSlider(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.ViewModel.CurrentEEs.Value.SelectedEntity.Value.Guid)); }));
-                m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);
+                m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
                 this.AddDisposable(base.ViewModel.AllEEs.Value);
                 this.m_AllEEs.Bind(base.ViewModel.AllEEs.Value);
                 this.AddDisposable(base.ViewModel.CurrentEEs.Value);
                 this.m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
-                this.m_VisualSettings.Dispose();
+                this.m_VisualSettings.gameObject.SetActive(false);
 
                 base.AddDisposable(this.ViewModel?.CurrentEEs?.Value?.SelectedEntity?.Subscribe((ListViewItemVM vm) => { this.m_EEColorPicker.OnEEChanged(ResourcesLibrary.TryGetResource<EquipmentEntity>(vm.Guid)); }));
             }
@@ -91,7 +93,7 @@ namespace VisualAdjustments2.UI
             m_EEColorPicker.Dispose();
             this.m_dollCharacterController.Unbind();
         }
-        public CharacterVisualSettingsView m_VisualSettings;
+        public CharacterVisualSettingsPCView m_VisualSettings;
         public DollCharacterController m_dollCharacterController;
         public ListPCView m_AllEEs;
         public ListPCView m_CurrentEEs;

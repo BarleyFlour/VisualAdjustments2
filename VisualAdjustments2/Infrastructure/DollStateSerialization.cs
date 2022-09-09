@@ -273,7 +273,7 @@ namespace VisualAdjustments2
                     var settings = new Polymorph.VisualTransitionSettings();
                     settings.OldPrefabFX = new PrefabLink();
                     settings.NewPrefabFX = new PrefabLink();
-                    data.View.StartCoroutine(Polymorph.Transition(settings, view, data.View));
+                    //data.View.StartCoroutine(Polymorph.Transition(settings, view, data.View));
                 }
                 else
                 {

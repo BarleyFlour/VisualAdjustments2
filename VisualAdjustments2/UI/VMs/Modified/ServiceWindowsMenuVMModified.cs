@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.EntitySystem.Entities;
 using UniRx;
 using VisualAdjustments2.UI;
 
@@ -35,7 +36,7 @@ namespace VisualAdjustments2
             this.m_SelectedEntity = new ReactiveProperty<VisualWindowsMenuEntityVM>(this.m_EntitiesList.First());
             base.AddDisposable(this.SelectionGroup = new SelectionGroupRadioVM<VisualWindowsMenuEntityVM>(this.m_EntitiesList, this.m_SelectedEntity));
             base.AddDisposable(this.m_SelectedEntity.Skip(1).Subscribe(new Action<VisualWindowsMenuEntityVM>(this.OnEntitySelected)));
-            base.AddDisposable(this.UnitDescriptor.Subscribe(new Action<UnitDescriptor>(this.OnUnitChanged)));
+            base.AddDisposable(this.UnitDescriptor.Subscribe(new Action<UnitReference>(this.OnUnitChanged)));
         }
         public void SelectWindow(VisualWindowType type)
         {
@@ -78,14 +79,14 @@ namespace VisualAdjustments2
                 Main.Logger.Error(e.ToString());
             }
         }
-        private void OnUnitChanged(UnitDescriptor unitDescriptor)
+        private void OnUnitChanged(UnitReference unitDescriptor)
         {
             VisualWindowsMenuEntityVM serviceWindowsMenuEntityVM = this.m_EntitiesList.FirstOrDefault((VisualWindowsMenuEntityVM e) => e.VisualWindowType == VisualWindowType.None);
             if (serviceWindowsMenuEntityVM == null)
             {
                 return;
             }
-            serviceWindowsMenuEntityVM.SetAvailable(UIUtilityUnit.HasMythic(unitDescriptor));
+            serviceWindowsMenuEntityVM.SetAvailable(UIUtilityUnit.HasMythic(unitDescriptor.Value.Descriptor));
         }
         public void Close()
         {
@@ -103,6 +104,6 @@ namespace VisualAdjustments2
         public List<VisualWindowsMenuEntityVM> m_EntitiesList;
         public ReactiveProperty<VisualWindowsMenuEntityVM> m_SelectedEntity;
         public readonly Action<VisualWindowType> m_OnSelect;
-        public IReactiveProperty<UnitDescriptor> UnitDescriptor;
+        public IReactiveProperty<UnitReference> UnitDescriptor;
     }
 }

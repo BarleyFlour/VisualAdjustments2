@@ -14,11 +14,15 @@ using Owlcat.Runtime.UI.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kingmaker.UI.MVVM._PCView.ServiceWindows.Inventory.VisualSettings;
+using Kingmaker.UI.MVVM._VM.ServiceWindows.Inventory;
+using Owlcat.Runtime.UI.Controls.Other;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using Owlcat.Runtime.UniRx;
-
+using UniRx.Triggers;
+using UnityEngine.EventSystems;
 
 
 //Add apply button
@@ -59,8 +63,7 @@ namespace VisualAdjustments2.UI
             this.m_BeardSelectorPcView.SetTitleText(charGen.Beard);
             this.m_HairColorSelectorView.SetTitleText(charGen.HairColor);
             this.m_CharacterController.Unbind();
-
-            this.VisualSettings.Intialize();
+            this.m_VisualSettingsView.Initialize();
         }
 
         // Token: 0x060062D0 RID: 25296 RVA: 0x001FC15C File Offset: 0x001FA35C
@@ -73,9 +76,22 @@ namespace VisualAdjustments2.UI
                     this.DestroyViewImplementation();
                     return;
                 }
+                
+                this.m_SettingsContainer.SetActive(true);
+                this.m_VisualSettingsButton.gameObject.SetActive(true);
+                this.m_VisualSettingsView.gameObject.SetActive(true);
+                #if DEBUG
+                Main.Logger.Log("DollPCViewBindViewImplmnt");
+                #endif
+                base.AddDisposable(base.ViewModel.VisualSettingsVM.Subscribe(new Action<CharacterVisualSettingsVM>(this.m_VisualSettingsView.Bind)));
+                base.AddDisposable(this.m_VisualSettingsButton.OnLeftClickAsObservable().Subscribe(new Action(base.ViewModel.ShowVisualSettings)));
+                
+                
+                
                 base.gameObject.SetActive(true);
                 //base.BindViewImplementation();
-                this?.VisualSettings?.Bind(base.ViewModel?.DollState);
+                //var newvisvm = new CharacterVisualSettingsVM(base.ViewModel?.DollState, default);
+                //this?.VisualSettings?.Bind(newvisvm);
                 this.m_CharacterController.Bind(base.ViewModel.DollState);
                 this.m_CharacterController.SetTransform(this.m_TargetSizeInfoDollTransform);
                 this.m_BodySelectorPcView.Bind(base.ViewModel.BodySelectorVM);
@@ -96,21 +112,21 @@ namespace VisualAdjustments2.UI
                 this.m_TatooPaginator.Initialize(base.ViewModel.TattoosNumber, new Action<int>(this.BindTattoos));
                 this.m_TatooSelectorPcView.SetOnChangeCallback(delegate
                 {
-                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
+                   // this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
                 });
                 this.m_TatooColorSelectorView.SetOnChangeCallback(delegate
                 {
-                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
+                   // this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(false);
                 });
                 this.m_PrimaryOutfitColorSelectorView.Bind(base.ViewModel.PrimaryOutfitColorVM);
                 this.m_PrimaryOutfitColorSelectorView.SetOnChangeCallback(delegate
                 {
-                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
+                   // this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
                 });
                 this.m_SecondaryOutfitColorSelectorView.Bind(base.ViewModel.SecondaryOutfitColorVM);
                 this.m_SecondaryOutfitColorSelectorView.SetOnChangeCallback(delegate
                 {
-                    this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
+                  //  this.VisualSettings.ShowIfNotSeenAndSwitchClothTo(true);
                 });
                 //if (base.ViewModel.HornSelectorVM.IsValid())
                 {
@@ -157,13 +173,14 @@ namespace VisualAdjustments2.UI
 
 
 
-                        var visualsettings = this.transform.parent.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsView>();
-                        visualsettings.Bind(this.ViewModel.DollState);
+                        /*var visualsettings = this.transform.parent.Find("DollRoom(Clone)/CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsPCView>();
+                        var newvisvm2 = new CharacterVisualSettingsVM(base.ViewModel?.DollState, default);
+                        visualsettings.Bind(newvisvm2);*/
 
                         var DollRoomComp = this.transform.parent.Find("DollRoom(Clone)").GetComponent<DollCharacterController>();
                         DollRoomComp.Bind(this.ViewModel.DollState);
 
-                        if (Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.IsStoryCompanion())
+                        if (Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.IsStoryCompanion())
                         {
                             m_DeleteDollButton.gameObject.transform.parent.gameObject.SetActive(true);
                         }
@@ -206,7 +223,7 @@ namespace VisualAdjustments2.UI
         {
             base.gameObject.SetActive(false);
             // base.DestroyViewImplementation();
-            this.VisualSettings.Dispose();
+            this.m_VisualSettingsView.gameObject.SetActive(false);
             this.m_CharacterController.Unbind();
             //this.Unbind();
         }
@@ -356,12 +373,14 @@ namespace VisualAdjustments2.UI
         [SerializeField]
         public RectTransform m_TargetSizeInfoDollTransform;
 
-        // Token: 0x04004261 RID: 16993
-        [SerializeField]
-        public CharacterVisualSettingsView VisualSettings;
-
         public OwlcatButton m_ApplyButton;
 
         public OwlcatButton m_DeleteDollButton;
+        
+        public CharacterVisualSettingsPCView m_VisualSettingsView;
+        
+        public OwlcatButton m_VisualSettingsButton;
+        
+        public GameObject m_SettingsContainer;
     }
 }

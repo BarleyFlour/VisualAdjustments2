@@ -20,7 +20,7 @@ namespace VisualAdjustments2.UI
     {
         public ReactiveProperty<BuffListViewVM> m_AllFX = new ReactiveProperty<BuffListViewVM>();
         public ReactiveProperty<BuffListViewVM> m_CurrentFX = new ReactiveProperty<BuffListViewVM>();
-        public ReactiveProperty<UnitDescriptor> UnitDescriptor;
+        public IReactiveProperty<UnitReference> UnitDescriptor;
         public FXViewerVM(UnitEntityData data)
         {
             base.AddDisposable(this);
@@ -35,7 +35,7 @@ namespace VisualAdjustments2.UI
                 reactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
             }
             this.UnitDescriptor = Game.Instance.SelectionCharacter.SelectedUnit;
-            base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitDescriptor _)
+            base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitReference _)
             {
                 this.OnUnitChanged();
             }));
@@ -54,7 +54,7 @@ namespace VisualAdjustments2.UI
                 if (this.m_CurrentFX?.Value?.EntitiesCollection?.Contains(item) == true)
                 {
                     this.m_CurrentFX?.Value?.EntitiesCollection.Remove(item);
-                    var settings = this.UnitDescriptor.Value.Unit.GetSettings();
+                    var settings = this.UnitDescriptor.Value.Value.GetSettings();
                     // if (settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
                     {
                         settings.BuffSettings.fXBlockerHolder.FXBlockers.Remove(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
@@ -74,7 +74,7 @@ namespace VisualAdjustments2.UI
             try
             {
                 if (!this.m_CurrentFX?.Value?.EntitiesCollection.Any(a => a.Feature.AssetGuid == item.Feature.AssetGuid) == true) this.m_CurrentFX?.Value.EntitiesCollection.Add(new BuffButtonVM(item.Feature, false, RemoveListItem));
-                var settings = this.UnitDescriptor.Value.Unit.GetSettings();
+                var settings = this.UnitDescriptor.Value.Value.GetSettings();
                 // if (!settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == item.Feature.AssetGuidThreadSafe))
                 {
                     settings.BuffSettings.fXBlockerHolder.FXBlockers.Add(ResourceLoader.AbilityGuidToFXBlocker[item.Feature.AssetGuidThreadSafe]);
@@ -95,7 +95,7 @@ namespace VisualAdjustments2.UI
         {
             {
                 var CurrentReactive = new ReactiveCollection<BuffButtonVM>();
-                foreach (var buff in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().BuffSettings.fXBlockerHolder.FXBlockers)
+                foreach (var buff in Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings.fXBlockerHolder.FXBlockers)
                 {
                     CurrentReactive.Add(new BuffButtonVM(ResourcesLibrary.TryGetBlueprint<BlueprintUnitFact>(buff.AbilityGUID), false, this.RemoveListItem));
                 }

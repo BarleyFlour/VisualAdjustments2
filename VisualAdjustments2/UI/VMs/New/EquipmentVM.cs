@@ -28,7 +28,7 @@ namespace VisualAdjustments2.UI
 #if DEBUG
             Main.Logger.Log("TriedApplyClassCol");
 #endif
-            var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
+            var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings();
             if (PrimOrSec)
             {
                 settings.ClassOverride.PrimaryIndex = null;
@@ -39,7 +39,7 @@ namespace VisualAdjustments2.UI
                 settings.ClassOverride.SecondaryIndex = null;
                 settings.ClassOverride.SecondaryCustomCol = new SerializableColor(col);
             }
-            var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
+            var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value;
 
             {
                 Gender gender = unit.Gender;
@@ -144,7 +144,7 @@ namespace VisualAdjustments2.UI
 #endif
             try
             {
-                var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
+                var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings();
                 if (PrimOrSec)
                 {
                     settings.ClassOverride.PrimaryIndex = col;
@@ -155,7 +155,7 @@ namespace VisualAdjustments2.UI
                     settings.ClassOverride.SecondaryIndex = col;
                     settings.ClassOverride.SecondaryCustomCol = null;
                 }
-                var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
+                var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value;
 
                 {
                     Gender gender = unit.Gender;

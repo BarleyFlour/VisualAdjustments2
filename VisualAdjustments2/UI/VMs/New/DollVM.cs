@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.EntitySystem.Entities;
 using UniRx;
 using Owlcat.Runtime.UniRx;
 using VisualAdjustments2.Infrastructure;
@@ -19,19 +20,19 @@ namespace VisualAdjustments2.UI
         public DollVM()
         {
             base.AddDisposable(this);
-            base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor _) => { OnCharacterChanged(); }));
+            base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitReference _) => { OnCharacterChanged(); }));
             OnCharacterChanged(true);
         }
         public void AddUnitPart()
         {
             try
             {
-                var dolldata = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Parts.Add<UnitPartDollData>();
+                var dolldata = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Parts.Add<UnitPartDollData>();
                 var data = dolldata.SetupForStoryCompanion();
                 //dolldata.Default = data;
                 dolldata.SetDefault(data);
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = true;//Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit; //They naked if we use HasCustomOutfit
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.RebuildCharacter();
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForcceUseClassEquipment = true;//Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit; //They naked if we use HasCustomOutfit
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.RebuildCharacter();
                 OnCharacterChanged(true);
             }
             catch(Exception e)
@@ -43,8 +44,8 @@ namespace VisualAdjustments2.UI
         {
             try
             {
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Parts.Remove<UnitPartDollData>();
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit;
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Parts.Remove<UnitPartDollData>();
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForcceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().ClassOverride.HasCustomOutfit;
                 OnCharacterChanged(true);
             }
             catch (Exception e)
@@ -58,7 +59,7 @@ namespace VisualAdjustments2.UI
             {
                 if (this.IsDisposed) return;
                 //Main.Logger.Log("charch");
-                var unit = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
+                var unit = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value;
                 if (unit.Get<UnitPartDollData>() != null && (forcechange || this.createDollVM?.Value?.charname != unit.CharacterName))
                 {
                     var doll = unit.GetDollState();

@@ -20,7 +20,7 @@ namespace VisualAdjustments2.UI
         {
             base.AddDisposable(this);
             
-            charname = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.CharacterName;
+            charname = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.CharacterName;
             ToDisplay.Value = $"{charname} has no doll, create?";
 
            /* base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe((UnitDescriptor val) =>

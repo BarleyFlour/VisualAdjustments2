@@ -39,7 +39,7 @@ namespace VisualAdjustments2.UI
         {
             this.applyActions.Clear();
             var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
-            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
+            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.CharacterAvatar.EquipmentEntities)
             {
                 //Main.Logger.Log(ee.name);
                 var inf = ee.ToEEInfo();
@@ -52,7 +52,7 @@ namespace VisualAdjustments2.UI
             base.AddDisposable(CurrentEEs.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(CurrentReactive.FirstOrDefault())));
         }
 
-        public ReactiveProperty<UnitDescriptor> UnitDescriptor;
+        public IReactiveProperty<UnitReference> UnitDescriptor;
         public ReactiveProperty<ListViewVM> AllEEs = new ReactiveProperty<ListViewVM>();
         public ReactiveProperty<ListViewVM> CurrentEEs = new ReactiveProperty<ListViewVM>();
         public EEPickerVM(UnitEntityData data)
@@ -64,7 +64,7 @@ namespace VisualAdjustments2.UI
                 reactive.Add(new ListViewItemVM(kv, true, AddListItem,true));
             }
             var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
-            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
+            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.CharacterAvatar.EquipmentEntities)
             {
                 //Main.Logger.Log(ee.name);
                 var inf = ee.ToEEInfo();
@@ -74,7 +74,7 @@ namespace VisualAdjustments2.UI
                 }
             }
             this.UnitDescriptor = Game.Instance.SelectionCharacter.SelectedUnit;
-            base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitDescriptor _)
+            base.AddDisposable(Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(delegate (UnitReference _)
             {
                 this.OnUnitChanged();
             }));
@@ -88,7 +88,7 @@ namespace VisualAdjustments2.UI
         {
             this.applyActions.Clear();
             var CurrentReactive = new ReactiveCollection<ListViewItemVM>();
-            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.EquipmentEntities)
+            foreach (var ee in Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.CharacterAvatar.EquipmentEntities)
             {
                 //Main.Logger.Log(ee.name);
                 var inf = ee.ToEEInfo();
@@ -171,7 +171,7 @@ namespace VisualAdjustments2.UI
                 }
                 else
                 {
-                    var ee = this.UnitDescriptor.Value.Unit.GetSettings().EeSettings.EEs.FirstOrDefault(a => a.GUID == this.CurrentEEs.Value.SelectedEntity.Value.Guid);
+                    var ee = this.UnitDescriptor.Value.Value.GetSettings().EeSettings.EEs.FirstOrDefault(a => a.GUID == this.CurrentEEs.Value.SelectedEntity.Value.Guid);
                     var loaded = ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid);
                     if (ee != null)
                     {
@@ -280,7 +280,7 @@ namespace VisualAdjustments2.UI
                 }
                 else
                 {
-                    var ee = this.UnitDescriptor.Value.Unit.GetSettings().EeSettings.EEs.FirstOrDefault(a => a.GUID == this.CurrentEEs.Value.SelectedEntity.Value.Guid);
+                    var ee = this.UnitDescriptor.Value.Value.GetSettings().EeSettings.EEs.FirstOrDefault(a => a.GUID == this.CurrentEEs.Value.SelectedEntity.Value.Guid);
                     var loaded = ResourcesLibrary.TryGetResource<EquipmentEntity>(this.CurrentEEs.Value.SelectedEntity.Value.Guid);
                     if (ee != null)
                     {
@@ -347,8 +347,8 @@ namespace VisualAdjustments2.UI
                         }
                     }
                 }
-                Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
-                Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.CharacterAvatar.UpdateCharacter();
+                Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.UpdateClassEquipment();
+                Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.CharacterAvatar.UpdateCharacter();
 
 
                 Kingmaker.Game.Instance.UI.Common.DollRoom.Unit.View.UpdateClassEquipment();

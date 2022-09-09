@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.UI.MVVM._VM.ServiceWindows.Inventory;
 using UniRx;
 using UnityEngine;
 using VisualAdjustments2.UI;
@@ -34,7 +35,7 @@ namespace VisualAdjustments2.UI
         {
             try
             {
-                this.unit_GUID = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.UniqueId;
+                this.unit_GUID = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.UniqueId;
                 this.DollState = dollState;
                 //base.AddDisposable(dollState.m_OnUpdateAction += () => { levelUpController.Unit.SaveDollState(dollState); });
                 this.IsAlternative = isAlternative;
@@ -50,12 +51,11 @@ namespace VisualAdjustments2.UI
             }
         }
         private string unit_GUID;
-        public void OnUnitChanged(UnitDescriptor descriptor)
+        public void OnUnitChanged(UnitReference descriptor)
         {
             try
             {
                 this.Change();
-                
             }
             catch (Exception ex)
             {
@@ -256,6 +256,25 @@ namespace VisualAdjustments2.UI
             }
             //this.LevelUpController.Unit.SaveDollState(this.DollState);
             //Main.Logger.Log("changed");
+        }
+        public ReactiveProperty<CharacterVisualSettingsVM> VisualSettingsVM = new ReactiveProperty<CharacterVisualSettingsVM>();
+        public void ShowVisualSettings()
+        {
+            if (this.VisualSettingsVM.Value != null)
+            {
+                this.DisposeVisualSettings();
+                return;
+            }
+            this.VisualSettingsVM.Value = new CharacterVisualSettingsVM(this.DollState, new Action(this.DisposeVisualSettings));
+        }
+        public void DisposeVisualSettings()
+        {
+            CharacterVisualSettingsVM value = this.VisualSettingsVM.Value;
+            if (value != null)
+            {
+                value.Dispose();
+            }
+            this.VisualSettingsVM.Value = null;
         }
         private static void GetTextureSelectorItemVM(ReactiveCollection<TextureSelectorItemVM> valueList, int i, Texture2D item, Action setter)
         {

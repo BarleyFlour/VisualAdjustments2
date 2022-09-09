@@ -29,7 +29,7 @@ namespace VisualAdjustments2.UI
             try
             {
 
-                var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
+                var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings();
                 var first = settings.EnchantOverrides.FirstOrDefault(b => b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
                 if (first == null)
                 {
@@ -53,9 +53,9 @@ namespace VisualAdjustments2.UI
                 void Refresh()
                 {
                     Game.Instance.UI.Common.DollRoom.m_AvatarHands.UpdateAll();
-                    Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.UpdateAll();
-                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet.MainHand.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet.OffHand.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View?.HandsEquipment?.UpdateAll();
+                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment.m_ActiveSet.MainHand.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment.m_ActiveSet.OffHand.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                     if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
                     if (Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                 }
@@ -69,7 +69,7 @@ namespace VisualAdjustments2.UI
         {
             try
             {
-                var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
+                var settings = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings();
                 var first = settings.WeaponOverrides.FirstOrDefault(b => b.AnimStyle == style.ToString() && b.Slot == slot.Value && b.MainOrOffHand == hand.Value);
                 if (first == null)
                 {
@@ -93,9 +93,9 @@ namespace VisualAdjustments2.UI
                 void Refresh()
                 {
                     Game.Instance?.UI?.Common?.DollRoom?.m_AvatarHands?.UpdateAll();
-                    Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.HandsEquipment?.UpdateAll();
-                    if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-                    if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+                    Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value.View?.HandsEquipment?.UpdateAll();
+                    if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+                    if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value.View?.HandsEquipment?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                     if (Game.Instance?.UI?.Common?.DollRoom?.m_AvatarHands?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
                     if (Game.Instance?.UI?.Common?.DollRoom?.m_AvatarHands?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
                 }
@@ -124,7 +124,7 @@ namespace VisualAdjustments2.UI
                     //var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
                     // Main.Logger.Log(s.ToString());
                     //return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(a => a.Guid == s.GUID);
-                    var selected = this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
+                    var selected = this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
                     selected = (selected != null ? selected : this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault());
                     return selected;
                     /*var enchant = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value);
@@ -138,7 +138,7 @@ namespace VisualAdjustments2.UI
                 {
                     var animstyleasstring = this.animStyle.Value.ToString();
                     //Main.Logger.Log(animstyleasstring);
-                    var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animstyleasstring);
+                    var s = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().WeaponOverrides.FirstOrDefault(x => x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animstyleasstring);
                     if (s != null)
                     {
                         return this.m_ListViewVM.Value.EntitiesCollection.FirstOrDefault(c => c.Guid == s.GUID);
@@ -209,7 +209,7 @@ namespace VisualAdjustments2.UI
             m_ListViewVM.Value?.Dispose();
             if (i == 14)
             {
-                var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
+                var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().EnchantOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value));
                 selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
 #if DEBUG
                 Main.Logger.Log(selected.Guid + " " + selected.DisplayName);
@@ -218,7 +218,7 @@ namespace VisualAdjustments2.UI
             }
             else
             {
-                var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().WeaponOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animStyle.Value.ToString()));
+                var selected = CurrentReactive.FirstOrDefault(a => null != Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().WeaponOverrides.FirstOrDefault(x => (x.GUID == a.Guid) && x.MainOrOffHand == hand.Value && x.Slot == this.slot.Value && x.AnimStyle == animStyle.Value.ToString()));
                 selected = (selected != null ? selected : CurrentReactive.FirstOrDefault());
                 base.AddDisposable(m_ListViewVM.Value = new ListViewVM(CurrentReactive, new ReactiveProperty<ListViewItemVM>(selected)));
             }

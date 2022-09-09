@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.EntitySystem.Entities;
 using TMPro;
 using UniRx;
 using VisualAdjustments2.Infrastructure;
@@ -27,15 +28,15 @@ namespace VisualAdjustments2.UI
                 button.SetSelected(this.Selected.Value == button);
             }
         }
-        public void OnUnitChanged(UnitDescriptor unit)
+        public void OnUnitChanged(UnitReference unit)
         {
-            var settings = unit.Unit.GetSettings();
+            var settings = unit.Value.GetSettings();
             if (settings.ClassOverride.GUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
             else Selected.Value = Buttons.FirstOrDefault(a => a.Key == settings.ClassOverride.GUID).Value;
         }
         public void SetClass(string guid)
         {
-            var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit;
+            var unit = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value;
             var settings = unit.GetSettings();
             settings.ClassOverride.HasCustomOutfit = !(guid == "");
             var needsreset = (guid.IsNullOrEmpty() && unit.IsStoryCompanion() && !settings.ClassOverride.GUID.IsNullOrEmpty());
@@ -50,19 +51,19 @@ namespace VisualAdjustments2.UI
                 }
             }
             settings.ClassOverride.GUID = guid;
-            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.ForcceUseClassEquipment = guid != "";
+            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForcceUseClassEquipment = guid != "";
             //Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.RebuildOutfit();
             Kingmaker.Game.Instance.UI.Common.DollRoom.Unit.View.UpdateClassEquipment();
             if (needsreset) unit.View.UpdateBodyEquipmentVisibility();
-            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
+            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.UpdateClassEquipment();
         }
         public override void BindViewImplementation()
         {
             try
             {
-                var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings();
+                var settings = Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings();
                 if (settings.ClassOverride.GUID.IsNullOrEmpty()) Selected.Value = Buttons.First().Value;
                 else Selected.Value = Buttons.First(a => a.Key == settings.ClassOverride.GUID).Value;
 

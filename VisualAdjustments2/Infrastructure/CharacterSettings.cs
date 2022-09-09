@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.Visual.Particles.FxSpawnSystem;
 using UnityEngine;
 
 namespace VisualAdjustments2.Infrastructure
@@ -63,7 +64,7 @@ namespace VisualAdjustments2.Infrastructure
     {
         public List<WeaponOverride> WeaponOverrides = new List<WeaponOverride>();
         public List<EnchantOverride> EnchantOverrides = new List<EnchantOverride>();
-        [JsonIgnore] public Dictionary<ItemEntity, List<GameObject>> CurrentFXs = new Dictionary<ItemEntity, List<GameObject>>();
+        [JsonIgnore] public Dictionary<ItemEntity, List<IFxHandle>> CurrentFXs = new Dictionary<ItemEntity, List<IFxHandle>>();
 
         public EESettings EeSettings = new();
         public Buff_Settings m_BuffSettings = new();

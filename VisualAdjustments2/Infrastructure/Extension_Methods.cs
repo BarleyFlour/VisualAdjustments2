@@ -38,6 +38,7 @@ using Kingmaker.Items.Slots;
 using Kingmaker.Items;
 using Owlcat.Runtime;
 using Kingmaker.Blueprints.Root;
+using Kingmaker.UI.MVVM._PCView.ServiceWindows.Inventory.VisualSettings;
 
 namespace VisualAdjustments2.Infrastructure
 {
@@ -369,7 +370,7 @@ namespace VisualAdjustments2.Infrastructure
                 UnityEngine.Component.Destroy(oldview);
 
                 var canvas = Kingmaker.Game.Instance.UI.Canvas != null ? Kingmaker.Game.Instance.UI.Canvas.transform.Find("ServiceWindowsPCView") : Kingmaker.Game.Instance.UI.GlobalMapCanvas.transform.Find("ServiceWindowsConfig");
-                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("Background/Windows/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
                 var icon = InstantiatedButton.Find("Icon");
                 icon.gameObject.SetActive(true);
                 newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
@@ -579,7 +580,7 @@ namespace VisualAdjustments2.Infrastructure
                 UnityEngine.Component.Destroy(oldview);
 
                 var canvas = Kingmaker.Game.Instance.UI.Canvas != null ? Kingmaker.Game.Instance.UI.Canvas.transform.Find("ServiceWindowsPCView") : Kingmaker.Game.Instance.UI.GlobalMapCanvas.transform.Find("ServiceWindowsConfig");
-                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("Background/Windows/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
                 var icon = InstantiatedButton.Find("Icon");
                 icon.gameObject.SetActive(true);
                 newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
@@ -611,13 +612,14 @@ namespace VisualAdjustments2.Infrastructure
                 throw e;
             }
         }
-        public static void SetupFromVisualSettings(this EEColorPickerView newcomp, CharacterVisualSettingsView oldcomp)
+        public static void SetupFromVisualSettings(this EEColorPickerView newcomp, CharacterVisualSettingsPCView oldcomp)
         {
-            newcomp.m_SettingsBtn = oldcomp.m_SettingsBtn;
-            newcomp.m_Title = oldcomp.m_Title;
-            newcomp.m_Window = oldcomp.m_Window;
-            newcomp.m_WindowShow = oldcomp.m_WindowShow;
-            newcomp.m_OnClickDispose = oldcomp.m_OnClickDispose;
+            newcomp.m_SettingsBtn = oldcomp.transform.Find("OptionButton").GetComponent<OwlcatButton>();
+            newcomp.m_Header = oldcomp.m_Header;
+            
+            //newcomp.m_Window = oldcomp.m_Window;
+            //newcomp.m_WindowShow = oldcomp.m_WindowShow;
+            newcomp.m_FadeAnimator = oldcomp.m_FadeAnimator;
             var windowcontainer = newcomp.transform.Find("WindowContainer");
             var layout = windowcontainer.gameObject.GetComponent<VerticalLayoutGroup>();
             layout.childControlWidth = true;
@@ -625,9 +627,15 @@ namespace VisualAdjustments2.Infrastructure
             layout.spacing = -15;
             var sizefitter = windowcontainer.gameObject.GetComponent<ContentSizeFitterExtended>();
             sizefitter.m_VerticalFit = ContentSizeFitterExtended.FitMode.MinSize;
-            windowcontainer.Find("ShowBackpackContainer").gameObject.SetActive(false);
-            windowcontainer.Find("ShowHelmContainer").gameObject.SetActive(false);
-            windowcontainer.Find("ShowClothContainer").gameObject.SetActive(false);
+            windowcontainer.Find("SettingsEntity").gameObject.SetActive(false);
+            windowcontainer.Find("SettingsEntity (1)").gameObject.SetActive(false);
+            windowcontainer.Find("SettingsEntity (2)").gameObject.SetActive(false);
+            windowcontainer.Find("TextMask/TextDecor").gameObject.SetActive(false);
+            var vlg = windowcontainer.GetComponent<VerticalLayoutGroup>();
+            vlg.childControlHeight = true;
+            vlg.padding.top = 33;
+            vlg.padding.bottom = 4;
+            windowcontainer.Find("HeaderBlock/Header").localPosition = new Vector3(0,-20,0);
         }
         public static void SetupFromSlideSelector(this BarleySlideSelectorPCView newcomp, SlideSelectorPCView oldcomp)
         {

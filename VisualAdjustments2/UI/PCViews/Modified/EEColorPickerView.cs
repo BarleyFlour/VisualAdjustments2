@@ -263,11 +263,11 @@ namespace VisualAdjustments2.UI
         // Token: 0x06003C9C RID: 15516 RVA: 0x000ECDC4 File Offset: 0x000EAFC4
         private void InitWindowAndControlls(bool state)
 		{
-			this.m_Window.Initialize();
-			this.m_Window.gameObject.SetActive(false);
+			this.m_FadeAnimator.Initialize();
+			this.m_FadeAnimator.gameObject.SetActive(false);
 			this.m_WindowShow = false;
 			base.gameObject.SetActive(state);
-			this.m_Title.text = "Colour";
+			this.m_Header.text = "Colour";
 			IDisposable onClickDispose = this.m_OnClickDispose;
 			if (onClickDispose != null)
 			{
@@ -300,16 +300,16 @@ namespace VisualAdjustments2.UI
 		private void HideWindow()
 		{
 			this.m_WindowShow = false;
-			this.m_Window.DisappearAnimation(delegate
+			this.m_FadeAnimator.DisappearAnimation(delegate
 			{
-				this.m_Window.gameObject.SetActive(false);
+				this.m_FadeAnimator.gameObject.SetActive(false);
 			});
 		}
 		private void ShowWindow()
 		{
 			this.m_WindowShow = true;
-			this.m_Window.gameObject.SetActive(true);
-			this.m_Window.AppearAnimation(null);
+			this.m_FadeAnimator.gameObject.SetActive(true);
+			this.m_FadeAnimator.AppearAnimation(null);
 			this.HasPlayerSeenWindow = true;
 		}
 		public void Dispose()
@@ -321,12 +321,8 @@ namespace VisualAdjustments2.UI
 		[SerializeField]
 		[UsedImplicitly]
 		public OwlcatButton m_SettingsBtn;
-		[SerializeField]
-		[UsedImplicitly]
-		public WindowAnimator m_Window;
-		[SerializeField]
-		[UsedImplicitly]
-		public TextMeshProUGUI m_Title;
+		public FadeAnimator m_FadeAnimator;
+		public TextMeshProUGUI m_Header;
 		public bool m_WindowShow;
 		public bool m_Init;
 		public IDisposable m_OnClickDispose;

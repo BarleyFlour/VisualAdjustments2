@@ -32,7 +32,7 @@ namespace VisualAdjustments2.UI
             base.BindViewImplementation();
             base.AddDisposable(this.ViewModel.slot.Subscribe((int i) =>
             {
-                var animstyle = Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemBlueprint?.VisualParameters?.AnimStyle;
+                var animstyle = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemVisualParameters?.AnimStyle;
                 if (animstyle != null) this.m_DropDown.value = WeaponOverrideVM.m_AnimToInt[(WeaponAnimationStyle)animstyle];
                 var viewVM = this.ViewModel.SelectFromSettings(this.m_DropDown.value);
                 if (viewVM != null)
@@ -41,7 +41,7 @@ namespace VisualAdjustments2.UI
                 }
                 else this.ViewModel.m_ListViewVM?.Value?.TryUnselectEntity(this.ViewModel.m_ListViewVM.Value.SelectedEntity.Value);
             }));
-            var animstyle2 = Game.Instance.SelectionCharacter.SelectedUnit.Value?.Unit?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemBlueprint?.VisualParameters?.AnimStyle;
+            var animstyle2 = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value?.View?.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItemVisualParameters?.AnimStyle;
             if (animstyle2 != null) this.m_DropDown.value = WeaponOverrideVM.m_AnimToInt[(WeaponAnimationStyle)animstyle2];
             //base.AddDisposable(this.animStyle.Subscribe((WeaponAnimationStyle i) => { this.m_ListViewVM.Value.TrySelectEntity(SelectFromSettings()); }));
             base.AddDisposable(this.ViewModel.hand.Subscribe((bool i) =>
@@ -57,13 +57,13 @@ namespace VisualAdjustments2.UI
                 else this.ViewModel.m_ListViewVM?.Value?.TryUnselectEntity(this.ViewModel.m_ListViewVM.Value.SelectedEntity.Value);
             }));
             m_DropDown.value = 0;
-            m_SlotButtons.OnClickPage(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Body.CurrentHandEquipmentSetIndex);
+            m_SlotButtons.OnClickPage(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Body.CurrentHandEquipmentSetIndex);
             // this.ViewModel.slot.Value = ;
             m_ToggleGroup.PrimOrSec.Value = true;
             m_ListPCView.Bind(ViewModel.m_ListViewVM.Value);
             this.AddDisposable(ViewModel.m_ListViewVM.Subscribe(this.m_ListPCView.Bind));
-            if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
-            if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.HandsEquipment?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
+            if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
+            if (Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.HandsEquipment?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
             if (Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.MainHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.MainHand?.UpdateWeaponEnchantmentFx(true);
             if(Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.OffHand?.VisibleItem != null) Game.Instance.UI.Common.DollRoom.m_AvatarHands?.m_ActiveSet?.OffHand?.UpdateWeaponEnchantmentFx(true);
             //  this.m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit);

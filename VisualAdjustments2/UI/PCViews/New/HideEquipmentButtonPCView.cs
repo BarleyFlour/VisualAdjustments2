@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.UI.MVVM._PCView.ServiceWindows.Inventory.VisualSettings;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -18,14 +19,14 @@ namespace VisualAdjustments2.UI
     {
         public void SetOption(bool state)
         {
-            var settings = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.GetSettings();
+            var settings = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.GetSettings();
             if (settings == null) return;
             switch (type)
             {
                 case HideButtonType.Class_Equipment:
                     {
                         settings.HideEquipmentDict[(ItemsFilter.ItemType)type] = state;
-                        Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.UpdateBackpackVisibility(state);
+                        Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.View?.CharacterAvatar.UpdateBackpackVisibility(state);
                         break;
                     }
                 case HideButtonType.Mythic_Things:
@@ -33,15 +34,15 @@ namespace VisualAdjustments2.UI
                         settings.HideEquipmentDict[(ItemsFilter.ItemType)type] = state;
                         if(state == true)
                         {
-                            Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar?.SetAdditionalVisualSettings(null);
+                            Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.View?.CharacterAvatar?.SetAdditionalVisualSettings(null);
                             Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.SetAdditionalVisualSettings(null);
                            // Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.ApplyAdditionalVisualSettings();
                            // Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.ApplyAdditionalVisualSettings();
                         }
                         else
                         {
-                            var charclass = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit.Progression?.GetVisualSettingsProvider()?.GetAdditionalVisualSettings();
-                            Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar?.SetAdditionalVisualSettings(charclass);
+                            var charclass = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value.Progression?.GetVisualSettingsProvider()?.GetAdditionalVisualSettings();
+                            Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.View?.CharacterAvatar?.SetAdditionalVisualSettings(charclass);
                             Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.SetAdditionalVisualSettings(charclass);
                            // Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.ApplyAdditionalVisualSettings();
                            // Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.ApplyAdditionalVisualSettings();
@@ -57,15 +58,15 @@ namespace VisualAdjustments2.UI
             }
             Kingmaker.Game.Instance?.SelectionCharacter?.CurrentSelectedCharacter?.View?.VAUpdate();
         }
-        public void SetupFromVisualSettingsView(CharacterVisualSettingsEntityView old)
+        public void SetupFromVisualSettingsView(CharacterVisualSettingsEntityPCView old)
         {
-            this.m_Toggle = old.m_Toggle;
+            this.m_Toggle = old.m_Button;
             this.m_Label = old.m_Label;
             UnityEngine.Component.DestroyImmediate(old);
         }
         bool GetCheckState()
         {
-            var settings = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.GetSettings();
+            var settings = Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.GetSettings();
             if (settings == null) return false;
             if(settings.HideEquipmentDict.TryGetValue((ItemsFilter.ItemType)type,out var value))
             {

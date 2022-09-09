@@ -119,7 +119,7 @@ namespace VisualAdjustments2.UI
                     case VisualWindowType.FXViewer:
                         if (this.FXViewerVM.Value == null)
                         {
-                            base.AddDisposable(this.FXViewerVM.Value = new FXViewerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit));
+                            base.AddDisposable(this.FXViewerVM.Value = new FXViewerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value));
                             return;
                         }
                         return;
@@ -133,7 +133,7 @@ namespace VisualAdjustments2.UI
                     case VisualWindowType.EEPicker:
                         if (this.EEPickerVM.Value == null)
                         {
-                            base.AddDisposable(this.EEPickerVM.Value = new EEPickerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit));
+                            base.AddDisposable(this.EEPickerVM.Value = new EEPickerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value));
                             return;
                         }
                         return;

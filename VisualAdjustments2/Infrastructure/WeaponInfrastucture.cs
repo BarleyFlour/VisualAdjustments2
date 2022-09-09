@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.Visual.Particles.FxSpawnSystem;
 using UnityEngine;
 
 namespace VisualAdjustments2.Infrastructure
@@ -22,10 +24,10 @@ namespace VisualAdjustments2.Infrastructure
     // public class WeaponInfrastucture
     //  {
     //[HarmonyPatch(typeof(UnitViewHandSlotData), "VisibleItemBlueprint", MethodType.Getter)]
-    [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.VisibleItemBlueprint), MethodType.Getter)]
+    [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.VisibleItemVisualParameters), MethodType.Getter)]
     public static class UnitViewHandsSlotData_VisibleItemBlueprint_Patch
     {
-        public static void Postfix(UnitViewHandSlotData __instance, ref BlueprintItemEquipmentHand __result)
+        public static void Postfix(UnitViewHandSlotData __instance, ref WeaponVisualParameters __result)
         {
             try
             {
@@ -38,7 +40,7 @@ namespace VisualAdjustments2.Infrastructure
                     var WeaponOverride = characterSettings.WeaponOverrides.FirstOrDefault(b => b.Slot == __instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) && b?.AnimStyle == bp && __instance?.m_IsMainHand == b?.MainOrOffHand);
                     if (WeaponOverride != null)
                     {
-                        __result = ResourcesLibrary.TryGetBlueprint<BlueprintItemEquipmentHand>(WeaponOverride.GUID);
+                        __result = ResourcesLibrary.TryGetBlueprint<BlueprintItemEquipmentHand>(WeaponOverride.GUID).VisualParameters;
                     }
                 }
             }
@@ -51,7 +53,7 @@ namespace VisualAdjustments2.Infrastructure
     [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.UpdateWeaponEnchantmentFx))]
     public static class UnitViewHandSlotData_UpdateWeaponEnchantmentFX_Patch
     {
-        public static GameObject RespawnFx(GameObject prefab, ItemEntity item)
+        public static IFxHandle RespawnFx(GameObject prefab, ItemEntity item)
         {
             WeaponSlot weaponSlot = item?.HoldingSlot as WeaponSlot;
             var weaponSnap = weaponSlot?.FxSnapMap;
@@ -80,14 +82,15 @@ namespace VisualAdjustments2.Infrastructure
                 }
                 if (__instance.IsInHand && isVisible)
                 {
-                    if (!characterSettings.CurrentFXs.ContainsKey(__instance.Slot.MaybeItem)) characterSettings.CurrentFXs[__instance.Slot.MaybeItem] = new List<GameObject>();
+                    if (!characterSettings.CurrentFXs.ContainsKey(__instance.Slot.MaybeItem)) characterSettings.CurrentFXs[__instance.Slot.MaybeItem] = new List<IFxHandle>();
                     foreach (var enchantOverride in characterSettings.EnchantOverrides)
                     {
                         if ((__instance.Owner.View.HandsEquipment?.Sets?.Keys?.ToList().IndexOf(__instance?.Slot?.HandsEquipmentSet) == enchantOverride.Slot) && __instance.Slot.IsPrimaryHand == enchantOverride.MainOrOffHand)
                         {
                             foreach (var enchant in __instance.m_EnchantmentFxObjects.ToTempList())
                             {
-                                GameObject.Destroy(enchant);
+                                enchant.HandleDestroy();
+                               // GameObject.Destroy(enchant);
                                 __instance.m_EnchantmentFxObjects.Remove(enchant);
                             }
                             if (enchantOverride.GUID == "Hide")
@@ -141,12 +144,12 @@ namespace VisualAdjustments2.Infrastructure
                             var weapon = isOffhand ?
                                     ___m_Unit?.Body?.SecondaryHand?.MaybeItem :
                                     ___m_Unit?.Body?.PrimaryHand?.MaybeItem;
-                            characterSettings.CurrentFXs.TryGetValue(weapon, out List<GameObject> fxObjects);
+                            characterSettings.CurrentFXs.TryGetValue(weapon, out List<IFxHandle> fxObjects);
                             if (fxObjects != null)
                             {
                                 foreach (var fxObject in fxObjects)
                                 {
-                                    DollRoom.UnscaleFxTimes(fxObject);
+                                    DollRoom.UnscaleFxTimes(fxObject.SpawnedObject);
                                 }
                             }
                         }

@@ -70,23 +70,23 @@ namespace VisualAdjustments2.UI
         public ReactiveProperty<CharGenPortraitVM> PreviewVM = new();
         public ReactiveProperty<CharGenPortraitPhaseVM> PickerVM = new();
 
-        public void OnCharacterChanged(UnitDescriptor data)
+        public void OnCharacterChanged(UnitReference data)
         {
-            this.PickerVM.Value.SelectedPortrait.Value = this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(a => a.PortraitData == data.Unit.Portrait);
+            this.PickerVM.Value.SelectedPortrait.Value = this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(a => a.PortraitData == data.Value.Portrait);
         }
         //Onchar changed stuff
         public PortraitPickerVM()
         {
-            base.AddDisposable(this.PreviewVM.Value = new(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Portrait));
-            base.AddDisposable(this.PickerVM.Value = new PickerVMTst(new Kingmaker.UnitLogic.Class.LevelUp.LevelUpController(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit, true, Kingmaker.UnitLogic.Class.LevelUp.LevelUpState.CharBuildMode.CharGen)));
-            base.AddDisposable(this.PickerVM.Value.SelectedPortrait.Value = this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(a => a.PortraitData == Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.Portrait));
+            base.AddDisposable(this.PreviewVM.Value = new(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Portrait));
+            base.AddDisposable(this.PickerVM.Value = new PickerVMTst(new Kingmaker.UnitLogic.Class.LevelUp.LevelUpController(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value, true, Kingmaker.UnitLogic.Class.LevelUp.LevelUpState.CharBuildMode.CharGen)));
+            base.AddDisposable(this.PickerVM.Value.SelectedPortrait.Value = this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(a => a.PortraitData == Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Portrait));
             base.AddDisposable(this.PickerVM?.Value?.SelectedPortrait?.Subscribe(b => 
             { 
                 if(this.PreviewVM?.Value?.IsDisposed is not false or null) this.PreviewVM?.Value?.Dispose();
                 if (b?.PortraitData != null)
                 {
                     this.PreviewVM.Value = new(b.PortraitData);
-                    Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.UISettings.SetPortrait(b.GetBlueprintPortrait());
+                    Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.UISettings.SetPortrait(b.GetBlueprintPortrait());
                 }
             }));
             base.AddDisposable(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(OnCharacterChanged));
