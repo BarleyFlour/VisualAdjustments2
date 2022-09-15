@@ -3,7 +3,7 @@
   <Import Project="..\packages\Aze.Publicise.MSBuild.Task.1.0.0\build\Aze.Publicise.MSBuild.Task.props" Condition="Exists('..\packages\Aze.Publicise.MSBuild.Task.1.0.0\build\Aze.Publicise.MSBuild.Task.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <InstallDir Condition=" '$(InstallDir)' == '' ">$(WrathPathDebug)</InstallDir>
+    <InstallDir Condition=" '$(InstallDir)' == '' ">$(WrathPath)</InstallDir>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -139,11 +139,12 @@
     <Compile Include="UI\VMs\New\VisualAdjustments2VM.cs" />
   </ItemGroup>
   <ItemGroup>
+    
     <Reference Include="0Harmony">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\0Harmony.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp_public, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -151,81 +152,81 @@
       <HintPath>..\lib\Assembly-CSharp_public.dll</HintPath>
     </Reference>
     <Reference Include="Boo.Lang">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Boo.Lang.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Boo.Lang.dll</HintPath>
     </Reference>
     <Reference Include="DXTCompressor">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\DXTCompressor.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\DXTCompressor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Framework">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Microsoft.Build.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Owlcat.Runtime.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Owlcat.Runtime.Core.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Owlcat.Runtime.UI_public">
       <HintPath>..\lib\Owlcat.Runtime.UI_public.dll</HintPath>
     </Reference>
     <Reference Include="Owlcat.Runtime.UniRx">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Owlcat.Runtime.UniRx.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Owlcat.Runtime.UniRx.dll</HintPath>
     </Reference>
     <Reference Include="Owlcat.Runtime.Validation">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Owlcat.Runtime.Validation.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Owlcat.Runtime.Validation.dll</HintPath>
     </Reference>
     <Reference Include="Owlcat.Runtime.Visual">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Owlcat.Runtime.Visual.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Owlcat.Runtime.Visual.dll</HintPath>
     </Reference>
     <Reference Include="Owlcat.SharedTypes">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Owlcat.SharedTypes.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Owlcat.SharedTypes.dll</HintPath>
     </Reference>
     <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Rewired_Core.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Rewired_Core.dll</HintPath>
     </Reference>
     <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UniRx">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UniRx.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UniRx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule_public, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\UnityEngine.AssetBundleModule_public.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ClothModule">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule_public">
       <HintPath>..\lib\UnityEngine.CoreModule_public.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule_public">
       <HintPath>..\lib\UnityEngine.UIModule_public.dll</HintPath>
@@ -234,7 +235,7 @@
       <HintPath>..\lib\UnityEngine.UI_public.dll</HintPath>
     </Reference>
     <Reference Include="UnityModManager">
-      <HintPath>F:\Games\Steam\steamapps\common\Pathfinder Second Adventure Debug\Wrath_Data\Managed\UnityModManager\UnityModManager.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityModManager\UnityModManager.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
