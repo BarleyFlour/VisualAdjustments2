@@ -15,7 +15,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kingmaker.Blueprints.Items.Weapons;
-using Kingmaker.UI.Common;
 using Kingmaker.Visual.Particles.FxSpawnSystem;
 using UnityEngine;
 
@@ -102,13 +101,19 @@ namespace VisualAdjustments2.Infrastructure
                         {
                             foreach (var enchant in __instance.m_EnchantmentFxObjects.ToTempList())
                             {
-                                enchant.HandleDestroy();
+                                FxHelper.Destroy(enchant,true);
+                                // enchant?.SpawnedObject?.SetActive(false);
+                                //  GameObject.DestroyImmediate(enchant?.SpawnedObject);
+                                //  enchant?.HandleDestroy();
                                 // GameObject.Destroy(enchant);
-                                __instance.m_EnchantmentFxObjects.Remove(enchant);
+                                // __instance.m_EnchantmentFxObjects.Remove(enchant);
                             }
 
                             if (enchantOverride.GUID == "Hide")
                             {
+#if DEBUG
+                                Main.Logger.Log("Tried Remove Enchant");
+#endif
                                 continue;
                             }
 
@@ -128,7 +133,7 @@ namespace VisualAdjustments2.Infrastructure
         }
     }
 
-    [HarmonyPatch(typeof(DollRoom), nameof(DollRoom.UpdateAvatarRenderers))]
+    [HarmonyPatch(typeof(DollRoom), "UpdateAvatarRenderers")]
     public static class DollRoom_UpdateAvatarRenderers_Patchf
     {
         //static FastInvoker<DollRoom, GameObject, object> UnscaleFxTimes;
@@ -180,33 +185,5 @@ namespace VisualAdjustments2.Infrastructure
             }
         }
     }
-
-    [HarmonyPatch(typeof(UnitViewHandsEquipment), nameof(UnitViewHandsEquipment.UpdateBeltPrefabs))]
-    static class UnitViewHandsEquipment_UpdateBeltPrefabs_Patch
-    {
-        private static void Postfix(UnitViewHandsEquipment __instance, GameObject[] ___m_ConsumableSlots)
-        {
-            try
-            {
-#if DEBUG
-                Main.Logger.Log($"Updating {__instance.Owner.CharacterName}'s Belt items");
-#endif
-                if (!__instance.Owner.IsPlayerFaction) return;
-#if DEBUG
-                Main.Logger.Log($"{__instance.Owner.CharacterName} is of PlayerFaction");
-#endif
-                // Main.logger.Log("UpdateBeltPrefabs");
-                var characterSettings = __instance.Owner.GetSettings();
-                if (characterSettings.HideEquipmentDict[(ItemsFilter.ItemType)11])
-                {
-                    Main.Logger.Log($"tried to hide {__instance.Owner.CharacterName}'s belt items");
-                    foreach (var go in ___m_ConsumableSlots) go?.SetActive(false);
-                }
-            }
-            catch (Exception ex)
-            {
-                Main.Logger.Error(ex.ToString());
-            }
-        }
-    }
+    //}
 }
