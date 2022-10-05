@@ -59,3 +59,11 @@ A successor mod to Visual Adjustments featuring:
 
 ## Note
 * It is best to leave the base-game visual settings on default.
+
+## Known fixes 
+In case of a broken doll (leading to the level up screen not showing for the afflicted character) try version 1.0.12> then recreate the doll by 
+1) Selecting any character 
+2) Go to the visual menu, any tab but EXCEPT the doll tab
+4) Select the afflicted character
+5) Go to the doll tab and recreate the doll
+6) Delete the doll
