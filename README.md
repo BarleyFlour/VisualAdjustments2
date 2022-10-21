@@ -36,6 +36,9 @@ A successor mod to Visual Adjustments featuring:
 **Q:** What does the "EE" in "EE Picker" mean? 
 
 **A:** It means "EquipmentEntity", they are individual pieces of equipment e.g. a Helmet, Hair, Gloves, Etc.
+
+**Q:** My game is lagging after an update, whats that about?
+**A:** It is simply the mod re-caching all of the needed assets, this will only happen once when the game has been updated.
 ##
 
 
