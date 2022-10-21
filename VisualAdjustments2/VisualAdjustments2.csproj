@@ -75,6 +75,7 @@
     <Compile Include="Infrastructure\CharacterScale.cs" />
     <Compile Include="Infrastructure\CharacterSettings.cs" />
     <Compile Include="Infrastructure\ClassEquipment.cs" />
+    <Compile Include="Infrastructure\CustomPortraitPetEyeFixer.cs" />
     <Compile Include="Infrastructure\EeInfraStructure.cs" />
     <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\Extension_Methods.cs" />

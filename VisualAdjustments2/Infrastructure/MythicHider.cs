@@ -103,21 +103,26 @@ namespace VisualAdjustments2.Infrastructure
         }
     }*/
     [HarmonyPatch(typeof(UnitProgressionData), nameof(UnitProgressionData.GetVisualSettingsProvider))]
-    public static class GetAdditionalVisualSettings_Patch
+    public static class GetVisualSettingsProvider_Patch
     {
         public static bool Prefix(UnitProgressionData __instance, ref ClassData __result)
         {
             try
             {
                 var unit = __instance.Owner;
-                if (!unit.IsPlayerFaction) return true;
-                if (unit == null) return true;
+                if (unit?.IsPlayerFaction != true) return true;
                 var settings = unit.Unit.GetSettings();
                 if (settings == null) return true;
                 if (settings.HideEquipmentDict.TryGetValue((ItemsFilter.ItemType)100, out var value) && value == true)
                 {
                     __result = null;
+                    unit.Progression.m_AdditionalVisualSettingsDisabled = 1;
                     return false;
+                }
+                else
+                {
+                    unit.Progression.m_AdditionalVisualSettingsDisabled = 0;
+                    return true;
                 }
             }
             catch (Exception e)

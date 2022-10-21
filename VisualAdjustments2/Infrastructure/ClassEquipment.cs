@@ -55,7 +55,7 @@ namespace VisualAdjustments2.Infrastructure
                     }
                     return list;
                 }*/
-                if (!__instance.Data.IsStoryCompanion() || (__instance.Data.IsStoryCompanion() && __instance.Data.Descriptor.ForcceUseClassEquipment))
+                if (!__instance.Data.IsStoryCompanion() || (__instance.Data.IsStoryCompanion() && __instance.Data.Descriptor.ForceUseClassEquipment))
                 {
                     foreach (var clothesLink in links)
                     {

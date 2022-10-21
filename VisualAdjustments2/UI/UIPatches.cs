@@ -1769,6 +1769,8 @@ namespace VisualAdjustments2
             {
                 if ((int)type == 50)
                 {
+                    var list = new List<int>();
+                    list.Any(a => a.Equals(0));
                     ServiceWindowsVM_ShowWindow_Patch.pcview?.ViewModel?.Dispose();
                     ServiceWindowsVM_ShowWindow_Patch.swPCView?.ViewModel?.Dispose();
                     return;

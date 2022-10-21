@@ -50,6 +50,8 @@ namespace VisualAdjustments2.UI
                 throw;
             }
         }
+        
+
         private string unit_GUID;
         public void OnUnitChanged(UnitReference descriptor)
         {
@@ -347,7 +349,7 @@ namespace VisualAdjustments2.UI
                 Texture2D texture2D = skinRamps[index];
                 if (rampsAvailability[index])
                 {
-                    CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, num, texture2D, delegate
+                    GetTextureSelectorItemVM(entitiesCollection, num, texture2D, delegate
                     {
                         dollState.SetSkinColor(i1);
                     });
@@ -387,7 +389,7 @@ namespace VisualAdjustments2.UI
                         dollState.SetEyesColor(i1);
                        // this.LevelUpController.Unit.SaveDollState(dollState);
                     };
-                    CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, num, texture2D, setter);
+                    GetTextureSelectorItemVM(entitiesCollection, num, texture2D, setter);
                     if (dollState.EyesColorRampIndex == index)
                     {
                         selector.TrySelectEntity(entitiesCollection[num]);
@@ -522,7 +524,7 @@ namespace VisualAdjustments2.UI
                     dollState.SetHornsColor(i1);
                     //this.LevelUpController.Unit.SaveDollState(dollState);
                 };
-                CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
+                GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
                 if (dollState.HairRampIndex == index)
                 {
                     selector.TrySelectEntity(entitiesCollection[index]);
@@ -630,7 +632,7 @@ namespace VisualAdjustments2.UI
                     dollState.SetHairColor(i1);
                     //this.LevelUpController.Unit.SaveDollState(dollState);
                 };
-                CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
+                GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
                 if (dollState.HairRampIndex == index)
                 {
                     selector.TrySelectEntity(entitiesCollection[index]);
@@ -722,7 +724,7 @@ namespace VisualAdjustments2.UI
                     dollState.SetWarpaintColor(i1, index);
                     //this.LevelUpController.Unit.SaveDollState(dollState);
                 };
-                CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, index2, texture2D, setter);
+                GetTextureSelectorItemVM(entitiesCollection, index2, texture2D, setter);
                 if (dollState.Warprints[index].PaintRampIndex == index2)
                 {
                     selector.TrySelectEntity(entitiesCollection[index2]);
@@ -834,7 +836,7 @@ namespace VisualAdjustments2.UI
                     dollState.SetTattooColor(i1, index);
                     //this.LevelUpController.Unit.SaveDollState(dollState);
                 };
-                CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, index2, texture2D, setter);
+                GetTextureSelectorItemVM(entitiesCollection, index2, texture2D, setter);
                 if (dollState.Tattoos[index].PaintRampIndex == index2)
                 {
                     selector.TrySelectEntity(entitiesCollection[index2]);
@@ -926,7 +928,7 @@ namespace VisualAdjustments2.UI
                     dollState.SetPrimaryEquipColor(i1);
                     //this.LevelUpController.Unit.SaveDollState(dollState);
                 };
-                CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
+                GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
                 if (dollState.EquipmentRampIndex == index)
                 {
                     selector.TrySelectEntity(entitiesCollection[index]);
@@ -957,7 +959,7 @@ namespace VisualAdjustments2.UI
                     dollState.SetSecondaryEquipColor(i1);
                     //this.LevelUpController.Unit.SaveDollState(dollState);
                 };
-                CharGenAppearancePhaseVM.GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
+                GetTextureSelectorItemVM(entitiesCollection, index, texture2D, setter);
                 if (dollState.EquipmentRampIndexSecondary == index)
                 {
                     selector.TrySelectEntity(entitiesCollection[index]);

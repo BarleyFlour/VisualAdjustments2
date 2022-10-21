@@ -59,19 +59,5 @@ namespace VisualAdjustments2.Infrastructure
 
         }
 #endif
-#if DEBUG
-
-        [HarmonyPatch(typeof(DlcStore),nameof(DlcStore.IsPurchased))]
-        public static class thingie
-        {
-            //[HarmonyPatch(typeof(DlcStoreSteam),nameof(DlcStoreSteam.IsPurchased)), HarmonyPrefix]
-            public static bool Prefix(ref bool __result)
-            {
-                __result = true;
-                return false;
-            }
-
-        }
-#endif
     }
 }

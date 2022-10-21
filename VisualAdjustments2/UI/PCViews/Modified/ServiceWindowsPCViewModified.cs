@@ -44,10 +44,10 @@ namespace VisualAdjustments2.UI
             {
                 if (vm != null)
                 {
-                    this.m_Background.AppearAnimation(null);
+                    this.m_Background?.AppearAnimation(null);
                     return;
                 }
-                this.m_Background.DisappearAnimation(null);
+                this.m_Background?.DisappearAnimation(null);
             }));
         }
         public override void DestroyViewImplementation()

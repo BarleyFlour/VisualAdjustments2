@@ -51,7 +51,7 @@ namespace VisualAdjustments2.UI
                 }
             }
             settings.ClassOverride.GUID = guid;
-            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForcceUseClassEquipment = guid != "";
+            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForceUseClassEquipment = guid != "";
             //Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.RebuildOutfit();

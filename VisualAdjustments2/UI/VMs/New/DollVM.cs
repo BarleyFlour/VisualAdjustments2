@@ -31,7 +31,7 @@ namespace VisualAdjustments2.UI
                 var data = dolldata.SetupForStoryCompanion();
                 //dolldata.Default = data;
                 dolldata.SetDefault(data);
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForcceUseClassEquipment = true;//Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit; //They naked if we use HasCustomOutfit
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForceUseClassEquipment = true;//Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.GetSettings().ClassOverride.HasCustomOutfit; //They naked if we use HasCustomOutfit
                 Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.RebuildCharacter();
                 OnCharacterChanged(true);
             }
@@ -45,7 +45,7 @@ namespace VisualAdjustments2.UI
             try
             {
                 Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Parts.Remove<UnitPartDollData>();
-                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForcceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().ClassOverride.HasCustomOutfit;
+                Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForceUseClassEquipment = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().ClassOverride.HasCustomOutfit;
                 OnCharacterChanged(true);
             }
             catch (Exception e)
