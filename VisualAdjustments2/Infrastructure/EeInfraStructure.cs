@@ -10,20 +10,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kingmaker.Items;
+using Kingmaker.UI.MVVM._VM.ServiceWindows.Inventory;
 
 namespace VisualAdjustments2.Infrastructure
 {
-
-
-
-    [HarmonyLib.HarmonyPatch(typeof(UnitEntityData),nameof(UnitEntityData.OnViewDidAttach))]
+    [HarmonyLib.HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.OnViewDidAttach))]
     public static class UnitEntityData_CreateView_Patch
     {
         public static void Postfix(UnitEntityData __instance)
         {
             try
             {
-                if (__instance.View?.CharacterAvatar != null && __instance.IsPlayerFaction && Kingmaker.Game.Instance.Player.AllCharacters.Contains(__instance))
+                if (__instance.View?.CharacterAvatar != null && __instance.IsPlayerFaction &&
+                    Kingmaker.Game.Instance.Player.AllCharacters.Contains(__instance))
                 {
                     foreach (var action in __instance.GetSettings()?.EeSettings?.EEs)
                     {
@@ -33,22 +33,28 @@ namespace VisualAdjustments2.Infrastructure
                 }
             }
             catch (Exception e)
-            { Main.Logger.Error(e.ToString());}
+            {
+                Main.Logger.Error(e.ToString());
+            }
         }
     }
+
     public abstract class EEApplyAction
     {
         public EEApplyAction(string guid)
         {
             GUID = guid;
         }
+
         public string GUID;
-        public abstract void Apply(UnitEntityData unitData,CharacterSettings settings);
+        public abstract void Apply(UnitEntityData unitData, CharacterSettings settings);
     }
+
     public class AddEE : EEApplyAction
     {
         public EE_Applier.ColorInfo PrimaryCol;
         public EE_Applier.ColorInfo SecondaryCol;
+
         public AddEE(string guid) : base(guid)
         {
         }
@@ -61,11 +67,13 @@ namespace VisualAdjustments2.Infrastructure
             var applier = new EE_Applier(this.GUID, EE_Applier.ActionType.Add);
             applier.Primary = this.PrimaryCol;
             applier.Secondary = this.SecondaryCol;
-            if (settings.EeSettings?.EEs?.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add) == false) settings.EeSettings.EEs.Add(applier);
-            this.PrimaryCol?.Apply(loadedEE,character);
+            if (settings.EeSettings?.EEs?.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Add) ==
+                false) settings.EeSettings.EEs.Add(applier);
+            this.PrimaryCol?.Apply(loadedEE, character);
             this.SecondaryCol?.Apply(loadedEE, character);
         }
     }
+
     public class RemoveEE : EEApplyAction
     {
         public RemoveEE(string guid) : base(guid)
@@ -76,12 +84,10 @@ namespace VisualAdjustments2.Infrastructure
         {
             var character = unitData.View.CharacterAvatar;
             var loadedEE = ResourcesLibrary.TryGetResource<EquipmentEntity>(GUID);
-            if (character.EquipmentEntities.Any(a => a.name == loadedEE.name)) character.RemoveEquipmentEntity(loadedEE);
-            if(!settings.EeSettings.EEs.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Remove)) settings.EeSettings.EEs.Add(new EE_Applier(this.GUID, EE_Applier.ActionType.Remove));
+            if (character.EquipmentEntities.Any(a => a.name == loadedEE.name))
+                character.RemoveEquipmentEntity(loadedEE);
+            if (!settings.EeSettings.EEs.Any(a => a.GUID == this.GUID && a.actionType == EE_Applier.ActionType.Remove))
+                settings.EeSettings.EEs.Add(new EE_Applier(this.GUID, EE_Applier.ActionType.Remove));
         }
-    }
-    public class EeInfraStructure
-    {
-        
     }
 }

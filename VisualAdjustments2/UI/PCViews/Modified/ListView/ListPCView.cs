@@ -66,6 +66,44 @@ namespace VisualAdjustments2.UI
             this.SlotPrefab = m_Template;
             this.VirtualList = oldcomp.VirtualList;
         }
+        public virtual void SetupFromChargenListForVoice(CharGenFeatureSelectorPCView oldcomp, bool LeftOrRight, string LabelText)
+        {
+            try
+            {
+#if DEBUG
+                Main.Logger.Log("SetupFromChargenListForVoice");
+#endif
+                var newpcview = oldcomp.gameObject.AddComponent<ListSearchPCView>();
+                newpcview.SetupFromChargenFeatureSearchPCView(oldcomp.m_CharGenFeatureSearchView);
+                this.m_CharGenFeatureSearchView = newpcview;
+                this.m_SearchRequestEntitiesNotFound = oldcomp.m_SearchRequestEntitiesNotFound;
+                // if (m_Template == null)
+                {
+                    var instantiated = UnityEngine.GameObject.Instantiate(oldcomp.SlotPrefabs.First());
+                    var cmp = instantiated.ConvertToListPCViewForVoice();
+                    if (LeftOrRight)
+                    {
+                        instantiated.transform.Find("TextContainer").SetAsLastSibling();
+                        instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.left = 20;
+                    }
+                    else
+                    {
+                        instantiated.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>().padding.right = 12;
+                    }
+
+                    m_Template = cmp;
+                }
+                this.m_SelectorHeader = this.transform.Find("HeaderH2/Label").GetComponent<TextMeshProUGUI>();
+
+                this.m_SelectorHeader.text = LabelText;
+                this.SlotPrefab = m_Template;
+                this.VirtualList = oldcomp.VirtualList;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+            }
+        }
         public void UpdateNotFoundText(bool val)
         {
             this.m_SearchRequestEntitiesNotFound.gameObject.SetActive(!val);

@@ -21,6 +21,7 @@ namespace VisualAdjustments2.UI
     {
         public PickerVMTst(LevelUpController levelUpController) : base(levelUpController)
         {
+            base.AddDisposable(this);
         }
 
         public override void CollectCharacterPortraits(LevelUpController levelUpController)
@@ -69,14 +70,21 @@ namespace VisualAdjustments2.UI
     {
         public ReactiveProperty<CharGenPortraitVM> PreviewVM = new();
         public ReactiveProperty<CharGenPortraitPhaseVM> PickerVM = new();
+        public VoicePickerVM VoiceVM;
 
         public void OnCharacterChanged(UnitReference data)
         {
-            this.PickerVM.Value.SelectedPortrait.Value = this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(a => a.PortraitData == data.Value.Portrait);
+
+                this.PickerVM.Value.SelectedPortrait.Value =
+                    this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(
+                        a => a.PortraitData == data.Value.Portrait);
+                this.VoiceVM.supressVoiceLine = true;
+                this.VoiceVM.SetupSelected();
         }
         //Onchar changed stuff
         public PortraitPickerVM()
         {
+            base.AddDisposable(this.VoiceVM = new VoicePickerVM());
             base.AddDisposable(this.PreviewVM.Value = new(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Portrait));
             base.AddDisposable(this.PickerVM.Value = new PickerVMTst(new Kingmaker.UnitLogic.Class.LevelUp.LevelUpController(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value, true, Kingmaker.UnitLogic.Class.LevelUp.LevelUpState.CharBuildMode.CharGen)));
             base.AddDisposable(this.PickerVM.Value.SelectedPortrait.Value = this.PickerVM.Value.AllPortraitsCollection.FirstOrDefault(a => a.PortraitData == Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Portrait));
@@ -89,6 +97,7 @@ namespace VisualAdjustments2.UI
                     Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.UISettings.SetPortrait(b.GetBlueprintPortrait());
                 }
             }));
+            
             base.AddDisposable(Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Subscribe(OnCharacterChanged));
 
         }

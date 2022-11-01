@@ -30,9 +30,11 @@ using Kingmaker.View.Animation;
 using Kingmaker.Blueprints.Items.Equipment;
 using Kingmaker.Blueprints.Items.Shields;
 using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.Visual.Sound;
 
 namespace VisualAdjustments2
 {
+    
     public class SerializedResourceList
     {
         [JsonProperty] public string Version;
@@ -91,6 +93,32 @@ namespace VisualAdjustments2
     }
     public static class ResourceLoader
     {
+        private static Dictionary<BlueprintUnitAsksList,string> m_AllVoices;
+        public static Dictionary<BlueprintUnitAsksList,string> AllVoices
+        {
+            get
+            {
+                if (m_AllVoices == null)
+                {
+                    m_AllVoices = new();
+                    var voices = Kingmaker.Cheats.Utilities.GetAllBlueprints().Entries
+                        .Where(a => a.Type == typeof(BlueprintUnitAsksList)).Select(a =>
+                            ResourcesLibrary.TryGetBlueprint<BlueprintUnitAsksList>(a.Guid)).Where(b => b.GetComponent<UnitAsksComponent>().Selected.HasBarks != null).ToList();
+                    foreach (var voice in voices)
+                    {
+                        if (voice.DisplayName.IsEmpty())
+                        {
+                            m_AllVoices.Add(voice,ResourceLoader.ProcessEEName(voice.name));
+                        }
+                        else
+                        {
+                            m_AllVoices.Add(voice,voice.DisplayName);
+                        }
+                    }
+                }
+                return m_AllVoices;
+            }
+        }
         public static Sprite LoadImage(string folder, string file, Vector2Int size)
         {
 #if true
@@ -1174,7 +1202,7 @@ namespace VisualAdjustments2
                 {
                     newarray.Add("Any");
                 }
-                else if ((s != "EE" && s != "KEE" && s != "Buff" && s != "NPC") && s.Length > 1)
+                else if ((s != "EE" && s != "KEE" && s != "Buff" && s != "NPC" && s != "CMP") && s.Length > 1)
                 {
                     StringBuilder SB = new System.Text.StringBuilder(s);
                     var b = 0;

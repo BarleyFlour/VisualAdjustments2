@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UniRx;
 using Owlcat.Runtime.UniRx;
 using Kingmaker.UI.MVVM._VM.Utility;
+using UnityEngine;
 
 namespace VisualAdjustments2.UI
 {
@@ -16,6 +17,8 @@ namespace VisualAdjustments2.UI
 
         public Kingmaker.UI.MVVM._PCView.CharGen.Portrait.CharGenPortraitPCView m_PortraitPreview;
 
+        public VoicePickerPCView voicePickerPCView;
+        
         public override void BindViewImplementation()
         {
             base.BindViewImplementation();
@@ -24,6 +27,8 @@ namespace VisualAdjustments2.UI
             this.m_PortraitPreview.Bind(this.ViewModel.PreviewVM.Value);
             base.AddDisposable(this.ViewModel.PreviewVM.Value);
             base.AddDisposable(this.ViewModel.PreviewVM.Subscribe(b => this.m_PortraitPreview.Bind(b)));
+            this.voicePickerPCView.Bind(base.ViewModel?.VoiceVM);
+            voicePickerPCView.fadeAnimator.DisappearAnimation();
             this.m_PortraitPicker.transform.Find("ContentWrapper/PortraitSelector/DefaultPortraitGroup/Scroll View/Viewport/Content/PortraitGroupView(Clone)/Expandable").gameObject.SetActive(false);
         }
 
@@ -38,6 +43,7 @@ namespace VisualAdjustments2.UI
         {
             this.m_PortraitPicker.Initialize();
             this.m_PortraitPreview.Initialize();
+            this.gameObject.SetActive(false);
         }
     }
 }

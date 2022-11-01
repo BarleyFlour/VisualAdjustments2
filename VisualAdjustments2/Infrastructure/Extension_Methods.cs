@@ -401,6 +401,81 @@ namespace VisualAdjustments2.Infrastructure
                 throw e;
             }
         }
+        public static ListViewItemPCView ConvertToListPCViewForVoice(this CharGenFeatureSelectorItemPCView oldview)
+        {
+            try
+            {
+                #if DEBUG
+                Main.Logger.Log("started creating ListPCViewForVoice");
+                #endif
+                var newcomp = oldview.gameObject.AddComponent<ListViewItemPCView>();
+                newcomp.m_Button = oldview.m_Button;
+                newcomp.m_DisplayName = oldview.m_FeatureNameText;
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("CollapseButton"));
+                // UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("RecommendationPlace"));
+                /*foreach(var comp in oldview.transform.Find("IconPlace").GetComponents<Component>().Concat(oldview.transform.Find("IconPlace").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+                foreach (var comp in oldview.transform.Find("TextContainer/Description").GetComponents<Component>().Concat(oldview.transform.Find("TextContainer/Description").GetComponentInChildren<Component>(true)))
+                {
+                    UnityEngine.Component.DestroyImmediate(comp, true);
+                }
+
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("IconPlace"), true);
+                UnityEngine.GameObject.DestroyImmediate(oldview.transform.Find("TextContainer/Description"), true);*/
+                var iconplace = oldview.transform.Find("IconPlace");
+
+                //iconplace.localScale = new Vector3((float)0.75, (float)0.75, (float)0.75);
+                var bg = iconplace.Find("BG");
+                bg.Find("Icon").gameObject.SetActive(false);
+                var acronym = bg.Find("Acronym");
+                acronym.gameObject.SetActive(true);
+                var acronymTMP = acronym.GetComponent<TextMeshProUGUI>();
+                acronymTMP.fontSizeMax = 46;
+                acronymTMP.fontSize = 46;
+                acronymTMP.verticalAlignment = VerticalAlignmentOptions.Geometry;
+                acronymTMP.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                //  newcomp.m_IconText = acronymTMP;
+                oldview.transform.Find("TextContainer/Description").gameObject.SetActive(false);
+                UnityEngine.Component.Destroy(oldview);
+
+                var canvas = Kingmaker.Game.Instance.UI.Canvas != null ? Kingmaker.Game.Instance.UI.Canvas.transform.Find("ServiceWindowsPCView") : Kingmaker.Game.Instance.UI.GlobalMapCanvas.transform.Find("ServiceWindowsConfig");
+                var InstantiatedButton = UnityEngine.GameObject.Instantiate(canvas.Find("Background/Windows/InventoryPCView/Inventory/Stash/StashContainer/PC_FilterBlock/FilterPCView/SwitchBar/NonUsable"), newcomp.transform);
+                var icon = InstantiatedButton.Find("Icon");
+                icon.gameObject.SetActive(true);
+                newcomp.m_AddButton = InstantiatedButton.GetComponent<OwlcatMultiButton>();
+                UnityEngine.Component.DestroyImmediate(icon.gameObject.GetComponent<Image>(), true);
+                //var newtxt = icon.gameObject.AddComponent<TextMeshProUGUI>(acronymTMP);
+               // newtxt.text = "";
+               // newtxt.fontSizeMin = 45;
+               // newcomp.m_IconText = newtxt;
+               // GameObject.DestroyImmediate(newtxt);
+                
+                GameObject.DestroyImmediate(acronym.GetComponent<TextMeshProUGUI>());
+                var imgobj = new GameObject("Imgparent");
+                imgobj.transform.SetParent(icon);
+                imgobj.transform.localPosition = Vector3.zero;
+                imgobj.transform.localScale = new Vector3((float)0.25, (float)0.25, (float)0.25);
+                var img = imgobj.gameObject.AddComponent<Image>();
+                img.sprite = ResourceLoader.LoadImage("","Playbutton.png",new(128,128));
+                
+                #if DEBUG
+                Main.Logger.Log("Created Voice button");
+                #endif
+                
+                iconplace.gameObject.SetActive(false);
+
+                var Layout = oldview.gameObject.GetComponent<HorizontalLayoutGroupWorkaround>();
+                Layout.spacing = 10;
+                return newcomp;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Error(e.ToString());
+                throw e;
+            }
+        }
         public static ClassOutfitSelectorButtonPCView ConvertToClassButtonPCView(this CharGenFeatureSelectorItemPCView oldview)
         {
             try

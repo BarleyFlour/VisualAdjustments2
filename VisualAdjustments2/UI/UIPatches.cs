@@ -12,6 +12,7 @@ using Kingmaker.EntitySystem.Entities;
 using Kingmaker.ResourceLinks;
 using Kingmaker.UI;
 using Kingmaker.UI.Common;
+using Kingmaker.UI.Common.Animations;
 using Kingmaker.UI.MVVM;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Appearance;
 using Kingmaker.UI.MVVM._PCView.CharGen.Phases.Common;
@@ -216,15 +217,17 @@ namespace VisualAdjustments2
                     newcomp.m_WarpaintSelectorPcView = appearancecomponent.m_WarpaintSelectorPcView;
 
 
-
-                    newcomp.m_VisualSettingsView = newdollroom.Find("CharacterVisualSettingsView").GetComponent<CharacterVisualSettingsPCView>();
-                    newcomp.m_VisualSettingsButton = newdollroom.Find("CharacterVisualSettingsView/OptionButton").GetComponent<OwlcatButton>();
+                    newcomp.m_VisualSettingsView = newdollroom.Find("CharacterVisualSettingsView")
+                        .GetComponent<CharacterVisualSettingsPCView>();
+                    newcomp.m_VisualSettingsButton = newdollroom.Find("CharacterVisualSettingsView/OptionButton")
+                        .GetComponent<OwlcatButton>();
                     var vssettingsview = newdollroom.Find("CharacterVisualSettingsView");
-                    newcomp.m_SettingsContainer = vssettingsview.gameObject.transform.Find("WindowContainer").gameObject;
+                    newcomp.m_SettingsContainer =
+                        vssettingsview.gameObject.transform.Find("WindowContainer").gameObject;
                     vssettingsview.Find("WindowContainer").localPosition =
-                        new Vector3(0,-376,0);
+                        new Vector3(0, -376, 0);
                 }
-               // newcomp.m_VisualSettingsView.gameObject.transform.Find("WindowContainer").localPosition = new Vector3(0,-350,0);
+                // newcomp.m_VisualSettingsView.gameObject.transform.Find("WindowContainer").localPosition = new Vector3(0,-350,0);
                 //Instantiate new things
                 {
                     var RaceSelector = UnityEngine.Object.Instantiate(newappearance.Find(
@@ -524,9 +527,11 @@ namespace VisualAdjustments2
                                         GlobalCharacterSettings.Instance.useGlobalBuffProfile =
                                             !view.ViewModel.IsOn.Value;
                                         FXViewerPCView?.ViewModel?.OnUnitChanged();
-                                        FXViewerPCView.m_FixScaleButton.ViewModel.IsOn.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings.FixSize;
+                                        FXViewerPCView.m_FixScaleButton.ViewModel.IsOn.Value = Game.Instance
+                                            .SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings
+                                            .FixSize;
                                         //if (Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value != null && !GlobalCharacterSettings.Instance.useGlobalBuffProfile)
-                                         //   FXViewerPCView.m_FixScaleButton.Bind(new CharacterVisualSettingsEntityVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings.FixSize,FXViewerPCView.SetFixScale));//FXViewerPCView.m_FixScaleButton.ViewModel.IsOn.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings.FixSize;
+                                        //   FXViewerPCView.m_FixScaleButton.Bind(new CharacterVisualSettingsEntityVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings.FixSize,FXViewerPCView.SetFixScale));//FXViewerPCView.m_FixScaleButton.ViewModel.IsOn.Value = Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.GetSettings().BuffSettings.FixSize;
                                     });
                                 view.Bind(vmnew);
                                 view.m_Label.text = "Global Profile";
@@ -897,12 +902,15 @@ namespace VisualAdjustments2
                                 var newButtonTemplate = GameObject.Instantiate(buttontemplate);
                                 Component.DestroyImmediate(newButtonTemplate.GetComponent<VerticalLayoutGroup>());
                                 var HLGNewComp = newButtonTemplate.gameObject.AddComponent<HorizontalLayoutGroup>();
-                                var MultiButtonLE = newButtonTemplate.Find("MultiButton").EnsureComponent<LayoutElement>();
+                                var MultiButtonLE = newButtonTemplate.Find("MultiButton")
+                                    .EnsureComponent<LayoutElement>();
                                 newButtonTemplate.Find("HorizontalLayoutGroup").gameObject
                                     .AddComponent<LayoutElement>().minWidth = 45;
                                 MultiButtonLE.minWidth = 65;
-                                GameObject.Destroy(newButtonTemplate.transform.Find("MultiButton/LeftArrowImage").gameObject);
-                                GameObject.Destroy(newButtonTemplate.transform.Find("MultiButton/RightArrowImage").gameObject);
+                                GameObject.Destroy(newButtonTemplate.transform.Find("MultiButton/LeftArrowImage")
+                                    .gameObject);
+                                GameObject.Destroy(newButtonTemplate.transform.Find("MultiButton/RightArrowImage")
+                                    .gameObject);
                                 MultiButtonLE.ignoreLayout = false;
                                 if ((enumValues.Length % vertRows) > 0) OverFlow = (enumValues.Length % vertRows);
                                 for (int i = 0; i < ((vertRows)); i++)
@@ -1058,7 +1066,7 @@ namespace VisualAdjustments2
                                     ColPicker.localPosition = new Vector3(398, -283, 0);
                                     var window = ColPicker.Find("WindowContainer");
                                     window.Find("HeaderBlock").gameObject.SetActive(false);
-                                    window.GetComponent<VerticalLayoutGroup>().padding.top = 30;
+                                    window.GetComponent<VerticalLayoutGroup>().padding.top = 35;
                                     window.localPosition = new Vector3(193, 42, 0);
                                     var oldcomp2 = ColPicker.GetComponent<CharacterVisualSettingsPCView>();
                                     var newcomp2 = ColPicker.gameObject.AddComponent<EEColorPickerView>();
@@ -1077,7 +1085,7 @@ namespace VisualAdjustments2
                                         HLG.padding.right = 10;
 
                                         var windowVertLayout = window.GetComponent<VerticalLayoutGroup>();
-                                        windowVertLayout.padding.top = 5;
+                                        windowVertLayout.padding.top = 35;
 
                                         var TopLayout = new GameObject("TopLayout");
                                         var TopLE = TopLayout.AddComponent<LayoutElement>();
@@ -1292,10 +1300,87 @@ namespace VisualAdjustments2
                     PortraitListView.transform
                         .Find("ContentWrapper/PortraitSelector/CustomPortraitGroup/ChangePortraitButton")
                         .localPosition = new(-330, -460, 0);
+
+                    // Voice picker button
+                    var backgroundButton = UnityEngine.Object.Instantiate(
+                        newgameobject.transform.Find("DollRoom(Clone)/CharacterVisualSettingsView"),
+                        portraitpcview.transform);
+
+                    backgroundButton.Find("OptionButton").gameObject.SetActive(false);
+                    
+                    
+                    
+                    var somenewobj = new GameObject("ButtonParent", typeof(HorizontalLayoutGroup));
+                    somenewobj.transform.SetParent(portraitpcview.transform);
+
+
+                    var somebutton = UnityEngine.GameObject.Instantiate(
+                        newgameobject.transform.parent.Find(
+                            "InventoryPCView/Inventory/SmartItemButton/FrameImage/Button"), somenewobj.transform);
+                    var somebuttonHLG = somenewobj.EnsureComponent<HorizontalLayoutGroup>();
+
+                    somebuttonHLG.padding.top = 60;
+                    somebuttonHLG.padding.left = -30;
+                    somebuttonHLG.padding.right = -30;
+
+                    somebutton.Find("FinneanLabel").gameObject.SetActive(false);
+                    somebutton.Find("StashLabel").GetComponent<TextMeshProUGUI>().text = "Voice Selector";
+                    var somebuttonLE = somebutton.gameObject.AddComponent<LayoutElement>();
+                    somenewobj.transform.localScale = Vector3.one;
+                    somenewobj.transform.localPosition = new(495, -412, 0);
+
+                    var WindowContainer = backgroundButton.Find("WindowContainer");
+
+                    var WindowContainerVertList = WindowContainer.GetComponent<VerticalLayoutGroup>();
+                    WindowContainerVertList.padding.top = 5;
+                    WindowContainerVertList.padding.bottom = -70;
+                    WindowContainer.transform.localPosition = new(584, -438, 0);
+                        
+                    var VoiceListSelector = GameObject.Instantiate(
+                        gameobject3.transform.parent.parent.parent.parent.parent
+                            .Find(
+                                "ChargenPCView/ContentWrapper/DetailedViewZone/ChargenFeaturesDetailedPCView/FeatureSelectorPlace/FeatureSelectorView")
+                            .gameObject, WindowContainer);
+                    WindowContainer.Find("TextMask").gameObject.SetActive(false);
+                    WindowContainer.Find("HeaderBlock").gameObject.SetActive(false);
+                    WindowContainer.Find("SettingsEntity").gameObject.SetActive(false);
+                    WindowContainer.Find("SettingsEntity (1)").gameObject.SetActive(false);
+                    WindowContainer.Find("SettingsEntity (2)").gameObject.SetActive(false);
+                    VoiceListSelector.transform.localPosition = new(620, 0, 0);
+                    VoiceListSelector.transform.localScale = Vector3.one;
+                    VoiceListSelector.GetComponent<VerticalLayoutGroupWorkaround>().padding.bottom = 100;
+
+                    
+                    WindowContainer.gameObject.SetActive(false);
+                    
+                    var fadeanim = WindowContainer.GetComponent<FadeAnimator>();
+
+                    
+                    
+                    somebutton.GetComponent<OwlcatButton>().OnLeftClick.AddListener(() =>
+                    {
+                        if (WindowContainer.gameObject.activeSelf)
+                        {
+                            fadeanim.DisappearAnimation();
+                        }
+                        else
+                        {
+                            fadeanim.AppearAnimation();
+                        }
+                    });
+                    var voicePickerPCView = WindowContainer.gameObject.AddComponent<VoicePickerPCView>();
+                    var oldcompV = VoiceListSelector.GetComponent<CharGenFeatureSelectorPCView>();
+                    var newcompV = VoiceListSelector.AddComponent<ListPCView>();
+                    newcompV.SetupFromChargenListForVoice(oldcompV, true, "Voice");
+                    
+                    
+                    
+                    
+                    voicePickerPCView.m_VoiceList = newcompV;
+                    portraitpcview.voicePickerPCView = voicePickerPCView; 
                     portraitpcview.Initialize();
                     //
-
-
+                    voicePickerPCView.fadeAnimator = fadeanim;
                     newselectionbar.transform.localScale = oldbar.transform.localScale;
                     //Add visual adjustments Window PCView
                     {
@@ -1468,7 +1553,7 @@ namespace VisualAdjustments2
                     HLG.padding.right = 10;
 
                     var windowVertLayout = window.GetComponent<VerticalLayoutGroup>();
-                    windowVertLayout.padding.top = 5;
+                    windowVertLayout.padding.top = 35;
 
                     var TopLayout = new GameObject("TopLayout");
                     var TopLE = TopLayout.AddComponent<LayoutElement>();

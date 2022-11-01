@@ -26,7 +26,7 @@ namespace VisualAdjustments2.UI
             base.BindViewImplementation();
             m_AddButton?.OnLeftClick?.AddListener(OnClickAddRemove);
             this.m_DisplayName.text = base.ViewModel.DisplayName.IsNullOrEmpty() ? base.ViewModel.InternalName : base.ViewModel.DisplayName;
-            if(this.m_IconText != null) this.m_IconText.text = base.ViewModel.AddOrRemove ? ListViewItemVM.Add : ListViewItemVM.Remove;
+            if(this.m_IconText != null && !hasImage) this.m_IconText.text = base.ViewModel.AddOrRemove ? ListViewItemVM.Add : ListViewItemVM.Remove;
         }
         public override void DestroyViewImplementation()
         {
@@ -48,5 +48,6 @@ namespace VisualAdjustments2.UI
         public TextMeshProUGUI m_DisplayName;
         public TextMeshProUGUI m_IconText;
         public OwlcatMultiButton m_AddButton;
+        public bool hasImage = false;
     }
 }

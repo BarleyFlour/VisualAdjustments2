@@ -100,6 +100,7 @@
     <Compile Include="UI\Misc\ToggleGroup.cs" />
     <Compile Include="UI\PCViews\Modified\CharGenAppearancePhaseDetailedPCViewModified.cs" />
     <Compile Include="UI\PCViews\New\HideEquipmentButtonPCView.cs" />
+    <Compile Include="UI\PCViews\New\VoicePickerPCView.cs" />
     <Compile Include="UI\PCViews\New\WeaponOverridePCView.cs" />
     <Compile Include="UI\VMs\Modified\ColorSelectorSliderVM.cs" />
     <Compile Include="UI\VMs\Modified\ListView\BuffButtonVM.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="UI\VMs\New\ClassOutfitSelectorVM.cs" />
     <Compile Include="UI\VMs\New\ListViewItemEquipmentVM.cs" />
     <Compile Include="UI\VMs\New\PortraitPickerVM.cs" />
+    <Compile Include="UI\VMs\New\VoicePickerVM.cs" />
     <Compile Include="UI\VMs\New\WeaponOverrideVM.cs" />
     <Compile Include="UI\VMs\Modified\VisualWindowsMenuEntityVM.cs" />
     <Compile Include="UI\VMs\New\CreateDollVM.cs" />
