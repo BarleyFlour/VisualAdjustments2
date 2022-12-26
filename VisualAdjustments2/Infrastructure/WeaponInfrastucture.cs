@@ -134,7 +134,7 @@ namespace VisualAdjustments2.Infrastructure
         }
     }
 
-    [HarmonyPatch(typeof(DollRoom), "UpdateAvatarRenderers")]
+    [HarmonyPatch(typeof(DollRoom), nameof(DollRoom.UpdateAvatarRenderers))]
     public static class DollRoom_UpdateAvatarRenderers_Patchf
     {
         //static FastInvoker<DollRoom, GameObject, object> UnscaleFxTimes;

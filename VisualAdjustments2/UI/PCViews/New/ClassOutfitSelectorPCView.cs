@@ -21,6 +21,11 @@ namespace VisualAdjustments2.UI
 
         public ReactiveProperty<ClassOutfitSelectorButtonPCView> Selected = new();
         public Dictionary<string /*GUID*/, ClassOutfitSelectorButtonPCView> Buttons = new();
+
+        public ClassOutfitSelectorPCView()
+        {
+        }
+
         public void SetupSelectedState()
         {
             foreach (ClassOutfitSelectorButtonPCView button in this.Buttons.Values)
@@ -52,7 +57,7 @@ namespace VisualAdjustments2.UI
             }
             settings.ClassOverride.GUID = guid;
             Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.Descriptor.ForceUseClassEquipment = guid != "";
-            //Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Unit.View.UpdateClassEquipment();
+            Kingmaker.Game.Instance.SelectionCharacter.SelectedUnit.Value.Value.View.UpdateClassEquipment();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.UpdateCharacter();
             Kingmaker.Game.Instance.UI.Common.DollRoom.m_Avatar.RebuildOutfit();
             Kingmaker.Game.Instance.UI.Common.DollRoom.Unit.View.UpdateClassEquipment();

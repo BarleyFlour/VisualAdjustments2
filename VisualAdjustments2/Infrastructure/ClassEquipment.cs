@@ -60,7 +60,13 @@ namespace VisualAdjustments2.Infrastructure
                     foreach (var clothesLink in links)
                     {
                         EquipmentEntity ee = clothesLink;//.Load(false, false);
-                        if (!__instance.CharacterAvatar.EquipmentEntities.Contains(ee)) __instance.CharacterAvatar.AddEquipmentEntity(ee);
+                        if (!__instance.CharacterAvatar.EquipmentEntities.Contains(ee) &&
+                            !settings.EeSettings.EEs.Any(a =>
+                                a.GUID == ResourceLoader.NameToEEInfo[clothesLink.name].GUID))
+                        {
+                            __instance.CharacterAvatar.AddEquipmentEntity(ee);
+                        }
+                        else continue;
                         if (clothesLink.PrimaryColorsProfile?.Ramps?.Count is >= 0 or not null)
                         {
                             if (settings.ClassOverride.PrimaryIndex is not null or >= 0)
