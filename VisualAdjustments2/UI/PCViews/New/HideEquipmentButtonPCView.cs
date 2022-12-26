@@ -61,6 +61,13 @@ namespace VisualAdjustments2.UI
                     Kingmaker.Game.Instance.UI?.Common?.DollRoom?.AvatarHands?.UpdateBeltPrefabs();
                     break;
                 }
+                case HideButtonType.Weapon:
+                {
+                    settings.HideEquipmentDict[(ItemsFilter.ItemType)type] = state;
+                    Kingmaker.Game.Instance?.SelectionCharacter?.CurrentSelectedCharacter?.View?.HandsEquipment?.UpdateAll();
+                    Kingmaker.Game.Instance.UI?.Common?.DollRoom?.AvatarHands?.UpdateAll();
+                    break; 
+                }
                 default:
                 {
                     settings.HideEquipmentDict[(ItemsFilter.ItemType)type] = state;

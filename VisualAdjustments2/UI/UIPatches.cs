@@ -62,7 +62,7 @@ namespace VisualAdjustments2
         Shoulders = 9,
         Wrist = 10,
         Usable = 11, //Belt items
-        Weapon = 1,
+        Weapon = 0,
         Class_Equipment = 99,
         Mythic_Things = 100
     };

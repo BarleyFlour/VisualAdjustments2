@@ -347,7 +347,7 @@ namespace VisualAdjustments2.Infrastructure
                         continue;
                     }
                     var bp = ResourcesLibrary.TryGetBlueprint<BlueprintAbility>(ability.Guid);
-                    if (!bp.HiddenInInspector && bp.GetBeneficialBuffs())
+                    if ((!bp?.HiddenInInspector == true) && (bp?.GetBeneficialBuffs() == true))
                     {
                         //Main.Logger.Log(ability.Name);
                         var firstMatch = wack2.FirstOrDefault(b => b.DisplayName == bp.m_DisplayName);

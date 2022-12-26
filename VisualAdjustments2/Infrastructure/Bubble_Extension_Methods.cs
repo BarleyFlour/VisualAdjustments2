@@ -37,13 +37,16 @@ namespace VisualAdjustments2.Infrastructure
         {
             if (action != null)
             {
-                if (action is ContextActionApplyBuff applyBuff && applyBuff.Buff != null && ((applyBuff.Buff.FxOnStart != null && applyBuff.Buff.FxOnStart.AssetId != "") || (applyBuff.Buff.FxOnRemove != null && applyBuff.Buff.FxOnRemove.AssetId != "")))
+                if (action is ContextActionApplyBuff applyBuff && applyBuff.Buff != null &&
+                    ((applyBuff.Buff.FxOnStart != null && applyBuff.Buff.FxOnStart.AssetId != "") ||
+                     (applyBuff.Buff.FxOnRemove != null && applyBuff.Buff.FxOnRemove.AssetId != "")))
                 {
                     return true;
                 }
                 else if (action is ContextActionsOnPet enchantPet)
                 {
-                    if (enchantPet.Actions.Actions.Where(a => a != null).Where(a => a.GetBeneficialBuffs()).Any()) return true;
+                    if (enchantPet.Actions.Actions.Where(a => a != null).Where(a => a.GetBeneficialBuffs()).Any())
+                        return true;
                 }
                 else if (action is ContextActionPartyMembers applyParty)
                 {
@@ -53,7 +56,8 @@ namespace VisualAdjustments2.Infrastructure
                 else if (action is ContextActionSpawnAreaEffect spawnArea)
                 {
                     //  LogVerbose(level, $"recursing into spawnArea");
-                    if (spawnArea.AreaEffect.TryGetComponent<AbilityAreaEffectBuff>(out var areaBuff) && areaBuff.Buff.IsBeneficial())
+                    if (spawnArea.AreaEffect.TryGetComponent<AbilityAreaEffectBuff>(out var areaBuff) &&
+                        areaBuff.Buff.IsBeneficial())
                     {
                         //  LogVerbose(level, $"FOUND: areaBuff {areaBuff.name}");
                         return true;
@@ -73,40 +77,54 @@ namespace VisualAdjustments2.Infrastructure
                                 takeNo = false;
                         }
                     }
+
                     if (takeNo)
                     {
                         foreach (var b in maybe.IfFalse.Actions.Where(a => a.GetBeneficialBuffs()))
-                            if (b) return true;
+                            if (b)
+                                return true;
                     }
+
                     if (takeYes)
                     {
                         foreach (var b in maybe.IfTrue.Actions.Where(a => a.GetBeneficialBuffs()))
-                            if (b) return b;
+                            if (b)
+                                return b;
                     }
                 }
                 else if (action is ContextActionCastSpell spellCast)
                 {
-                    ;
-                    if (spellCast.Spell.GetBeneficialBuffs())
+                    if (spellCast?.Spell?.GetBeneficialBuffs() == true)
                         return true;
                 }
             }
+
             return false;
         }
+
         public static bool GetBeneficialBuffs(this BlueprintAbility spell)
         {
-            //LogVerbose(level, $"getting buffs for spell: {spell.Name}");
-            // spell = spell.DeTouchify();
-            // LogVerbose(level, $"detouchified-to: {spell.Name}");
-            if (spell.TryGetComponent<AbilityEffectRunAction>(out var runAction))
+            try
             {
-                return runAction.Actions.Actions.Where(a => a.GetBeneficialBuffs()).Any();
+                //LogVerbose(level, $"getting buffs for spell: {spell.Name}");
+                // spell = spell.DeTouchify();
+                // LogVerbose(level, $"detouchified-to: {spell.Name}");
+                if (spell.TryGetComponent<AbilityEffectRunAction>(out var runAction))
+                {
+                    return runAction.Actions.Actions.Where(a => a.GetBeneficialBuffs()).Any();
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (Exception e)
             {
-                return false;
+                Main.Logger.Error(e.ToString());
+                throw;
             }
         }
+
         public static bool GetBeneficialBuffs(this BlueprintActivatableAbility spell)
         {
             //LogVerbose(level, $"getting buffs for spell: {spell.Name}");
@@ -121,11 +139,13 @@ namespace VisualAdjustments2.Infrastructure
                 return false;
             }
         }
+
         public static bool TryGetComponent<T>(this BlueprintScriptableObject bp, out T component)
         {
             component = bp.GetComponent<T>();
             return component != null;
         }
+
         public static bool IsBeneficial(this BlueprintBuff buff)
         {
             var contextApply = buff.GetComponent<AddFactContextActions>();

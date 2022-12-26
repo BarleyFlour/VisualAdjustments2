@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kingmaker.Blueprints.Items.Weapons;
 using Kingmaker.UI.Common;
+using Kingmaker.UnitLogic.Parts;
 using Kingmaker.Visual.Particles.FxSpawnSystem;
 using UnityEngine;
 
@@ -25,6 +26,30 @@ namespace VisualAdjustments2.Infrastructure
     // public class WeaponInfrastucture
     //  {
     //[HarmonyPatch(typeof(UnitViewHandSlotData), "VisibleItemBlueprint", MethodType.Getter)]
+    [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.ReattachSheath))]
+    public static class UnitViewHandsSlotData_ReattachSheath_Patch
+    {
+        private static bool Prefix(UnitViewHandSlotData __instance, UnitViewHandsEquipment ___m_Equipment)
+        {
+            try
+            {
+                if (!__instance.Owner.IsPlayerFaction) return true;
+                var characterSettings = __instance.Owner.GetSettings();
+                if (characterSettings.HideEquipmentDict[ItemsFilter.ItemType.Weapon])
+                {
+                    __instance.DestroySheathModel();
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Main.Logger.Error(ex.ToString());
+            }
+
+            return true;
+        }
+    }
+
     [HarmonyPatch(typeof(UnitViewHandSlotData), nameof(UnitViewHandSlotData.VisibleItemVisualParameters),
         MethodType.Getter)]
     public static class UnitViewHandsSlotData_VisibleItemBlueprint_Patch
@@ -102,7 +127,7 @@ namespace VisualAdjustments2.Infrastructure
                         {
                             foreach (var enchant in __instance.m_EnchantmentFxObjects.ToTempList())
                             {
-                                FxHelper.Destroy(enchant,true);
+                                FxHelper.Destroy(enchant, true);
                                 // enchant?.SpawnedObject?.SetActive(false);
                                 //  GameObject.DestroyImmediate(enchant?.SpawnedObject);
                                 //  enchant?.HandleDestroy();
@@ -186,6 +211,7 @@ namespace VisualAdjustments2.Infrastructure
             }
         }
     }
+
     [HarmonyPatch(typeof(UnitViewHandsEquipment), nameof(UnitViewHandsEquipment.UpdateBeltPrefabs))]
     static class UnitViewHandsEquipment_UpdateBeltPrefabs_Patch
     {
