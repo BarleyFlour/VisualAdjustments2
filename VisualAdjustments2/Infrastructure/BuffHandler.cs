@@ -15,7 +15,7 @@ namespace VisualAdjustments2.Infrastructure
         {
             if (!__instance.Owner.IsPlayerFaction) return true;
             var settings = __instance.Owner.Unit.GetSettings();
-            if (settings.BuffSettings.fXBlockerHolder.FXGuids.Contains(__instance.Blueprint?.FxOnStart?.AssetId)/* || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceAbility?.AssetGuidThreadSafe) || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceFact?.Blueprint?.AssetGuidThreadSafe)*/)
+            if (settings.BuffSettings.fXBlockerHolder.FXGuids.Contains(__instance.Blueprint.FxOnStart?.AssetId)/* || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceAbility?.AssetGuidThreadSafe) || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceFact?.Blueprint?.AssetGuidThreadSafe)*/)
             {
                // Main.Logger.Log(__instance.NameForAcronym + " Blocked");
                 if (settings.BuffSettings.WhiteOrBlackList) return true;
