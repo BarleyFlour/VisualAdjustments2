@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace VisualAdjustments2.Infrastructure
 {
-    [HarmonyPatch(typeof(Buff), "TrySpawnParticleEffect")]
+    [HarmonyPatch(typeof(Buff), nameof(Buff.TrySpawnParticleEffect))]
     public static class TrySpawnParticleEffect_Patch
     {
         public static bool Prefix(Buff __instance)
         {
             if (!__instance.Owner.IsPlayerFaction) return true;
             var settings = __instance.Owner.Unit.GetSettings();
-            if (settings.BuffSettings.fXBlockerHolder.FXGuids.Contains(__instance.Blueprint.FxOnStart.AssetId)/* || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceAbility?.AssetGuidThreadSafe) || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceFact?.Blueprint?.AssetGuidThreadSafe)*/)
+            if (settings.BuffSettings.fXBlockerHolder.FXGuids.Contains(__instance.Blueprint?.FxOnStart?.AssetId)/* || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceAbility?.AssetGuidThreadSafe) || settings.Fx_Settings.fXBlockerHolder.FXBlockers.Any(a => a.AbilityGUID == __instance.SourceFact?.Blueprint?.AssetGuidThreadSafe)*/)
             {
                // Main.Logger.Log(__instance.NameForAcronym + " Blocked");
                 if (settings.BuffSettings.WhiteOrBlackList) return true;
