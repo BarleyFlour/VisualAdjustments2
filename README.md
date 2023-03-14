@@ -32,6 +32,7 @@ A successor mod to Visual Adjustments featuring:
 ## Features
 Custom eye pictures.
 Just place a .png in the custom portrait folder named "Eye.png" and it will appear as the eye image (though you may have to reload a save/transition into a new area for it to update if you just switched portrait). The appropriate aspect ratio is 22:3 (i.e. 22 units of width for each 3 units of height)
+
 [Sample Eye Image](https://github.com/BarleyFlour/VisualAdjustments2/blob/master/Eye.png)
 
 ## FAQ
