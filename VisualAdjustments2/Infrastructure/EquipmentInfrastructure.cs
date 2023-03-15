@@ -35,42 +35,4 @@ namespace VisualAdjustments2.Infrastructure
             else return true;
         }
     }
-
-    [HarmonyPatch(typeof(UnitViewHandsEquipment), nameof(UnitViewHandsEquipment.UpdateBeltPrefabs))]
-    public static class bro
-    {
-        private static void Postfix(UnitViewHandsEquipment __instance)
-        {
-            try
-            {
-                if (!__instance.Owner.IsPlayerFaction) return;
-                var characterSettings = __instance.Owner.GetSettings();
-#if  DEBUG
-                Main.Logger.Log($"Updating {__instance.Owner.CharacterName}'s Belt items, Hide is set to {characterSettings.HideEquipmentDict[ItemsFilter.ItemType.Usable]}");
-#endif
-                if (characterSettings.HideEquipmentDict[ItemsFilter.ItemType.Usable])
-                {
-                    foreach (var go in __instance.m_ConsumableSlots)
-                    {
-#if  DEBUG
-                        Main.Logger.Log($"Tried to hide belt item: {go.name}");
-#endif
-                        go.SetActive(false);
-                    }
-                }
-                /*if (characterSettings.overrideScale && !__instance.Character.PeacefulMode)
-                {
-                    foreach (var go in ___m_ConsumableSlots)
-                    {
-                        if (go == null) continue;
-                        go.transform.localScale *= ViewManager.GetRealSizeScale(__instance.Owner.View, characterSettings);
-                    }
-                }*/
-            }
-            catch (Exception ex)
-            {
-                Main.Logger.Error(ex.ToString());
-            }
-        }
-    }
 }
