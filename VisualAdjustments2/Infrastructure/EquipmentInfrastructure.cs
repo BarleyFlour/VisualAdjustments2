@@ -52,6 +52,7 @@ namespace VisualAdjustments2.Infrastructure
                 {
                     foreach (var go in __instance.m_ConsumableSlots)
                     {
+                        if (go == null) continue;
 #if  DEBUG
                         Main.Logger.Log($"Tried to hide belt item: {go.name}");
 #endif

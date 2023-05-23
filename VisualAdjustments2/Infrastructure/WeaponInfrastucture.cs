@@ -230,7 +230,9 @@ namespace VisualAdjustments2.Infrastructure
                 var characterSettings = __instance.Owner.GetSettings();
                 if (characterSettings.HideEquipmentDict[(ItemsFilter.ItemType)11])
                 {
+                    #if DEBUG
                     Main.Logger.Log($"tried to hide {__instance.Owner.CharacterName}'s belt items");
+                    #endif
                     foreach (var go in ___m_ConsumableSlots) go?.SetActive(false);
                 }
             }

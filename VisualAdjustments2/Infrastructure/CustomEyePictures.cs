@@ -38,10 +38,12 @@ namespace VisualAdjustments2.Infrastructure
                 catch (Exception e)
                 {
                     Main.Logger.Error(e.ToString());
-                    return true;
+                    return true; 
                 }
             }
         }*/
+
+
         [HarmonyPatch(typeof(PortraitData),methodType:MethodType.Getter, methodName:nameof(PortraitData.PetEyePortrait))]
         public class CustomPortraitPetEyeFixer
         {
@@ -55,7 +57,7 @@ namespace VisualAdjustments2.Infrastructure
                 {
                     if (loadedSprites.TryGetValue(__instance.CustomId, out var thing))
                     {
-                        __result = thing;
+                        __result = thing; 
                     }
                     else
                     {

@@ -76,7 +76,6 @@
     <Compile Include="Infrastructure\CharacterSettings.cs" />
     <Compile Include="Infrastructure\ClassEquipment.cs" />
     <Compile Include="Infrastructure\CustomEyePictures.cs" />
-    <Compile Include="Infrastructure\CustomPortraitPetEyeFixer.cs" />
     <Compile Include="Infrastructure\EeInfraStructure.cs" />
     <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\Extension_Methods.cs" />
@@ -147,6 +146,10 @@
     <Reference Include="0Harmony">
       <HintPath>$(InstallDir)\Wrath_Data\Managed\0Harmony.dll</HintPath>
     </Reference>
+    
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\lib\Assembly-CSharp_public.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(InstallDir)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
@@ -172,6 +175,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(InstallDir)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Owlcat.Runtime.UI">
+      <HintPath>..\lib\Owlcat.Runtime.UI_public.dll</HintPath>
     </Reference>
     <Reference Include="Owlcat.Runtime.UI_public">
       <HintPath>..\lib\Owlcat.Runtime.UI_public.dll</HintPath>
