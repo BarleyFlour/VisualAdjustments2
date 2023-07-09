@@ -80,6 +80,7 @@
     <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\Extension_Methods.cs" />
     <Compile Include="Infrastructure\LoaderGameObject.cs" />
+    <Compile Include="Infrastructure\LoadingScreenToolTip.cs" />
     <Compile Include="Infrastructure\MythicHider.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
     <Compile Include="Infrastructure\WeaponInfrastucture.cs" />
