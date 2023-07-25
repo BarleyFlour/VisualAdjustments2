@@ -368,6 +368,7 @@ namespace VisualAdjustments2.Infrastructure
                     var ResultToArray = eeinfolist.ToArray();
                     SaveCachedResources<SerializedEEList>(ResultToArray);
                     ResourceLoader.m_AllEEs = eeinfolist;
+                    EELoaded = true;
                     //return task2.Result;
                 }
                 else throw (new Exception("GUID Map null, what? how?"));
