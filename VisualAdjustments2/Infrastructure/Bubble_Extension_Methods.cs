@@ -123,7 +123,7 @@ namespace VisualAdjustments2.Infrastructure
                 // LogVerbose(level, $"detouchified-to: {spell.Name}");
                 if (spell.TryGetComponent<AbilityEffectRunAction>(out var runAction))
                 {
-                    return runAction.Actions.Actions.Where(a => a.GetBeneficialBuffs()).Any();
+                    return runAction.Actions?.Actions?.Where(a => a.GetBeneficialBuffs()).Any() == true;
                 }
                 else
                 {
@@ -144,7 +144,7 @@ namespace VisualAdjustments2.Infrastructure
             // LogVerbose(level, $"detouchified-to: {spell.Name}");
             if (spell.TryGetComponent<AbilityEffectRunAction>(out var runAction))
             {
-                return runAction.Actions.Actions.Where(a => a.GetBeneficialBuffs()).Any();
+                return runAction.Actions?.Actions?.Where(a => a.GetBeneficialBuffs()).Any() == true;
             }
             else
             {
