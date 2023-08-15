@@ -45,19 +45,19 @@ namespace VisualAdjustments2.Infrastructure
                 }
                 else if (action is ContextActionsOnPet enchantPet)
                 {
-                    if (enchantPet.Actions.Actions.Where(a => a != null).Where(a => a.GetBeneficialBuffs()).Any())
+                    if (enchantPet.Actions?.Actions?.Where(a => a != null).Where(a => a?.GetBeneficialBuffs() == true).Any() == true)
                         return true;
                 }
                 else if (action is ContextActionPartyMembers applyParty)
                 {
-                    foreach (var subEffect in applyParty.Action.Actions.Where(a => a != null))
+                    if (applyParty.Action?.Actions?.Where(a => a != null).Any() == true)
                         return true;
                 }
                 else if (action is ContextActionSpawnAreaEffect spawnArea)
                 {
                     //  LogVerbose(level, $"recursing into spawnArea");
-                    if (spawnArea.AreaEffect.TryGetComponent<AbilityAreaEffectBuff>(out var areaBuff) &&
-                        areaBuff.Buff.IsBeneficial())
+                    if (spawnArea.AreaEffect?.TryGetComponent<AbilityAreaEffectBuff>(out var areaBuff) == true &&
+                        areaBuff.Buff?.IsBeneficial() == true)
                     {
                         //  LogVerbose(level, $"FOUND: areaBuff {areaBuff.name}");
                         return true;
@@ -67,29 +67,41 @@ namespace VisualAdjustments2.Infrastructure
                 {
                     bool takeYes = true;
                     bool takeNo = true;
-                    foreach (var c in maybe.ConditionsChecker.Conditions)
+                    var conditions = maybe.ConditionsChecker?.Conditions;
+                    if (conditions != null)
                     {
-                        if (c is ContextConditionIsAlly ally)
+                        foreach (var c in conditions)
                         {
-                            if (ally.Not)
-                                takeYes = false;
-                            else
-                                takeNo = false;
+                            if (c is ContextConditionIsAlly ally)
+                            {
+                                if (ally.Not)
+                                    takeYes = false;
+                                else
+                                    takeNo = false;
+                            }
                         }
                     }
 
                     if (takeNo)
                     {
-                        foreach (var b in maybe.IfFalse.Actions.Where(a => a.GetBeneficialBuffs()))
-                            if (b)
-                                return true;
+                        var buffs = maybe.IfFalse?.Actions?.Where(a => a.GetBeneficialBuffs());
+                        if (buffs != null)
+                        {
+                            foreach (var b in buffs)
+                                if (b)
+                                    return true;
+                        }
                     }
 
                     if (takeYes)
                     {
-                        foreach (var b in maybe.IfTrue.Actions.Where(a => a.GetBeneficialBuffs()))
-                            if (b)
-                                return b;
+                        var buffs = maybe.IfTrue?.Actions?.Where(a => a.GetBeneficialBuffs());
+                        if (buffs != null)
+                        {
+                            foreach (var b in buffs)
+                                if (b)
+                                    return b;
+                        }
                     }
                 }
                 else if (action is ContextActionCastSpell spellCast)

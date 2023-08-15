@@ -38,6 +38,7 @@ namespace VisualAdjustments2.UI
                         Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.View?.CharacterAvatar
                             ?.SetAdditionalVisualSettings(null);
                         Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.SetAdditionalVisualSettings(null);
+                        Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.Progression?.DisableAdditionalVisualSettings();
                         // Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.ApplyAdditionalVisualSettings();
                         // Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.ApplyAdditionalVisualSettings();
                     }
@@ -48,6 +49,7 @@ namespace VisualAdjustments2.UI
                         Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.View?.CharacterAvatar
                             ?.SetAdditionalVisualSettings(charclass);
                         Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.SetAdditionalVisualSettings(charclass);
+                        Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value.Value?.Progression?.EnableAdditionalVisualSettings();
                         // Kingmaker.Game.Instance?.SelectionCharacter?.SelectedUnit?.Value?.Unit?.View?.CharacterAvatar.ApplyAdditionalVisualSettings();
                         // Kingmaker.Game.Instance.UI?.Common?.DollRoom?.m_Avatar?.ApplyAdditionalVisualSettings();
                     }
