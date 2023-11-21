@@ -149,7 +149,7 @@
     </Reference>
     
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\lib\Assembly-CSharp_public.dll</HintPath>
+      <HintPath>..\..\RespecModRepo\RespecWrath\lib\Assembly-CSharp_public.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(InstallDir)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
