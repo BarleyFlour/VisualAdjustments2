@@ -1061,13 +1061,14 @@ namespace VisualAdjustments2
                                             new(156, 156));
                                         var iconGM = ColPicker.Find("OptionButton/Icon");
                                         iconGM.GetComponent<Image>().sprite = newSprite;
+                                        iconGM.localPosition = new((float)-25.5, (float)-25.5, 0);
                                     }
 
-                                    ColPicker.localPosition = new Vector3(398, -283, 0);
+                                    ColPicker.localPosition = new Vector3(-300, -283, 0);
                                     var window = ColPicker.Find("WindowContainer");
                                     window.Find("HeaderBlock").gameObject.SetActive(false);
                                     window.GetComponent<VerticalLayoutGroup>().padding.top = 35;
-                                    window.localPosition = new Vector3(193, 42, 0);
+                                    window.localPosition = new Vector3(921, 66, 0);
                                     var oldcomp2 = ColPicker.GetComponent<CharacterVisualSettingsPCView>();
                                     var newcomp2 = ColPicker.gameObject.AddComponent<EEColorPickerView>();
                                     newcomp2.SetupFromVisualSettings(oldcomp2);
