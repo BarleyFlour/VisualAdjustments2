@@ -100,7 +100,7 @@ namespace VisualAdjustments2
 #if DEBUG
                         Main.Logger.Log(c.NameForAcronym);
 #endif
-                        if (c.StartingItems.Any() && !c.PrestigeClass && !c.ToString().Contains("Scion"))
+                        if (c.StartingItems.Any() && !c.PrestigeClass && !c.ToString().Contains("Scion") && !c.ToString().Contains("PrototypeClass")) // Scion has no outfit, neither does PrototypeClass
                         {
                             m_Classes.Add((c.LocalizedName, c.AssetGuidThreadSafe));
                         }
@@ -597,7 +597,7 @@ namespace VisualAdjustments2
                         layout.minHeight = 35;
                         header.Find("Label").gameObject.SetActive(false);
                         var dropdown = newDropDown.GetComponent<TMP_DropdownWorkaround>();
-                        //Manual list of appropriate Animstyles and Indices so we dont have empety/unused ones.
+                        //Manual list of appropriate Animstyles and Indices so we don't have empty/unused ones.
                         Dictionary<int, WeaponAnimationStyle> m_IntToAnim = new Dictionary<int, WeaponAnimationStyle>();
                         Dictionary<WeaponAnimationStyle, int> m_AnimToInt = new Dictionary<WeaponAnimationStyle, int>();
                         var enumList = new Dictionary<WeaponAnimationStyle, string>()

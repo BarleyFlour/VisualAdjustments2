@@ -29,7 +29,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VisualAdjustments2</RootNamespace>
     <AssemblyName>VisualAdjustments2</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
     <TargetFrameworkProfile />
@@ -80,7 +80,6 @@
     <Compile Include="Infrastructure\EquipmentInfrastructure.cs" />
     <Compile Include="Infrastructure\Extension_Methods.cs" />
     <Compile Include="Infrastructure\LoaderGameObject.cs" />
-    <Compile Include="Infrastructure\LoadingScreenToolTip.cs" />
     <Compile Include="Infrastructure\MythicHider.cs" />
     <Compile Include="Infrastructure\ResourceLoader.cs" />
     <Compile Include="Infrastructure\WeaponInfrastucture.cs" />
@@ -145,7 +144,7 @@
   <ItemGroup>
     
     <Reference Include="0Harmony">
-      <HintPath>$(InstallDir)\Wrath_Data\Managed\0Harmony.dll</HintPath>
+      <HintPath>$(InstallDir)\Wrath_Data\Managed\UnityModManager\0Harmony.dll</HintPath>
     </Reference>
     
     <Reference Include="Assembly-CSharp">

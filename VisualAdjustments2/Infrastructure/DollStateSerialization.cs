@@ -19,6 +19,8 @@ using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker;
 using Owlcat.Runtime.Core.Utils;
 using Kingmaker.UnitLogic.Buffs;
+using Kingmaker.UnitLogic.Commands;
+using UnityEngine;
 
 namespace VisualAdjustments2
 {
@@ -255,35 +257,53 @@ namespace VisualAdjustments2
         public static void RebuildCharacter(this UnitEntityData data)
         {
             //From Polymorph.RestoreView (slightly modified)
+        
+            foreach (Buff buff in data.Buffs)
             {
-                UnitEntityView view = data.View;
-                data.AttachToViewOnLoad(null);
-                data.View.transform.SetParent(view.transform.parent, false);
-                data.View.transform.position = view.transform.position;
-                data.View.transform.rotation = view.transform.rotation;
-                SelectionManagerBase selectionManagerBase = Game.Instance.UI.SelectionManager.Or(null);
-                if (selectionManagerBase != null)
-                {
-                    selectionManagerBase.ForceCreateMarks();
-                }
-                // Polymorph.VisualTransitionSettings settings = this.HasExternalTransition ? this.m_TransitionExternal.ExitTransition : this.m_ExitTransition;
-                UnityEngine.Physics.SyncTransforms();
-                if (data.IsViewActive)
-                {
-                    var settings = new Polymorph.VisualTransitionSettings();
-                    settings.OldPrefabFX = new PrefabLink();
-                    settings.NewPrefabFX = new PrefabLink();
-                    //data.View.StartCoroutine(Polymorph.Transition(settings, view, data.View));
-                }
-                else
-                {
-                    UnityEngine.Object.Destroy(view.gameObject);
-                }
-                data.Wake(/*settings.ScaleTime*/);
-                //data.ViewReplacement = null;
+                buff.ClearParticleEffect();
             }
+            UnitEntityView view = data.View;
+            data.AttachToViewOnLoad(null);
+            data.View.transform.SetParent(view.transform.parent, false);
+            data.View.transform.position = view.transform.position;
+            data.View.transform.rotation = view.transform.rotation;
+            data.Commands.InterruptAll((UnitCommand cmd) => !(cmd is UnitMoveTo));
+            SelectionManagerBase selectionManagerdata = Game.Instance.UI.SelectionManager.Or(null);
+            if (selectionManagerdata != null)
+            {
+                selectionManagerdata.ForceCreateMarks();
+            }
+            Physics.SyncTransforms();
+            UnityEngine.Object.Destroy(view.gameObject);
+            data.Wake(5f, false);
+            /*UnitEntityView view = data.View;
+            data.AttachToViewOnLoad(null);
+            data.View.transform.SetParent(view.transform.parent, false);
+            data.View.transform.position = view.transform.position;
+            data.View.transform.rotation = view.transform.rotation;
+            SelectionManagerBase selectionManagerBase = Game.Instance.UI.SelectionManager.Or(null);
+            if (selectionManagerBase != null)
+            {
+                selectionManagerBase.ForceCreateMarks();
+            }
+            // Polymorph.VisualTransitionSettings settings = this.HasExternalTransition ? this.m_TransitionExternal.ExitTransition : this.m_ExitTransition;
+            UnityEngine.Physics.SyncTransforms();
+            if (data.IsViewActive)
+            {
+                var settings = new Polymorph.VisualTransitionSettings();
+                settings.OldPrefabFX = new PrefabLink();
+                settings.NewPrefabFX = new PrefabLink();
+                //data.View.StartCoroutine(Polymorph.Transition(settings, view, data.View));
+            }
+            else
+            {
+                UnityEngine.Object.Destroy(view.gameObject);
+            }
+            data.Wake(/*settings.ScaleTime*//*);
+            //data.ViewReplacement = null;
+        
             //data.View.CharacterAvatar.
-            //data.AttachToViewOnLoad(null);
+            //data.AttachToViewOnLoad(null);*/
         }
         public static void SaveDollState(this UnitEntityData data, DollState doll, bool Apply = true)
         {

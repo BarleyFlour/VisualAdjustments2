@@ -161,7 +161,7 @@ namespace VisualAdjustments2.Infrastructure
                 state.CreateTattos(state?.m_DefaultSettings);
                 state.CreateWarpaints(state?.m_DefaultSettings, state.Race.RaceId);
                 //state.RacePreset = dollData2.RacePreset;
-                ClassData classData = unit.Progression.Classes.FirstOrDefault<ClassData>();
+                ClassData classData = unit.Progression.Classes.FirstOrDefault<ClassData>(c => c.CharacterClass == unit.Progression.GetEquipmentClass());
                 state.CharacterClass = ((classData != null) ? classData.CharacterClass : null);
                 foreach (ClassData classData2 in unit.Progression.Classes)
                 {
