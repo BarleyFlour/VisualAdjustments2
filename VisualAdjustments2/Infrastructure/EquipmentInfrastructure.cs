@@ -37,7 +37,7 @@ namespace VisualAdjustments2.Infrastructure
     }
 
     [HarmonyPatch(typeof(UnitViewHandsEquipment), nameof(UnitViewHandsEquipment.UpdateBeltPrefabs))]
-    public static class bro
+    public static class UnitViewHandsEquipment_UpdateBeltPrefabs_patch
     {
         private static void Postfix(UnitViewHandsEquipment __instance)
         {

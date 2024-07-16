@@ -1385,7 +1385,7 @@ namespace VisualAdjustments2
                     newselectionbar.transform.localScale = oldbar.transform.localScale;
                     //Add visual adjustments Window PCView
                     {
-                        var oldcomp = newgameobject.transform.parent.GetComponent<ServiceWindowsPCView>();
+                        var oldcomp = newgameobject.transform.parent.parent.parent.GetComponent<ServiceWindowsPCView>();
                         var compPCView = newgameobject.AddComponent<ServiceWindowsPCViewModified>();
 
                         var Doll = new GameObject("Doll");
@@ -1398,6 +1398,7 @@ namespace VisualAdjustments2
 #if DEBUG
                         Main.Logger.Log(DollPCView.ToString() + " << DollPCView");
                         Main.Logger.Log(cmp.ToString() + " << cmp");
+                        Main.Logger.Log(oldcomp.ToString() + " << oldcomp");
 #endif
                         DollPCView.m_CreateDollPCView = cmp;
                         DollPCView.m_CreateDollPCView.Button.OnLeftClick.AddListener(() =>
@@ -1405,7 +1406,7 @@ namespace VisualAdjustments2
                             DollPCView.ViewModel?.AddUnitPart();
                         });
 
-                        //  compPCView.m_Background = oldcomp.m_Background;
+                        compPCView.m_Background = oldcomp.m_Background;
                         compPCView.m_ServiceWindowMenuPcView = comp;
                         compPCView.m_EEPickerPCView = EEPickerPCView;
                         compPCView.m_EquipmentPCView = EquipmentPCView;
@@ -1832,11 +1833,7 @@ namespace VisualAdjustments2
 
                             swVM.AddDisposable(swVM.ServiceWindowsMenuVM.Value = vm);
                         }
-                        else
-                        {
-                        }
                     }
-                    return;
                 }
             }
             catch (Exception e)

@@ -12,9 +12,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Kingmaker.Items;
 using Kingmaker.UI.MVVM._VM.ServiceWindows.Inventory;
+using UnityEngine;
 
 namespace VisualAdjustments2.Infrastructure
 {
+    public static class EeInfraStructure
+    {
+        public static Dictionary<Color, Texture2D> ColorToTex = new();
+    }
+
     [HarmonyLib.HarmonyPatch(typeof(UnitEntityData), nameof(UnitEntityData.OnViewDidAttach))]
     public static class UnitEntityData_CreateView_Patch
     {
@@ -27,7 +33,9 @@ namespace VisualAdjustments2.Infrastructure
                 {
                     foreach (var action in __instance.GetSettings()?.EeSettings?.EEs)
                     {
-                        //Main.Logger.Log($"Action of type {action.actionType}, Guid:{action.GUID}");
+#if DEBUG
+                        Main.Logger.Log($"Action of type {action.actionType}, Guid:{action.GUID}");
+#endif
                         action.Apply(__instance.View.CharacterAvatar);
                     }
                 }

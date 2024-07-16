@@ -15,22 +15,28 @@ using UniRx;
 
 namespace VisualAdjustments2.UI
 {
-    public class ServiceWindowsVMModified : BaseDisposable, IDisposable, IViewModel, IBaseDisposable, ISubscriber, IGlobalSubscriber
+    public class ServiceWindowsVMModified : BaseDisposable, IDisposable, IViewModel, IBaseDisposable, ISubscriber,
+        IGlobalSubscriber
     {
         public ServiceWindowsVMModified()
         {
             base.AddDisposable(EventBus.Subscribe(this));
             ShowWindow(VisualWindowType.Doll);
         }
+
         public override void DisposeImplementation()
         {
             this.HideMenu();
             this.HideWindow(this.CurrentWindow);
+#if DEBUG
+            Main.Logger.Log("Disposed ServiceWindowsVMModified");
+#endif
             /*EventBus.RaiseEvent<IFullScreenUIHandler>(delegate (IFullScreenUIHandler h)
             {
                 h.HandleFullScreenUiChanged(false, Kingmaker.UI.FullScreenUITypes.FullScreenUIType.Inventory);
             }, true);*/
         }
+
         /*public void HandleCloseAll()
         {
             this.HandleOpenWindow(this.CurrentWindow);
@@ -61,22 +67,27 @@ namespace VisualAdjustments2.UI
             {
                 return;
             }
+
             if (this.ServiceWindowsMenuVM.Value == null)
             {
                 if (type == this.CurrentWindow || type == VisualWindowType.None)
                 {
                     return;
                 }
+
                 this.ShowMenu();
             }
+
             ServiceWindowsMenuVMModified value = this.ServiceWindowsMenuVM.Value;
             if (value == null)
             {
                 return;
             }
+
             //this.CurrentWindow = type;
             value.SelectWindow(type);
         }
+
         public void OnSelectWindow(VisualWindowType type)
         {
             //Main.Logger.Log("OnSelectWindow");
@@ -92,12 +103,14 @@ namespace VisualAdjustments2.UI
                 }, true);*/
                 return;
             }
+
             this.HideMenu();
             this.PlayCloseSound(this.CurrentWindow);
-            EventBus.RaiseEvent<IFullScreenUIHandler>(delegate (IFullScreenUIHandler h)
-            {
-                h.HandleFullScreenUiChanged(false, Kingmaker.UI.FullScreenUITypes.FullScreenUIType.Inventory);
-            }, true);
+            EventBus.RaiseEvent<IFullScreenUIHandler>(
+                delegate(IFullScreenUIHandler h)
+                {
+                    h.HandleFullScreenUiChanged(false, Kingmaker.UI.FullScreenUITypes.FullScreenUIType.Inventory);
+                }, true);
             this.CurrentWindow = VisualWindowType.None;
         }
 
@@ -115,13 +128,16 @@ namespace VisualAdjustments2.UI
                             base.AddDisposable(this.EquipmentVM.Value = new EquipmentVM());
                             return;
                         }
+
                         return;
                     case VisualWindowType.FXViewer:
                         if (this.FXViewerVM.Value == null)
                         {
-                            base.AddDisposable(this.FXViewerVM.Value = new FXViewerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value));
+                            base.AddDisposable(this.FXViewerVM.Value =
+                                new FXViewerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value));
                             return;
                         }
+
                         return;
                     case VisualWindowType.Doll:
                         if (this.DollVM.Value == null)
@@ -129,13 +145,16 @@ namespace VisualAdjustments2.UI
                             base.AddDisposable(this.DollVM.Value = new DollVM());
                             return;
                         }
+
                         return;
                     case VisualWindowType.EEPicker:
                         if (this.EEPickerVM.Value == null)
                         {
-                            base.AddDisposable(this.EEPickerVM.Value = new EEPickerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value));
+                            base.AddDisposable(this.EEPickerVM.Value =
+                                new EEPickerVM(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value));
                             return;
                         }
+
                         return;
                     case VisualWindowType.Portrait:
                         if (this.PortraitVM.Value == null)
@@ -143,6 +162,7 @@ namespace VisualAdjustments2.UI
                             base.AddDisposable(this.PortraitVM.Value = new PortraitPickerVM());
                             return;
                         }
+
                         return;
                     default:
                         return;
@@ -153,68 +173,77 @@ namespace VisualAdjustments2.UI
                 Main.Logger.Error(e.ToString());
             }
         }
+
         public void HideWindow(VisualWindowType type)
         {
             switch (type)
             {
                 case VisualWindowType.Equipment:
+                {
+                    EquipmentVM value = this.EquipmentVM.Value;
+                    if (value != null)
                     {
-                        EquipmentVM value = this.EquipmentVM.Value;
-                        if (value != null)
-                        {
-                            value.Dispose();
-                        }
-                        this.EquipmentVM.Value = null;
-                        return;
+                        value.Dispose();
                     }
+
+                    this.EquipmentVM.Value = null;
+                    return;
+                }
                 case VisualWindowType.Doll:
+                {
+                    DollVM value2 = this.DollVM.Value;
+                    if (value2 != null)
                     {
-                        DollVM value2 = this.DollVM.Value;
-                        if (value2 != null)
-                        {
-                            value2.Dispose();
-                        }
-                        this.DollVM.Value = null;
-                        return;
+                        value2.Dispose();
                     }
+
+                    this.DollVM.Value = null;
+                    return;
+                }
                 case VisualWindowType.FXViewer:
+                {
+                    FXViewerVM value3 = this.FXViewerVM.Value;
+                    if (value3 != null)
                     {
-                        FXViewerVM value3 = this.FXViewerVM.Value;
-                        if (value3 != null)
-                        {
-                            value3.Dispose();
-                        }
-                        this.FXViewerVM.Value = null;
-                        return;
+                        value3.Dispose();
                     }
+
+                    this.FXViewerVM.Value = null;
+                    return;
+                }
                 case VisualWindowType.EEPicker:
+                {
+                    EEPickerVM value3 = this.EEPickerVM.Value;
+                    if (value3 != null)
                     {
-                        EEPickerVM value3 = this.EEPickerVM.Value;
-                        if (value3 != null)
-                        {
-                            value3.Dispose();
-                        }
-                        this.EEPickerVM.Value = null;
-                        return;
+                        value3.Dispose();
                     }
+
+                    this.EEPickerVM.Value = null;
+                    return;
+                }
                 case VisualWindowType.Portrait:
+                {
+                    var PortraitVM = this.PortraitVM.Value;
+                    if (PortraitVM != null)
                     {
-                        var PortraitVM = this.PortraitVM.Value;
-                        if (PortraitVM != null)
-                        {
-                            PortraitVM.Dispose();
-                        }
-                        this.PortraitVM.Value = null;
-                        return;
+                        PortraitVM.Dispose();
                     }
+
+                    this.PortraitVM.Value = null;
+                    return;
+                }
                 default:
                     return;
             }
         }
+
         public void ShowMenu()
         {
-            base.AddDisposable(this.ServiceWindowsMenuVM.Value = new ServiceWindowsMenuVMModified(new Action<VisualWindowType>(this.OnSelectWindow)));
+            base.AddDisposable(this.ServiceWindowsMenuVM.Value =
+                new ServiceWindowsMenuVMModified(new Action<VisualWindowType>(this.OnSelectWindow)));
         }
+
         public void HideMenu()
         {
             ServiceWindowsMenuVMModified value = this.ServiceWindowsMenuVM.Value;
@@ -222,16 +251,20 @@ namespace VisualAdjustments2.UI
             {
                 value.Dispose();
             }
+
             this.ServiceWindowsMenuVM.Value = null;
         }
+
         public void PlayOpenSound(VisualWindowType type)
         {
             UISoundController.Instance.Play(UISoundType.InventoryOpen);
         }
+
         public void PlayCloseSound(VisualWindowType type)
         {
             UISoundController.Instance.Play(UISoundType.InventoryClose);
         }
+
         public ReactiveProperty<ServiceWindowsMenuVMModified> ServiceWindowsMenuVM = new();
 
         public ReactiveProperty<EquipmentVM> EquipmentVM = new();

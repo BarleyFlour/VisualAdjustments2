@@ -25,15 +25,18 @@ namespace VisualAdjustments2.Infrastructure
         public SerializableColor? PrimaryCustomCol = null;
         public SerializableColor? SecondaryCustomCol = null;
     }
+
     public class WeaponOverride
     {
-        [JsonConstructor] public WeaponOverride(bool mainoroffhand,int slot,string guid,string animstyle)
+        [JsonConstructor]
+        public WeaponOverride(bool mainoroffhand, int slot, string guid, string animstyle)
         {
             this.MainOrOffHand = mainoroffhand;
             this.Slot = slot;
             this.GUID = guid;
             this.AnimStyle = animstyle;
         }
+
         public WeaponOverride(bool mainoroffhand, int slot, string guid, int animstyle)
         {
             this.MainOrOffHand = mainoroffhand;
@@ -41,11 +44,13 @@ namespace VisualAdjustments2.Infrastructure
             this.GUID = guid;
             this.AnimStyle = ((WeaponAnimationStyle)animstyle).ToString();
         }
+
         public bool MainOrOffHand;
         public int Slot;
         public string AnimStyle;
         public string GUID;
     }
+
     public class EnchantOverride
     {
         [JsonConstructor]
@@ -55,40 +60,53 @@ namespace VisualAdjustments2.Infrastructure
             this.Slot = slot;
             this.GUID = guid;
         }
+
         public bool MainOrOffHand;
         public int Slot;
         public string AnimStyle;
         public string GUID;
     }
+
     public class CharacterSettings
     {
         public List<WeaponOverride> WeaponOverrides = new List<WeaponOverride>();
         public List<EnchantOverride> EnchantOverrides = new List<EnchantOverride>();
-        [JsonIgnore] public Dictionary<ItemEntity, List<IFxHandle>> CurrentFXs = new Dictionary<ItemEntity, List<IFxHandle>>();
+
+        [JsonIgnore]
+        public Dictionary<ItemEntity, List<IFxHandle>> CurrentFXs = new Dictionary<ItemEntity, List<IFxHandle>>();
 
         public EESettings EeSettings = new();
         public Buff_Settings m_BuffSettings = new();
-        [JsonIgnore] public Buff_Settings BuffSettings
+
+        [JsonIgnore]
+        public Buff_Settings BuffSettings
         {
             get
             {
-                if (GlobalCharacterSettings.Instance.useGlobalBuffProfile) return GlobalCharacterSettings.Instance.global_profile;
+                if (GlobalCharacterSettings.Instance.useGlobalBuffProfile)
+                    return GlobalCharacterSettings.Instance.global_profile;
                 else return m_BuffSettings;
             }
         }
+
         public ClassOutfitOverride ClassOverride = new();
+
         public class EESettings
         {
             public List<EE_Applier> EEs = new List<EE_Applier>();
         }
+
         public class Buff_Settings
         {
             public bool FixSize = false;
             public bool WhiteOrBlackList = false;
             public ResourceLoader.FXBlockerHolder fXBlockerHolder = new ResourceLoader.FXBlockerHolder();
         }
+
         public Dictionary<ItemsFilter.ItemType, bool> m_HideEquipmentDict;
-        [JsonIgnore] public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict
+
+        [JsonIgnore]
+        public Dictionary<ItemsFilter.ItemType, bool> HideEquipmentDict
         {
             get
             {
@@ -96,19 +114,23 @@ namespace VisualAdjustments2.Infrastructure
                 return m_HideEquipmentDict;
             }
         }
+
         public SerializedDollState doll;
+
         public static Dictionary<ItemsFilter.ItemType, bool> SetupDict()
         {
             var newdict = new Dictionary<ItemsFilter.ItemType, bool>();
-            foreach(var type in Enum.GetValues(typeof(ItemsFilter.ItemType)))
+            foreach (var type in Enum.GetValues(typeof(ItemsFilter.ItemType)))
             {
                 newdict.Add((ItemsFilter.ItemType)type, false);
             }
-            newdict.Add((ItemsFilter.ItemType)99,false);
+
+            newdict.Add((ItemsFilter.ItemType)99, false);
             newdict.Add((ItemsFilter.ItemType)100, false);
             return newdict;
         }
     }
+
     public struct SerializableColor
     {
         public SerializableColor(Color col)
@@ -121,12 +143,13 @@ namespace VisualAdjustments2.Infrastructure
         public float r;
         public float g;
         public float b;
+
         public Color ToColor()
         {
             return new Color(r, g, b);
         }
     }
-    
+
     public class EE_Applier
     {
         public enum ActionType
@@ -134,59 +157,85 @@ namespace VisualAdjustments2.Infrastructure
             Add,
             Remove
         }
+
         public EquipmentEntity Load()
         {
             return ResourcesLibrary.TryGetResource<EquipmentEntity>(this.GUID);
         }
+
         public void Apply(Character character)
         {
             switch (this.actionType)
             {
                 case ActionType.Add:
-                    {
-                        AddEE(character);
-                        break;
-                    }
+                {
+                    AddEE(character);
+                    break;
+                }
                 case ActionType.Remove:
-                    {
-                        RemoveEE(character);
-                        break;
-                    }
+                {
+                    RemoveEE(character);
+                    break;
+                }
             }
         }
+
         private void RemoveEE(Character character)
         {
             var loadedEE = this.Load();
-            if (character.EquipmentEntities.Any(b => b.name == loadedEE.name)) character.EquipmentEntities.Remove(loadedEE);
+            if (character.EquipmentEntities.Any(b => b.name == loadedEE.name))
+                character.EquipmentEntities.Remove(loadedEE);
         }
+
         private void AddEE(Character character)
         {
             var loadedEE = this.Load();
             if (!character.EquipmentEntities.Contains(loadedEE)) character.EquipmentEntities.Add(loadedEE);
             Primary?.Apply(loadedEE, character);
             Secondary?.Apply(loadedEE, character);
-
         }
-        public EE_Applier(string guid,ActionType actiontype)
+
+        public EE_Applier(string guid, ActionType actiontype)
         {
             GUID = guid;
             actionType = actiontype;
         }
+
         public ActionType actionType;
         public string GUID;
-        public ColorInfo Primary;// = new ColorInfo(true);
-        public ColorInfo Secondary;// = new ColorInfo(false);
+        public ColorInfo Primary; // = new ColorInfo(true);
+        public ColorInfo Secondary; // = new ColorInfo(false);
+
         public class ColorInfo
         {
             public bool PrimOrSec;
             public bool CustomColor = false;
             public int Index;
+
             public ColorInfo(bool b)
             {
                 PrimOrSec = b;
                 Index = 1;
             }
+
             public SerializableColor CustomColorRGB;
+
+            public static Texture2D CreateTexture(Color col)
+            {
+                var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
+                {
+                    filterMode = FilterMode.Bilinear,
+                    wrapMode = TextureWrapMode.Clamp,
+                    wrapModeU = TextureWrapMode.Clamp,
+                    wrapModeV = TextureWrapMode.Clamp,
+                    wrapModeW = TextureWrapMode.Clamp,
+                };
+                tex.SetPixel(1, 1, col);
+                tex.Apply(true, true);
+                tex.name = "CustomTex";
+                return tex;
+            }
+
             public void Apply(EquipmentEntity ee, Character character)
             {
                 try
@@ -194,77 +243,34 @@ namespace VisualAdjustments2.Infrastructure
                     if (CustomColor)
                     {
                         var col = CustomColorRGB.ToColor();
-                        if (PrimOrSec)
+                        if (!EeInfraStructure.ColorToTex.TryGetValue(col, out var tex))
                         {
-                            var firstpixel = ee.PrimaryColorsProfile.Ramps.Where(t => t.isReadable).FirstOrDefault(t => t.GetPixel(1, 1) == col);
-                            if (firstpixel == null)
-                            {
-                                var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
-                                {
-                                    filterMode = FilterMode.Bilinear
-                                };
-                                tex.SetPixel(1, 1, col);
-                                tex.Apply();
-                                ee.PrimaryColorsProfile.Ramps.Add(tex);
-                                var index = ee.PrimaryColorsProfile.Ramps.IndexOf(tex);
-                                character.SetPrimaryRampIndex(ee, index);
-                            }
-                            else
-                            {
-                                var index = ee.PrimaryColorsProfile.Ramps.IndexOf(firstpixel);
-                                character.SetPrimaryRampIndex(ee, index);
-                            }
+                            tex = CreateTexture(col);
+#if DEBUG
+                            Main.Logger.Log($"Couldn't find texture for {col.ToString()}, Creating.");
+#endif
+                            EeInfraStructure.ColorToTex[col] = tex;
                         }
-                        else
-                        {
-                            var firstpixel = ee.SecondaryColorsProfile.Ramps.Where(t => t.isReadable).FirstOrDefault(t => t.GetPixel(1, 1) == col);
-                            if (firstpixel == null)
-                            {
-                                var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
-                                {
-                                    filterMode = FilterMode.Bilinear
-                                };
-                                tex.SetPixel(1, 1, col);
-                                tex.Apply();
-                                ee.SecondaryColorsProfile.Ramps.Add(tex);
-                                var index = ee.SecondaryColorsProfile.Ramps.IndexOf(tex);
-                                character.SetSecondaryRampIndex(ee, index);
-                            }
-                            else
-                            {
-                                var index = ee.SecondaryColorsProfile.Ramps.IndexOf(firstpixel);
-                                character.SetSecondaryRampIndex(ee, index);
-                            }
-                        }
-                        /*var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false)
-                        {
-                            filterMode = FilterMode.Bilinear
-                        };
-                        
-                       // var col = CustomColorRGB.ToColor();
-                        tex.SetPixel(1, 1, col);
-                        tex.Apply();
+
+                        var ramps = PrimOrSec ? ee.PrimaryColorsProfile.Ramps : ee.SecondaryColorsProfile.Ramps;
+                        if (!ramps.Contains(tex))
+                            ramps.Add(tex);
+
+                        var index = ramps.IndexOf(tex);
                         if (PrimOrSec)
-                        {
-                            ee.PrimaryColorsProfile.Ramps.Add(tex);
-                            var index = ee.PrimaryColorsProfile.Ramps.IndexOf(tex);
                             character.SetPrimaryRampIndex(ee, index);
-                        }
                         else
-                        {
-                            ee.SecondaryColorsProfile.Ramps.Add(tex);
-                            var index = ee.SecondaryColorsProfile.Ramps.IndexOf(tex);
                             character.SetSecondaryRampIndex(ee, index);
-                        }*/
                     }
                     else
                     {
                         if (PrimOrSec) character.SetPrimaryRampIndex(ee, Index);
                         else character.SetSecondaryRampIndex(ee, Index);
                     }
+
                     character.IsDirty = true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Main.Logger.Error(e.ToString());
                 }

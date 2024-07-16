@@ -14,7 +14,7 @@ namespace VisualAdjustments2.UI
 {
     public class ServiceWindowsPCViewModified : ViewBase<ServiceWindowsVMModified>
     {
-        public ServiceWindowsPCViewModified(ServiceWindowsPCView oldview,ServiceWindowMenuPCViewModified SWMPCVM)
+        public ServiceWindowsPCViewModified(ServiceWindowsPCView oldview, ServiceWindowMenuPCViewModified SWMPCVM)
         {
             this.m_Background = oldview.m_Background;
             this.m_BindDisposable = oldview.m_BindDisposable;
@@ -27,33 +27,45 @@ namespace VisualAdjustments2.UI
             {
                 return;
             }
+
             this.m_FXViewerPCView?.Initialize();
             this.m_EquipmentPCView?.Initialize();
             this.m_ServiceWindowMenuPcView?.Initialize();
             this.m_IsInit = true;
         }
+
         public override void BindViewImplementation()
         {
-            base.AddDisposable(base.ViewModel.ServiceWindowsMenuVM.Subscribe(new Action<ServiceWindowsMenuVMModified>(this.m_ServiceWindowMenuPcView.Bind)));
+            base.AddDisposable(base.ViewModel.ServiceWindowsMenuVM.Subscribe(
+                new Action<ServiceWindowsMenuVMModified>(this.m_ServiceWindowMenuPcView.Bind)));
             base.AddDisposable(base.ViewModel.EEPickerVM.Subscribe(new Action<EEPickerVM>(this.m_EEPickerPCView.Bind)));
             base.AddDisposable(base.ViewModel.FXViewerVM.Subscribe(new Action<FXViewerVM>(this.m_FXViewerPCView.Bind)));
-            base.AddDisposable(base.ViewModel.EquipmentVM.Subscribe(new Action<EquipmentVM>(this.m_EquipmentPCView.Bind)));
+            base.AddDisposable(
+                base.ViewModel.EquipmentVM.Subscribe(new Action<EquipmentVM>(this.m_EquipmentPCView.Bind)));
             base.AddDisposable(base.ViewModel.DollVM.Subscribe(new Action<DollVM>(this.m_DollPCView.Bind)));
-            base.AddDisposable(base.ViewModel.PortraitVM.Subscribe(new Action<PortraitPickerVM>(this.m_portraitPickerPCView.Bind)));
-            base.AddDisposable(base.ViewModel.ServiceWindowsMenuVM.Subscribe(delegate (ServiceWindowsMenuVMModified vm)
+            base.AddDisposable(
+                base.ViewModel.PortraitVM.Subscribe(new Action<PortraitPickerVM>(this.m_portraitPickerPCView.Bind)));
+            base.AddDisposable(base.ViewModel.ServiceWindowsMenuVM.Subscribe(delegate(ServiceWindowsMenuVMModified vm)
             {
+#if DEBUG
+                var isnullstring = vm == null ? "Null" : "Not null";
+                Main.Logger.Log($"ServiceWindowsPCViewModified BindViewImplementation, vm is {isnullstring}");
+#endif
                 if (vm != null)
                 {
-                    this.m_Background?.AppearAnimation(null);
+                    //this.m_Background?.AppearAnimation(null);
+                    this.gameObject.SetActive(true);
                     return;
                 }
-                this.m_Background?.DisappearAnimation(null);
+                //this.m_Background?.DisappearAnimation(null);
             }));
         }
+
         public override void DestroyViewImplementation()
         {
-            
+            //this.gameObject.SetActive(false);
         }
+
         public PortraitPickerPCView m_portraitPickerPCView;
         public EEPickerPCView m_EEPickerPCView;
         public FXViewerPCView m_FXViewerPCView;
