@@ -39,6 +39,7 @@ namespace VisualAdjustments2.UI
 
             m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
             this.m_VisualSettings.gameObject.SetActive(false);
+            base.AddDisposable(this.ViewModel?.CurrentEEs?.Value?.SelectedEntity?.Subscribe((ListViewItemVM vm) => { this.m_EEColorPicker.OnEEChanged(ResourcesLibrary.TryGetResource<EquipmentEntity>(vm.Guid)); }));
             
         }
         private void OnCharacterChanged()
@@ -48,6 +49,7 @@ namespace VisualAdjustments2.UI
             m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
             m_EEColorPicker.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
             this.m_VisualSettings.gameObject.SetActive(false);
+            base.AddDisposable(this.ViewModel?.CurrentEEs?.Value?.SelectedEntity?.Subscribe((ListViewItemVM vm) => { this.m_EEColorPicker.OnEEChanged(ResourcesLibrary.TryGetResource<EquipmentEntity>(vm.Guid)); }));
         }
         public override void BindViewImplementation()
         {
@@ -72,14 +74,14 @@ namespace VisualAdjustments2.UI
                 });
                 this.AddDisposable(this.m_EEColorPicker.Index.Subscribe((int index) => { this.m_EEColorPicker.UpdateColorFromIndex(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.ViewModel.CurrentEEs.Value.SelectedEntity.Value.Guid), index); }));
                 this.AddDisposable(this.m_EEColorPicker.m_ToggleGroupHandler.PrimOrSec.Subscribe((bool _) => { this.m_EEColorPicker.UpdateRampSlider(ResourcesLibrary.TryGetResource<EquipmentEntity>(this.ViewModel.CurrentEEs.Value.SelectedEntity.Value.Guid)); }));
+                base.AddDisposable(this.ViewModel?.CurrentEEs?.Value?.SelectedEntity?.Subscribe((ListViewItemVM vm) => { this.m_EEColorPicker.OnEEChanged(ResourcesLibrary.TryGetResource<EquipmentEntity>(vm.Guid)); }));
+                
                 m_dollCharacterController.Bind(Game.Instance.SelectionCharacter.SelectedUnit.Value.Value);
                 this.AddDisposable(base.ViewModel.AllEEs.Value);
                 this.m_AllEEs.Bind(base.ViewModel.AllEEs.Value);
                 this.AddDisposable(base.ViewModel.CurrentEEs.Value);
                 this.m_CurrentEEs.Bind(base.ViewModel.CurrentEEs.Value);
                 this.m_VisualSettings.gameObject.SetActive(false);
-
-                base.AddDisposable(this.ViewModel?.CurrentEEs?.Value?.SelectedEntity?.Subscribe((ListViewItemVM vm) => { this.m_EEColorPicker.OnEEChanged(ResourcesLibrary.TryGetResource<EquipmentEntity>(vm.Guid)); }));
             }
             catch(Exception e)
             {
