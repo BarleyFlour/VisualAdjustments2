@@ -59,18 +59,37 @@ namespace VisualAdjustments2.Infrastructure
                         go.SetActive(false);
                     }
                 }
-                /*if (characterSettings.overrideScale && !__instance.Character.PeacefulMode)
-                {
-                    foreach (var go in ___m_ConsumableSlots)
-                    {
-                        if (go == null) continue;
-                        go.transform.localScale *= ViewManager.GetRealSizeScale(__instance.Owner.View, characterSettings);
-                    }
-                }*/
             }
             catch (Exception ex)
             {
                 Main.Logger.Error(ex.ToString());
+            }
+        }
+        [HarmonyPatch(typeof(UnitViewHandsEquipment), nameof(UnitViewHandsEquipment.UpdateVisibility))]
+        private static class UnitViewHandsEquipment_UpdateVisibility_Patch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(UnitViewHandsEquipment __instance)
+            {
+                try
+                {
+                    if (!Main.IsEnabled) return;
+                    if (!__instance.Owner.IsPlayerFaction) return;
+                    var characterSettings = __instance.Owner.GetSettings();
+                    if (characterSettings.HideEquipmentDict[(ItemsFilter.ItemType)HideButtonType.Weapons])
+                    {
+                        foreach (var kv in __instance.Sets)
+                        {
+                            if (kv.Key.PrimaryHand.Active) continue;
+                            kv.Value.MainHand.ShowItem(false);
+                            kv.Value.OffHand.ShowItem(false);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Main.Logger.Error(ex.ToString());
+                }
             }
         }
     }

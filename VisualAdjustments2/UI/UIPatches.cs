@@ -61,10 +61,11 @@ namespace VisualAdjustments2
         Shirt = 15,
         Shoulders = 9,
         Wrist = 10,
-        Usable = 11, //Belt items
-        Weapon = 0,
+        Usable = 11, // Belt items
+        Weapon = 0, // Sheaths
         Class_Equipment = 99,
-        Mythic_Things = 100
+        Mythic_Things = 100,
+        Weapons = 101 // Weapons on back/hip, etc.
     };
 
     public enum Extended
@@ -873,7 +874,8 @@ namespace VisualAdjustments2
                                     HideButtonType.Usable,
                                     HideButtonType.Weapon,
                                     HideButtonType.Class_Equipment,
-                                    HideButtonType.Mythic_Things
+                                    HideButtonType.Mythic_Things,
+                                    HideButtonType.Weapons
                                 };
                                 Dictionary<HideButtonType, string> enumValuesNames =
                                     new Dictionary<HideButtonType, string>()
@@ -889,7 +891,8 @@ namespace VisualAdjustments2
                                         [HideButtonType.Usable] = "Belt items",
                                         [HideButtonType.Weapon] = "Sheaths",
                                         [HideButtonType.Class_Equipment] = "Class Gear",
-                                        [HideButtonType.Mythic_Things] = "Mythic"
+                                        [HideButtonType.Mythic_Things] = "Mythic",
+                                        [HideButtonType.Weapons] = "Weapons"
                                     };
 
                                 Transform toAttachTo = null;
