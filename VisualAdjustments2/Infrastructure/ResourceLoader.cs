@@ -30,6 +30,7 @@ using Kingmaker.View.Animation;
 using Kingmaker.Blueprints.Items.Equipment;
 using Kingmaker.Blueprints.Items.Shields;
 using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.Blueprints.Root;
 using Kingmaker.Visual.Sound;
 
 namespace VisualAdjustments2
@@ -101,11 +102,20 @@ namespace VisualAdjustments2
                 if (m_AllVoices == null)
                 {
                     m_AllVoices = new();
-                    var voices = Kingmaker.Cheats.Utilities.GetAllBlueprints().Entries
+                    var voices = BlueprintRoot.Instance.CharGen.m_MaleVoices
+                        .Select(a => (BlueprintUnitAsksList)a.GetBlueprint())
+                        .Concat(BlueprintRoot.Instance.CharGen.FemaleVoices.Select(a => a));
+                    voices = voices.Concat(Kingmaker.Cheats.Utilities.GetAllBlueprints().Entries
                         .Where(a => a.Type == typeof(BlueprintUnitAsksList)).Select(a =>
-                            ResourcesLibrary.TryGetBlueprint<BlueprintUnitAsksList>(a.Guid)).Where(b => b.GetComponent<UnitAsksComponent>().Selected.HasBarks != null).ToList();
+                            ResourcesLibrary.TryGetBlueprint<BlueprintUnitAsksList>(a.Guid)).Where(b => b.GetComponent<UnitAsksComponent>()?.Selected?.HasBarks != false).ToList());
+                    
+                    foreach(var voice in voices)
+                    {
+                        Main.Logger.Log($"{voice.name}, {voice.DisplayName}, {voice.NameSafe()}, {voice.AssetGuid}");
+                    }
                     foreach (var voice in voices)
                     {
+                        if (m_AllVoices.ContainsKey(voice)) continue;
                         if (voice.DisplayName.IsEmpty())
                         {
                             m_AllVoices.Add(voice,ResourceLoader.ProcessEEName(voice.name));
