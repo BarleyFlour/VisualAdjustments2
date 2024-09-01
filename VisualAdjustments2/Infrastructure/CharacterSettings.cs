@@ -127,6 +127,7 @@ namespace VisualAdjustments2.Infrastructure
 
             newdict.Add((ItemsFilter.ItemType)99, false);
             newdict.Add((ItemsFilter.ItemType)100, false);
+            newdict.Add((ItemsFilter.ItemType)101, false);
             return newdict;
         }
     }

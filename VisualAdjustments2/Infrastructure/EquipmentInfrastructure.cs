@@ -76,6 +76,8 @@ namespace VisualAdjustments2.Infrastructure
                     if (!Main.IsEnabled) return;
                     if (!__instance.Owner.IsPlayerFaction) return;
                     var characterSettings = __instance.Owner.GetSettings();
+                    if (!characterSettings.HideEquipmentDict.ContainsKey((ItemsFilter.ItemType)HideButtonType.Weapons)) // We need to add this to support older saves where SetupDict was ran previous to 1.2.10
+                        characterSettings.HideEquipmentDict[(ItemsFilter.ItemType)HideButtonType.Weapons] = false;
                     if (characterSettings.HideEquipmentDict[(ItemsFilter.ItemType)HideButtonType.Weapons])
                     {
                         foreach (var kv in __instance.Sets)
